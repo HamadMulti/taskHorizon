@@ -5,10 +5,12 @@ from flask_mail import Mail
 from config import CurrentConfig
 from flask_cors import CORS
 from flask_migrate import Migrate
+import os
 
 jwt = JWTManager()
 mail = Mail()
 migrate = Migrate()
+front_end_url = os.getenv("FRONTEND_URL")
 
 def create_app():
     app = Flask(__name__)
@@ -17,7 +19,7 @@ def create_app():
     db.init_app(app)
     jwt.init_app(app)
     mail.init_app(app)
-    CORS(app, supports_credentials=True, origins="*")
+    CORS(app, supports_credentials=True, origins=[front_end_url])
     migrate.init_app(app, db)
 
     from routes.auth_routes import auth_bp
