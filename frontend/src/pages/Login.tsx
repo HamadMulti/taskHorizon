@@ -25,7 +25,7 @@ const Login = () => {
           <div className="mb-12">
             <h3 className="text-2xl font-bold text-yellow-400">Sign in</h3>
           </div>
-          {error && <p className="text-red-500">{error}</p>}
+          {error && <p className="text-red-500">Invalid credentials</p>}
           <div className="mt-8">
             <label className="text-white text-xs block mb-2">Email</label>
             <div className="relative flex items-center">
