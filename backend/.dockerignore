@@ -14,7 +14,7 @@ dist
 build
 
 # Ignore environment files
-.env
+# .env
 .env.local
 
 # Ignore Docker files
@@ -28,7 +28,7 @@ docker-compose.yml
 
 # database
 *.db
-migrations
+# migrations
 instance
 
 # python logs and cache

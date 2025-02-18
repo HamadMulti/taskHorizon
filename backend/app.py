@@ -14,7 +14,16 @@ front_end_url = os.getenv("FRONTEND_URL")
 
 def create_app():
     app = Flask(__name__)
-    app.config.from_object(CurrentConfig)
+    app.config["SQLALCHEMY_DATABASE_URI"] = CurrentConfig.SQLALCHEMY_DATABASE_URI
+    app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = CurrentConfig.SQLALCHEMY_TRACK_MODIFICATIONS
+    app.config["SECRET_KEY"] = CurrentConfig.SECRET_KEY
+    app.config["JWT_SECRET_KEY"] = CurrentConfig.JWT_SECRET_KEY
+    app.config["MAIL_SERVER"] = CurrentConfig.MAIL_SERVER
+    app.config["MAIL_PORT"] = CurrentConfig.MAIL_PORT
+    app.config["MAIL_USE_TLS"] = CurrentConfig.MAIL_USE_TLS
+    app.config["MAIL_USERNAME"] = CurrentConfig.MAIL_USERNAME
+    app.config["MAIL_PASSWORD"] = CurrentConfig.MAIL_PASSWORD
+    app.config["DEBUG"] = CurrentConfig.DEBUG
 
     db.init_app(app)
     jwt.init_app(app)

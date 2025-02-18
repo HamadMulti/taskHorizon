@@ -15,8 +15,10 @@ ENV FLASK_ENV=production
 ENV FLASK_RUN_HOST=0.0.0.0
 
 # Create the database
+RUN rm -rf migrations
+RUN rm -rf instance
 RUN flask db init
-RUN flask db migrate -m "Initial migration."
+RUN flask db migrate -m "Initial Deployment migration one"
 RUN flask db upgrade
 
 # Run the web service on container startup

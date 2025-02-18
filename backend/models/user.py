@@ -11,4 +11,5 @@ class User(db.Model):
     location = db.Column(db.String(100), nullable=True)
     gender = db.Column(db.String(10), nullable=True)
     primary_email = db.Column(db.String(120), nullable=True)
+    verified = db.Column(db.Boolean, default=False)
 
