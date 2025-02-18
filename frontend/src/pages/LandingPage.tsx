@@ -142,7 +142,7 @@ const LandingPage = () => {
               {token ? (
                 <>
                   <a
-                    href="/register"
+                    href="/dashboard"
                     className="bg-yellow-600 hover:bg-yellow-700 transition-all text-white rounded-full px-5 py-2.5"
                   >
                     Dashboard
