@@ -19,4 +19,4 @@ ENV FLASK_RUN_HOST=0.0.0.0
 # RUN flask db upgrade
 
 # Run the web service on container startup
-CMD ["flask", "run"]
+CMD ["gunicorn", "-w", "4", "-b", "0.0.0.0:5000", "app:create_app()"]
