@@ -28,7 +28,7 @@ docker-compose.yml
 
 # database
 *.db
-migration
+migrations
 instance
 
 # python logs and cache

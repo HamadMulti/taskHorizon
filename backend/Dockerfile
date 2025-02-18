@@ -14,4 +14,10 @@ ENV FLASK_APP=app.py
 ENV FLASK_ENV=production
 ENV FLASK_RUN_HOST=0.0.0.0
 
-CMD ["flask", "init", "db", "upgrade"] && ["flask", "run"]
+# Create the database
+RUN flask db init
+RUN flask db migrate -m "Initial migration."
+RUN flask db upgrade
+
+# Run the web service on container startup
+CMD ["flask", "run"]
