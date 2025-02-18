@@ -2,7 +2,7 @@ import axios from "axios";
 import Cookies from "js-cookie";
 
 const API = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:5000",
+  baseURL: "https://taskhorizon.onrender.com",
   headers: {
     "Content-Type": "application/json",
     "Accept": "application/json",
