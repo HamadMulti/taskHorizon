@@ -75,7 +75,7 @@ const Login = () => {
           <div className="mt-8">
             <button
               type="submit"
-              className="w-max shadow-xl py-3 px-6 text-sm text-gray-800 font-semibold rounded bg-transparent bg-yellow-400 hover:bg-yellow-500 focus:outline-none"
+              className="w-max shadow-xl py-3 px-6 text-sm text-gray-800 font-semibold rounded bg-yellow-400 hover:bg-yellow-500 focus:outline-none"
             >
               {loading ? (
                 <>
