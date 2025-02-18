@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { loginUser } from "../features/authSlice";
 import { AppDispatch, RootState } from "../app/store";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 const Login = () => {
   const [credentials, setCredentials] = useState({ email: "", password: "" });
@@ -96,7 +96,7 @@ const Login = () => {
                 "Login"
               )}
             </button>
-            <p className="text-sm text-white mt-8">Don't have an account? <a href="/register" className="text-yellow-400 font-semibold hover:underline ml-1">Register here</a></p>
+            <p className="text-sm text-white mt-8">Don't have an account? <Link to="/register" className="text-yellow-400 font-semibold hover:underline ml-1">Register here</Link></p>
           </div>
         </form>
       </div>

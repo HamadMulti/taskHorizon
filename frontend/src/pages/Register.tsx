@@ -2,7 +2,8 @@ import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { registerUser } from "../features/authSlice";
 import { AppDispatch, RootState } from "../app/store";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
+
 
 const Register = () => {
   const [userData, setUserData] = useState({
@@ -249,12 +250,12 @@ const Register = () => {
               </button>
               <p className="text-sm text-white mt-8">
                 Already have an account?{" "}
-                <a
-                  href="/login"
+                <Link
+                  to="/login"
                   className="text-yellow-400 font-semibold hover:underline ml-1"
                 >
                   Login here
-                </a>
+                </Link>
               </p>
             </div>
           </form>

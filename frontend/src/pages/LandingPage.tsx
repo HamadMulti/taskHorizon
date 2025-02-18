@@ -2,6 +2,7 @@ import { useRef, useState } from "react";
 import FAQItem from "./FAQItem";
 import { useSelector } from "react-redux";
 import { RootState } from "../app/store";
+import { Link } from "react-router-dom";
 
 const LandingPage = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -57,9 +58,9 @@ const LandingPage = () => {
       <div className="bg-white text-black text-[16px]">
         <header className="shadow-[0_2px_10px_-3px_rgba(6,81,237,0.3)] sticky top-0 py-3 px-4 sm:px-10 bg-white z-50 min-h-[70px]">
           <div className="flex flex-wrap items-center gap-4">
-            <a href="javascript:void(0)">
+            <Link to="javascript:void(0)">
               <img src="/logo/logo.png" alt="TaskHorizon" className="w-36" />
-            </a>
+            </Link>
 
             <div
               id="collapseMenu"
@@ -91,49 +92,44 @@ const LandingPage = () => {
 
               <ul className="lg:ml-12 lg:flex gap-x-6 max-lg:space-y-3 max-lg:fixed max-lg:bg-white max-lg:w-1/2 max-lg:min-w-[300px] max-lg:top-0 max-lg:left-0 max-lg:p-6 max-lg:h-full max-lg:shadow-md max-lg:overflow-auto z-50">
                 <li className="mb-6 hidden max-lg:block">
-                  <a href="javascript:void(0)">
+                  <Link to="javascript:void(0)">
                     <img src="/logo/logo.png" alt="logo" className="w-36" />
-                  </a>
+                  </Link>
                 </li>
                 <li className="max-lg:border-b max-lg:py-3 px-3">
-                  <a
-                    href="javascript:void(0)"
+                  <Link to="javascript:void(0)"
                     className="hover:text-yellow-600 text-yellow-600 block font-semibold transition-all"
                   >
                     Home
-                  </a>
+                  </Link>
                 </li>
                 <li className="max-lg:border-b max-lg:py-3 px-3">
-                  <a
-                    href="javascript:void(0)"
+                  <Link to="javascript:void(0)"
                     className="hover:text-yellow-600 block font-semibold transition-all"
                   >
                     Team
-                  </a>
+                  </Link>
                 </li>
                 <li className="max-lg:border-b max-lg:py-3 px-3">
-                  <a
-                    href="javascript:void(0)"
+                  <Link to="javascript:void(0)"
                     className="hover:text-yellow-600 block font-semibold transition-all"
                   >
                     Feature
-                  </a>
+                  </Link>
                 </li>
                 <li className="max-lg:border-b max-lg:py-3 px-3">
-                  <a
-                    href="javascript:void(0)"
+                  <Link to="javascript:void(0)"
                     className="hover:text-yellow-600 block font-semibold transition-all"
                   >
                     Blog
-                  </a>
+                  </Link>
                 </li>
                 <li className="max-lg:border-b max-lg:py-3 px-3">
-                  <a
-                    href="javascript:void(0)"
+                  <Link to="javascript:void(0)"
                     className="hover:text-yellow-600 block font-semibold transition-all"
                   >
                     About
-                  </a>
+                  </Link>
                 </li>
               </ul>
             </div>
@@ -141,29 +137,27 @@ const LandingPage = () => {
             <div className="flex ml-auto">
               {token ? (
                 <>
-                  <a
-                    href="/dashboard"
+                  <Link to="/dashboard"
                     className="bg-yellow-600 hover:bg-yellow-700 transition-all text-white rounded-full px-5 py-2.5"
                   >
                     Dashboard
-                  </a>
+                  </Link>
                 </>
               ) : (
                 <>
                   <button className="mr-6 font-semibold border-none outline-none">
-                    <a
-                      href="/login"
+                    <Link
+                      to="/login"
                       className="text-yellow-600 hover:underline"
                     >
                       Login
-                    </a>
+                    </Link>
                   </button>
-                  <a
-                    href="/register"
+                  <Link to="/register"
                     className="bg-yellow-600 hover:bg-yellow-700 transition-all text-white rounded-full px-5 py-2.5"
                   >
                     Sign up
-                  </a>
+                  </Link>
                 </>
               )}
               <button
@@ -272,12 +266,11 @@ const LandingPage = () => {
                   </svg>
                   <h3 className="text-xl font-semibold mb-2">Customization</h3>
                   <p>Tailor our product to suit your needs.</p>
-                  <a
-                    href="javascript:void(0);"
+                  <Link to="javascript:void(0);"
                     className="text-yellow-600 font-semibold inline-block mt-2 hover:underline"
                   >
                     Learn more
-                  </a>
+                  </Link>
                 </div>
                 <div>
                   <svg
@@ -312,12 +305,11 @@ const LandingPage = () => {
                   </svg>
                   <h3 className="text-xl font-semibold mb-2">Security</h3>
                   <p>Your data is protected by the latest security measures.</p>
-                  <a
-                    href="javascript:void(0);"
+                  <Link to="javascript:void(0);"
                     className="text-yellow-600 font-semibold inline-block mt-2 hover:underline"
                   >
                     Learn more
-                  </a>
+                  </Link>
                 </div>
                 <div>
                   <svg
@@ -332,12 +324,11 @@ const LandingPage = () => {
                   </svg>
                   <h3 className="text-xl font-semibold mb-2">Support</h3>
                   <p>24/7 customer support for all your inquiries.</p>
-                  <a
-                    href="javascript:void(0);"
+                  <Link to="javascript:void(0);"
                     className="text-yellow-600 font-semibold inline-block mt-2 hover:underline"
                   >
                     Learn more
-                  </a>
+                  </Link>
                 </div>
                 <div>
                   <svg
@@ -362,12 +353,11 @@ const LandingPage = () => {
                   </svg>
                   <h3 className="text-xl font-semibold mb-2">Performance</h3>
                   <p>Experience blazing-fast performance with our product.</p>
-                  <a
-                    href="javascript:void(0);"
+                  <Link to="javascript:void(0);"
                     className="text-yellow-600 font-semibold inline-block mt-2 hover:underline"
                   >
                     Learn more
-                  </a>
+                  </Link>
                 </div>
                 <div>
                   <svg
@@ -406,12 +396,11 @@ const LandingPage = () => {
                   </svg>
                   <h3 className="text-xl font-semibold mb-2">Global Reach</h3>
                   <p>Expand your reach with our global network.</p>
-                  <a
-                    href="javascript:void(0);"
+                  <Link to="javascript:void(0);"
                     className="text-yellow-600 font-semibold inline-block mt-2 hover:underline"
                   >
                     Learn more
-                  </a>
+                  </Link>
                 </div>
                 <div>
                   <svg
@@ -440,12 +429,11 @@ const LandingPage = () => {
                   </svg>
                   <h3 className="text-xl font-semibold mb-2">Communication</h3>
                   <p>Seamless communication for your team.</p>
-                  <a
-                    href="javascript:void(0);"
+                  <Link to="javascript:void(0);"
                     className="text-yellow-600 font-semibold inline-block mt-2 hover:underline"
                   >
                     Learn more
-                  </a>
+                  </Link>
                 </div>
                 <div>
                   <svg
@@ -466,12 +454,11 @@ const LandingPage = () => {
                   <p>
                     Seamlessly integrate with your existing tools and systems.
                   </p>
-                  <a
-                    href="javascript:void(0);"
+                  <Link to="javascript:void(0);"
                     className="text-yellow-600 font-semibold inline-block mt-2 hover:underline"
                   >
                     Learn more
-                  </a>
+                  </Link>
                 </div>
                 <div>
                   <svg
@@ -490,12 +477,11 @@ const LandingPage = () => {
                   </svg>
                   <h3 className="text-xl font-semibold mb-2">Scalability</h3>
                   <p>Easily scale your resources to meet growing demands.</p>
-                  <a
-                    href="javascript:void(0);"
+                  <Link to="javascript:void(0);"
                     className="text-yellow-600 font-semibold inline-block mt-2 hover:underline"
                   >
                     Learn more
-                  </a>
+                  </Link>
                 </div>
                 <div>
                   <svg
@@ -530,12 +516,11 @@ const LandingPage = () => {
                   </svg>
                   <h3 className="text-xl font-semibold mb-2">Security</h3>
                   <p>Your data is protected by the latest security measures.</p>
-                  <a
-                    href="javascript:void(0);"
+                  <Link to="javascript:void(0);"
                     className="text-yellow-600 font-semibold inline-block mt-2 hover:underline"
                   >
                     Learn more
-                  </a>
+                  </Link>
                 </div>
               </div>
             </div>
@@ -873,36 +858,32 @@ const LandingPage = () => {
               <h4 className="text-xl font-semibold mb-6">Services</h4>
               <ul className="space-y-4">
                 <li>
-                  <a
-                    href="javascript:void(0)"
+                  <Link to="javascript:void(0)"
                     className="hover:text-yellow-600"
                   >
                     Web Development
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a
-                    href="javascript:void(0)"
+                  <Link to="javascript:void(0)"
                     className="hover:text-yellow-600"
                   >
                     Mobile App Development
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a
-                    href="javascript:void(0)"
+                  <Link to="javascript:void(0)"
                     className="hover:text-yellow-600"
                   >
                     UI/UX Design
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a
-                    href="javascript:void(0)"
+                  <Link to="javascript:void(0)"
                     className="hover:text-yellow-600"
                   >
                     Digital Marketing
-                  </a>
+                  </Link>
                 </li>
               </ul>
             </div>
@@ -910,36 +891,32 @@ const LandingPage = () => {
               <h4 className="text-xl font-semibold mb-6">Resources</h4>
               <ul className="space-y-4">
                 <li>
-                  <a
-                    href="javascript:void(0)"
+                  <Link to="javascript:void(0)"
                     className="hover:text-yellow-600"
                   >
                     Webinars
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a
-                    href="javascript:void(0)"
+                  <Link to="javascript:void(0)"
                     className="hover:text-yellow-600"
                   >
                     Ebooks
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a
-                    href="javascript:void(0)"
+                  <Link to="javascript:void(0)"
                     className="hover:text-yellow-600"
                   >
                     Templates
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a
-                    href="javascript:void(0)"
+                  <Link to="javascript:void(0)"
                     className="hover:text-yellow-600"
                   >
                     Tutorials
-                  </a>
+                  </Link>
                 </li>
               </ul>
             </div>
@@ -947,45 +924,41 @@ const LandingPage = () => {
               <h4 className="text-xl font-semibold mb-4">About Us</h4>
               <ul className="space-y-4">
                 <li>
-                  <a
-                    href="javascript:void(0)"
+                  <Link to="javascript:void(0)"
                     className="hover:text-yellow-600"
                   >
                     Our Story
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a
-                    href="javascript:void(0)"
+                  <Link to="javascript:void(0)"
                     className="hover:text-yellow-600"
                   >
                     Mission and Values
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a
-                    href="javascript:void(0)"
+                  <Link to="javascript:void(0)"
                     className="hover:text-yellow-600"
                   >
                     Team
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a
-                    href="javascript:void(0)"
+                  <Link to="javascript:void(0)"
                     className="hover:text-yellow-600"
                   >
                     Testimonials
-                  </a>
+                  </Link>
                 </li>
               </ul>
             </div>
           </div>
           <p className="mt-10">
             © {year}
-            <a href="/" target="_blank" className="hover:underline mx-1">
+            <Link to="/" target="_blank" className="hover:underline mx-1">
               TaskHorizon
-            </a>
+            </Link>
             All Rights Reserved.
           </p>
         </footer>
