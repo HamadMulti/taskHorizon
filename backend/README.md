@@ -80,7 +80,7 @@ taskHorizon/backend/
 1. Clone the repository:
    ```sh
    git clone https://github.com/HamadMulti/taskHorizon.git
-   cd taskhorizon/backend
+   cd taskHorizon/backend
    ```
 2. Create a virtual environment and install dependencies:
    ```sh

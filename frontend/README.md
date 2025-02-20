@@ -50,7 +50,7 @@ taskHorizon/frontend/
 1. **Clone the Repository**
    ```sh
    git clone https://github.com/HamadMulti/taskHorizon.git
-   cd taskhorizon/frontend
+   cd taskHorizon/frontend
    ```
 2. **Install Dependencies**
    ```sh
