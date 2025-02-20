@@ -31,8 +31,8 @@ const VerifyOTP = () => {
       .unwrap()
       .then(() => {
         navigate("/dashboard/tasks");
-      });
-      // .catch((error) => alert("Error verifying OTP: " + error.message));
+      })
+      .catch((error) => alert("Error verifying OTP: " + error.message));
   };
 
   const handleResendOTP = () => {
