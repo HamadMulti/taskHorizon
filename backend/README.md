@@ -173,70 +173,142 @@ class User(db.Model):
 
 - `POST /auth/register` - Register a new user
   ```json
-  { "message": "User registered successfully" }
+  {
+    "message": "User registered successfully" 
+  }
   ```
 - `POST /auth/login` - Authenticate user and obtain a token
   ```json
-  { "message": message, "access_token": token, "OTP sent": user=profile }
+  { 
+    "message": message,
+    "access_token": token,
+    "OTP sent": user=profile
+  }
   ```
 - `GET /auth/logout` - Logout the current user
+  ```json
+    { 
+      "message": "Ok"
+    }
+    ```
 - `POST /auth/send-otp` - Send OTP for verification
   ```json
-  { "message": "OTP sent successfully" }
+  {
+    "message": "OTP sent successfully"
+  }
   ```
 - `POST /auth/verify-otp` - Verify OTP code
   ```json
-  { "access_token": access_token, "role": user.role }
+  {
+    "access_token": access_token,
+    "role": user.role
+  }
   ```
 - `POST /auth/forgot-password` - Initiate password reset
   ```json
-  { "message": "Password reset email sent" }
+  {
+    "message": "Password reset email sent"
+  }
   ```
 - `POST /auth/reset-password` - Reset user password
   ```json
-  { "message": "Password has been updated successfully" }
+  {
+    "message": "Password has been updated successfully"
+  }
   ```
 
 ### User Management (`/user`)
 
 - `PUT /user/update-profile` - Update user profile information
   ```json
-  { "message": "Profile updated successfully" }
+  {
+    "message": "Profile updated successfully"
+  }
   ```
 - `GET /user/profile` - Retrieve user profile details
   ```json
-  { "user": { "username": user.username, "email": user.email, "role": user.role, "phone": user.phone, "location": user.location, "gender": user.gender, "primary_email": user.primary_email, "verified": user.verified } }
+  {
+    "user": 
+      {
+        "username": "John doe",
+        "email": "jhonedoe@mail.com",
+        "role": "user", # at the current moment we are using user as the administrator
+        "phone": +1234567890,
+        "location": "london",
+        "gender": "male",
+        "primary_email": "doejohn@mail.com",
+        "verified": "false"
+      } 
+    }
   ```
 
 ### Task Management (`/tasks`)
 
 - `POST /tasks/` - Create a new task
   ```json
-  { "message": "Task created successfully" }
+  {
+    "message": "Task created successfully"
+  }
   ```
 - `GET /tasks/` - Retrieve all tasks
   ```json
-  { "tasks": [{"id": t.id, "title": t.title, "status": t.status, "assigned_to": t.assigned_to}] }
+  {
+    "tasks": 
+      [
+        {
+          "id": 1,
+          "title": "Creating UI otp",
+          "status": "pending",
+          "assigned_to": "doe"
+        }
+      ]
+  }
   ```
 - `PUT /tasks/<int:task_id>` - Update a specific task
   ```json
-  { "message": "Task updated successfully" }
+  {
+    "message": "Task updated successfully"
+  }
   ```
 - `PUT /tasks/<int:task_id>/assign` - Assign a task to a user
   ```json
-  { "message": "Task assigned successfully" }
+  {
+    "message": "Task assigned successfully"
+  }
   ```
 - `DELETE /tasks/<int:task_id>/archive` - Archive a task
   ```json
-  { "message": "Task archived successfully" }
+  {
+    "message": "Task archived successfully"
+  }
   ```
 - `GET /tasks/user-tasks` - Get tasks assigned to the current user
   ```json
-  { "tasks": [{"id": t.id, "title": t.title, "status": t.status, "assigned_to": t.assigned_to}] }
+  {
+    "tasks":
+      [
+        {
+          "id": 1,
+          "title": "OTP confirmations",
+          "status": "In-progress",
+          "assigned_to": "john"
+        }
+      ]
+  }
   ```
 - `GET /tasks/team-tasks` - Get team-wide tasks
   ```json
-  { "tasks": [{"id": t.id, "title": t.title, "status": t.status, "assigned_to": t.assigned_to}] }
+  {
+    "tasks": 
+      [
+        {
+          "id": 6,
+          "title": "Otps verifications",
+          "status": "in-progress",
+          "assigned_to": "jhonedoe"
+        }
+      ]
+  }
   ```
 
 _Future Implementation: Tasks will be categorized under teams and admins for better management._
@@ -245,34 +317,82 @@ _Future Implementation: Tasks will be categorized under teams and admins for bet
 
 - `POST /projects/` - Create a new project
   ```json
-  { "message": "Project created successfully" }
+  { 
+    "message": "Project created successfully"
+  }
   ```
 - `GET /projects/` - Retrieve all projects
   ```json
-  { "projects": [{"id": p.id, "name": p.name, "description": p.description}], "total": projects.total, "pages": projects.pages, "current_page": projects.page }
+  { 
+    "projects": 
+      [
+        {
+          "id": 11, 
+          "name": "Weather APP",
+          "description": "Creating a terminal app for advising current weather"
+        }
+      ], 
+    "total": 30,
+    "pages": 3,
+    "current_page": 1
+  }
   ```
 - `GET /projects/user` - Retrieve projects associated with the current user
   ```json
-  { "my_projects": [{"id": p.id, "name": p.name, "description": p.description}], "total": projects.total, "pages": projects.pages, "current_page": projects.page }
+  {
+    "my_projects":
+      [
+        {
+          "id": 12,
+          "name": "Tacker",
+          "description": "A web app to track your small un-accounted expenditure"
+        }
+      ],
+      "total": 3,
+      "pages": 1,
+      "current_page": 1
+  }
   ```
 - `PUT /projects/<int:project_id>` - Update a project
   ```json
-  { "message": "Project updated successfully" }
+  { 
+    "message": "Project updated successfully"
+  }
   ```
 - `DELETE /projects/<int:project_id>` - Delete a project
   ```json
-  { "message": "Project deleted successfully" }
+  { 
+    "message": "Project deleted successfully"
+  }
   ```
 
 ### Analytics (`/analytics`)
 
 - `GET /analytics/user` - Get user activity analytics
   ```json
-  { "user_analytics": { "total_tasks": total_tasks, "pending_tasks": pending_tasks, "completed_tasks": completed_tasks, "productivity_percentage": round(productivity_percentage, 2) } }
+  { 
+    "user_analytics": 
+      { 
+        "total_tasks": 15,
+        "pending_tasks": 8, 
+        "completed_tasks": 6,
+        "productivity_percentage": "40%" # as a number
+      }
+  }
   ```
 - `GET /analytics/team-leader` - Get analytics for team leaders
   ```json
-  { "team_leader_analytics": { "user_id": u.id, "username": u.username, "total_tasks": total_tasks, "completed_tasks": completed_tasks, "due_tasks": due_tasks, "productivity_percentage": round(productivity, 2) } }
+  {
+    "team_leader_analytics": 
+      { 
+        "user_id": 1,
+        "username": John,
+        "total_tasks": 6,
+        "completed_tasks": 1,
+        "due_tasks": 4,
+        "productivity_percentage": 15%
+      }
+  }
   ```
 
 ## Deployment Considerations
