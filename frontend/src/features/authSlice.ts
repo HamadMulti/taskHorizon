@@ -1,7 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import API from "../utils/api";
 import Cookies from "js-cookie";
+import { persistReducer } from "redux-persist";
+import storage from "redux-persist/lib/storage";
 
 interface AuthState {
   user: any | null;
@@ -10,87 +12,170 @@ interface AuthState {
   loading: boolean;
 }
 
+const getTokenFromCookies = () => Cookies.get("access_token") || null;
 const initialState: AuthState = {
   user: null,
-  token: Cookies.get("access_token") || null,
+  token: getTokenFromCookies(),
   error: null,
-  loading: false,
+  loading: false
 };
+
+if (initialState.token) {
+  API.defaults.headers.common["Authorization"] = `Bearer ${initialState.token}`;
+} else {
+  delete API.defaults.headers.common["Authorization"];
+}
 
 // **🔹 Register a New User**
 export const registerUser = createAsyncThunk(
   "auth/register",
-  async (userData: { username: string; email: string; password: string, confirmPassword: string }, thunkAPI) => {
+  async (
+    userData: {
+      username: string;
+      email: string;
+      password: string;
+      confirmPassword: string;
+    },
+    thunkAPI
+  ) => {
     try {
       const response = await API.post("/auth/register", userData);
-      // Save the token in a cookie
       const token = response.data.access_token;
-      Cookies.set("access_token", token, { expires: 7, secure: true, sameSite: "Strict" });
-      return response.data;
+
+      Cookies.set("access_token", token, {
+        expires: 7,
+        path: "/",
+        sameSite: "Strict",
+        secure: process.env.NODE_ENV === "production"
+      });
+
+      return { token };
     } catch (error: any) {
-      return thunkAPI.rejectWithValue(error.response.data);
+      return thunkAPI.rejectWithValue(
+        error.response?.data || "Registration failed"
+      );
     }
   }
 );
 
-
+// **🔹 Login User**
 export const loginUser = createAsyncThunk(
   "auth/login",
   async (credentials: { email: string; password: string }, thunkAPI) => {
     try {
       const response = await API.post("/auth/login", credentials);
-      // Save the token in a cookie
       const token = response.data.access_token;
-      Cookies.set("access_token", token, { expires: 7, secure: true, sameSite: "Strict" });
-      Cookies.set("_email", credentials.email, { expires: 7, secure: true, sameSite: "Strict" });
-      
-      return response.data;
+
+      Cookies.set("access_token", token, {
+        expires: 7,
+        path: "/",
+        sameSite: "Strict",
+        secure: process.env.NODE_ENV === "production"
+      });
+      return { token };
     } catch (error: any) {
-      return thunkAPI.rejectWithValue(error.response.data);
+      return thunkAPI.rejectWithValue(error.response?.data || "Login failed");
     }
   }
 );
 
+// **🔹 Fetch User Details**
+export const fetchUserDetails = createAsyncThunk(
+  "auth/fetchUserDetails",
+  async (_, thunkAPI) => {
+    try {
+      const state: any = thunkAPI.getState();
+      const { token, user } = state.auth;
+
+      if (!token) {
+        throw new Error("No token found");
+      }
+
+      if (user) {
+        console.log("User already exists. Skipping fetch.");
+        return thunkAPI.rejectWithValue("User already exists");
+      }
+
+      API.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+      const response = await API.get("/user/profile");
+      return response.data.user;
+    } catch (error: any) {
+      console.error("Fetch User Details Error:", error);
+      return thunkAPI.rejectWithValue(
+        error.response?.data || "Failed to fetch user details"
+      );
+    }
+  }
+);
 
 // **🔹 Logout User**
-export const logoutUser = createAsyncThunk(
-  "auth/logout",
-  async () => {
-    const response = await API.get("/auth/logout");
-    if (response.status !== 200) {
-      return {message: "Something went wrong"};
-    }
-    Cookies.get("access_token");
-    return null;  
+export const logoutUser = createAsyncThunk("auth/logout", async () => {
+  try {
+    await API.get("/auth/logout");
+  } catch (error: any) {
+    console.error("Logout failed", error);
+  }
+
+  Cookies.remove("access_token");
+  return null;
 });
 
-// **🔹 Send OTP for Email Verification**
+export const updateProfile = createAsyncThunk(
+  "auth/updateProfile",
+  async (
+    profileData: { phone: string; location: string; gender: string },
+    thunkAPI
+  ) => {
+    try {
+      const response = await API.put("/user/update-profile", profileData);
+      return response.data;
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data || "Profile update failed"
+      );
+    }
+  }
+);
+
 export const sendOTP = createAsyncThunk(
   "auth/sendOTP",
-  async ({email}: {email: string}, thunkAPI) => {
+  async (_, thunkAPI) => {
     try {
+      const state: any = thunkAPI.getState();
+      const { user } = state.auth;
+      const email = user?.email
+      if (!email) {
+        return thunkAPI.rejectWithValue("Email is missing.");
+      }
+
       const response = await API.post("/auth/send-otp", { email });
       return response.data;
     } catch (error: any) {
-      return thunkAPI.rejectWithValue(error.response.data);
+      return thunkAPI.rejectWithValue(error.response?.data || "Error sending OTP");
     }
   }
 );
 
-// **🔹 Verify OTP**
 export const verifyOTP = createAsyncThunk(
   "auth/verifyOTP",
-  async (data: { email: string; otp: string }, thunkAPI) => {
+  async (otp: string, thunkAPI) => {
     try {
-      const response = await API.post("/auth/verify-otp", data);
+      const state: any = thunkAPI.getState();
+      const { user } = state.auth;
+      const email = user?.email
+      if (!email) {
+        return thunkAPI.rejectWithValue("Email is missing.");
+      }
+
+      const response = await API.post("/auth/verify-otp", { email, otp });
       return response.data;
     } catch (error: any) {
-      return thunkAPI.rejectWithValue(error.response.data);
+      return thunkAPI.rejectWithValue(error.response?.data || "Invalid OTP");
     }
   }
 );
 
-// **🔹 Forgot Password (Send Reset Link)**
+
 export const forgotPassword = createAsyncThunk(
   "auth/forgotPassword",
   async (email: string, thunkAPI) => {
@@ -103,7 +188,6 @@ export const forgotPassword = createAsyncThunk(
   }
 );
 
-// **🔹 Reset Password**
 export const resetPassword = createAsyncThunk(
   "auth/resetPassword",
   async (data: { token: string; newPassword: string }, thunkAPI) => {
@@ -116,15 +200,22 @@ export const resetPassword = createAsyncThunk(
   }
 );
 
-// **🔹 Update User Profile (Phone, Location, Gender, etc.)**
-export const updateProfile = createAsyncThunk(
-  "auth/updateProfile",
-  async (profileData: { phone: string; location: string; gender: string }, thunkAPI) => {
+export const hydrateAuthState = createAsyncThunk(
+  "auth/hydrateAuthState",
+  async (_, thunkAPI) => {
     try {
-      const response = await API.put("/user/update-profile", profileData);
-      return response.data;
+      const state: any = thunkAPI.getState();
+      const { token } = state.auth;
+
+      if (token) {
+        API.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+      } else {
+        delete API.defaults.headers.common["Authorization"];
+      }
+      return { token };
     } catch (error: any) {
-      return thunkAPI.rejectWithValue(error.response.data);
+      console.warn("Hydrate Auth Error:", error);
+      return { token: null };
     }
   }
 );
@@ -133,7 +224,11 @@ export const updateProfile = createAsyncThunk(
 const authSlice = createSlice({
   name: "auth",
   initialState,
-  reducers: {},
+  reducers: {
+    setCurrentUser(state, action: PayloadAction<any>) {
+      state.user = action.payload.user;
+    }
+  },
   extraReducers: (builder) => {
     builder
       .addCase(registerUser.pending, (state) => {
@@ -141,7 +236,7 @@ const authSlice = createSlice({
       })
       .addCase(registerUser.fulfilled, (state, action) => {
         state.loading = false;
-        state.user = action.payload.user;
+        state.token = action.payload.token;
       })
       .addCase(registerUser.rejected, (state, action) => {
         state.loading = false;
@@ -152,16 +247,44 @@ const authSlice = createSlice({
       })
       .addCase(loginUser.fulfilled, (state, action) => {
         state.loading = false;
-        state.user = action.payload.user;
-        state.token = action.payload.access_token;
+        state.token = action.payload.token;
+        state.error = null;
+        Cookies.set("access_token", action.payload.token, {
+          expires: 7,
+          path: "/"
+        });
       })
       .addCase(loginUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
+      .addCase(hydrateAuthState.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(hydrateAuthState.fulfilled, (state, action) => {
+        state.loading = false;
+        state.token = action.payload.token;
+      })
+      .addCase(fetchUserDetails.pending, (state) => {
+        if (!state.user) {
+          state.loading = true;
+        }
+      })
+      .addCase(fetchUserDetails.fulfilled, (state, action) => {
+        state.user = action.payload;
+        state.loading = false;
+      })
+      .addCase(fetchUserDetails.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
       })
       .addCase(logoutUser.fulfilled, (state) => {
         state.user = null;
         state.token = null;
+      })
+      .addCase(updateProfile.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = action.payload.user;
       })
       .addCase(sendOTP.fulfilled, (state) => {
         state.loading = false;
@@ -174,11 +297,16 @@ const authSlice = createSlice({
       })
       .addCase(resetPassword.fulfilled, (state) => {
         state.loading = false;
-      })
-      .addCase(updateProfile.fulfilled, (state, action) => {
-        state.user = action.payload.user;
       });
-  },
+  }
 });
 
-export default authSlice.reducer;
+// **🔹 Persist Configuration**
+const persistConfig = {
+  key: "auth",
+  storage,
+  whitelist: ["token", "user"]
+};
+
+export const { setCurrentUser } = authSlice.actions;
+export default persistReducer(persistConfig, authSlice.reducer);
