@@ -468,6 +468,8 @@ Currently, the system operates with a standard user model. Future enhancements w
 - **Database**: PostgreSQL (Render Free Tier - limited availability)
 - **Dockerized Deployment**: Using **NGINX** as a reverse proxy
 
+## Learn More
+- If you want to learn more about the **Frontend**, click [here](https://github.com/HamadMulti/taskHorizon/blob/main/frontend/README.md).
 ## License
 
 This project is licensed under the MIT License.
