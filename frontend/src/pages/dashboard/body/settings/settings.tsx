@@ -2,6 +2,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../../app/store";
 import { useState } from "react";
 import { updateProfile } from "../../../../features/authSlice";
+import { Error } from "../../interface";
+
+
 
 const Settings = () => {
   const { user, loading } = useSelector((state: RootState) => state.auth);
@@ -14,6 +17,10 @@ const Settings = () => {
       .unwrap()
       .then(() => {
         alert("settings updated");
+      })
+      .catch((error: Error) => {
+        console.warn(e);
+        alert(`Failed updating user: ${error.message || 'Unknown error'}`)
       });
   };
 
@@ -96,13 +103,13 @@ const Settings = () => {
                     </clipPath>
                   </defs>
                   <g
-                    clip-path="url(#a)"
+                    clipPath="url(#a)"
                     transform="matrix(1.33 0 0 -1.33 0 682.667)"
                   >
                     <path
                       fill="none"
-                      stroke-miterlimit="10"
-                      stroke-width="40"
+                      strokeMiterlimit="10"
+                      strokeWidth="40"
                       d="M452 444H60c-22.091 0-40-17.909-40-40v-39.446l212.127-157.782c14.17-10.54 33.576-10.54 47.746 0L492 364.554V404c0 22.091-17.909 40-40 40Z"
                       data-original="#000000"
                     ></path>
@@ -256,13 +263,13 @@ const Settings = () => {
                     </clipPath>
                   </defs>
                   <g
-                    clip-path="url(#a)"
+                    clipPath="url(#a)"
                     transform="matrix(1.33 0 0 -1.33 0 682.667)"
                   >
                     <path
                       fill="none"
-                      stroke-miterlimit="10"
-                      stroke-width="40"
+                      strokeMiterlimit="10"
+                      strokeWidth="40"
                       d="M452 444H60c-22.091 0-40-17.909-40-40v-39.446l212.127-157.782c14.17-10.54 33.576-10.54 47.746 0L492 364.554V404c0 22.091-17.909 40-40 40Z"
                       data-original="#000000"
                     ></path>
@@ -301,13 +308,13 @@ const Settings = () => {
                     </clipPath>
                   </defs>
                   <g
-                    clip-path="url(#a)"
+                    clipPath="url(#a)"
                     transform="matrix(1.33 0 0 -1.33 0 682.667)"
                   >
                     <path
                       fill="none"
-                      stroke-miterlimit="10"
-                      stroke-width="40"
+                      strokeMiterlimit="10"
+                      strokeWidth="40"
                       d="M452 444H60c-22.091 0-40-17.909-40-40v-39.446l212.127-157.782c14.17-10.54 33.576-10.54 47.746 0L492 364.554V404c0 22.091-17.909 40-40 40Z"
                       data-original="#000000"
                     ></path>
@@ -354,7 +361,22 @@ const Settings = () => {
               type="submit"
               className="mt-10 px-2 py-2.5 w-full rounded-sm text-sm bg-[#0c172b] hover:bg-[#0c172bee] text-white"
             >
-              Save
+              {loading ? (
+                  <>
+                    Loading
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="18px"
+                      fill="#fff"
+                      className="ml-2 inline animate-spin"
+                      viewBox="0 0 24 24"
+                    >
+                      <path d="M12 22c5.421 0 10-4.579 10-10h-2c0 4.337-3.663 8-8 8s-8-3.663-8-8c0-4.336 3.663-8 8-8V2C6.579 2 2 6.58 2 12c0 5.421 4.579 10 10 10z" />
+                    </svg>
+                  </>
+                ) : (
+                  "Save"
+                )}              
             </button>
           </form>
         </div>
