@@ -200,8 +200,8 @@ class User(db.Model):
 - `POST /auth/verify-otp` - Verify OTP code
   ```json
   {
-    "access_token": access_token,
-    "role": user.role
+    "access_token": "_xgchvjlhjoj0987769ft76r6ftf879tg08y9y0hg7XXXXXXX",
+    "role": "user"
   }
   ```
 - `POST /auth/forgot-password` - Initiate password reset
@@ -232,8 +232,8 @@ class User(db.Model):
       {
         "username": "John doe",
         "email": "jhonedoe@mail.com",
-        "role": "user", # at the current moment we are using user as the administrator
-        "phone": +1234567890,
+        "role": "user", // at the current moment we are using user as the administrator
+        "phone": "+1234567890",
         "location": "london",
         "gender": "male",
         "primary_email": "doejohn@mail.com",
