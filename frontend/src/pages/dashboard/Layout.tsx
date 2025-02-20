@@ -8,6 +8,7 @@ const Dashboard = () => {
   const { user, loading, error } = useSelector(
     (state: RootState) => state.auth
   );
+  console.log(user)
   return (
     <>
       <div className="relative font-[sans-serif] pt-[70px] h-screen">
