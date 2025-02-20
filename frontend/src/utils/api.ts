@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const url = process.env.NODE_ENV === "production" ? process.env.VITE_API_URL : "http://localhost:5000";
+const url = import.meta.env.VITE_API_BASE_URL
 
 const API = axios.create({
   baseURL: url,
