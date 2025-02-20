@@ -26,11 +26,13 @@ def get_tasks():
     if user.role == "admin":
         tasks = Task.query.all()
     elif user.role == "team_leader":
-        tasks = Task.query.filter_by(project_id=data["project_id"]).all()
+        tasks = Task.query.filter((Task.project_id == user.project_id)| (Task.project_id is None)).all()
     else:
-        tasks = Task.query.filter((Task.assigned_to == user_id) | (Task.assigned_to == None)).all()
+        tasks = Task.query.filter(
+            (Task.assigned_to == user_id) | (Task.assigned_to is None)
+        ).all()
 
-    return jsonify([{"id": t.id, "title": t.title, "status": t.status, "assigned_to": t.assigned_to} for t in tasks]), 200
+    return jsonify({"tasks": [{"id": t.id, "title": t.title, "status": t.status, "assigned_to": t.assigned_to} for t in tasks]}), 200
 
 @jwt_required()
 def assign_task(task_id):
@@ -100,8 +102,10 @@ def archive_task(task_id):
 def get_user_tasks():
     """User can view their assigned & unassigned tasks"""
     user_id = get_jwt_identity()
-    tasks = Task.query.filter((Task.assigned_to == user_id) | (Task.assigned_to == None)).all()
-    return jsonify([{"id": t.id, "title": t.title, "status": t.status, "assigned_to": t.assigned_to} for t in tasks]), 200
+    tasks = Task.query.filter(
+        (Task.assigned_to == user_id) | (Task.assigned_to is None)
+    ).all()
+    return jsonify({"tasks": [{"id": t.id, "title": t.title, "status": t.status, "assigned_to": t.assigned_to} for t in tasks]}), 200
 
 @jwt_required()
 def get_team_tasks():
@@ -113,4 +117,4 @@ def get_team_tasks():
         return jsonify({"error": "Unauthorized"}), 403
 
     tasks = Task.query.all()
-    return jsonify([{"id": t.id, "title": t.title, "status": t.status, "assigned_to": t.assigned_to} for t in tasks]), 200
+    return jsonify({"tasks": [{"id": t.id, "title": t.title, "status": t.status, "assigned_to": t.assigned_to} for t in tasks]}), 200
