@@ -16,5 +16,5 @@ export interface Loading {
 }
 
 export interface Error {
-  error: any | string | null;
+  message: string;
 }
