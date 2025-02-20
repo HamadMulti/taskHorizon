@@ -54,7 +54,7 @@ The architecture follows the **Model-View-Controller (MVC)** design pattern, sep
 ## API Structure
 
 ```
-TaskHorizon-backend/
+taskHorizon/backend/
 │── app.py                    # Main Flask application
 │── routes/
 │   ├── auth_routes.py        # Authentication Endpoints
@@ -80,7 +80,7 @@ TaskHorizon-backend/
 1. Clone the repository:
    ```sh
    git clone https://github.com/HamadMulti/taskHorizon.git
-   cd taskhorizon-backend
+   cd taskhorizon/backend
    ```
 2. Create a virtual environment and install dependencies:
    ```sh
@@ -305,7 +305,7 @@ class User(db.Model):
           "id": 6,
           "title": "Otps verifications",
           "status": "in-progress",
-          "assigned_to": "jhonedoe"
+          "assigned_to": "johndoe"
         }
       ]
   }
