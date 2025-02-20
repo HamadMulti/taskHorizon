@@ -182,11 +182,11 @@ class User(db.Model):
   { 
     "message": "Ok",
     "access_token": "jbuvyuctcyfg89t74esdfuky956r86d8XXXXX",
-    "message": OTP sent",
+    "message": "OTP sent",
     "user": {
         "username": "John doe",
         "email": "jhonedoe@mail.com",
-        "role": "user", // at the current moment we are using user as the administrator
+        "role": "user",
         "phone": "+1234567890",
         "location": "london",
         "gender": "male",
@@ -242,7 +242,7 @@ class User(db.Model):
       {
         "username": "John doe",
         "email": "jhonedoe@mail.com",
-        "role": "user", // at the current moment we are using user as the administrator
+        "role": "user",
         "phone": "+1234567890",
         "location": "london",
         "gender": "male",
@@ -386,7 +386,7 @@ _Future Implementation: Tasks will be categorized under teams and admins for bet
         "total_tasks": 15,
         "pending_tasks": 8, 
         "completed_tasks": 6,
-        "productivity_percentage": "40%" // as a number
+        "productivity_percentage": "40%"
       }
   }
   ```
@@ -396,11 +396,11 @@ _Future Implementation: Tasks will be categorized under teams and admins for bet
     "team_leader_analytics": 
       { 
         "user_id": 1,
-        "username": John,
+        "username": "John",
         "total_tasks": 6,
         "completed_tasks": 1,
         "due_tasks": 4,
-        "productivity_percentage": 15%
+        "productivity_percentage": "15%"
       }
   }
   ```
