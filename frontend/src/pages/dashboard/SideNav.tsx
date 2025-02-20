@@ -1,14 +1,24 @@
+import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 
 const Sidebar = () => {
   const { pathname } = useLocation();
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
+  };
+  const handleLinkClick = () => {
+    setIsSidebarOpen(false);
+  };
   return (
     <>
       <nav id="sidebar" className="lg:min-w-[250px] w-max max-lg:min-w-8">
         <div
           id="sidebar-collapse-menu"
-          style={{ height: 'calc(100vh - 72px)' }}
-          className="bg-white shadow-lg h-screen fixed py-6 px-4 top-[70px] left-0 overflow-auto z-[99] lg:min-w-[250px] lg:w-max max-lg:w-0 max-lg:invisible transition-all duration-500"
+          className={`bg-white shadow-lg h-screen fixed py-6 px-4 top-[70px] left-0 overflow-auto z-[99] 
+          transition-all duration-500
+          ${isSidebarOpen ? "w-[250px]" : "w-0 max-lg:invisible"} 
+          lg:w-[250px] lg:block`}
         >
           <ul className="space-y-2">
             {/* <li>
@@ -37,23 +47,46 @@ const Sidebar = () => {
           </ul>
 
           <div className="mt-6">
-            <h6 className="text-yellow-600 text-sm font-bold px-4">
-              Tasks
-            </h6>
+            <h6 className="text-yellow-600 text-sm font-bold px-4">Tasks</h6>
             <ul className="mt-3 space-y-2">
-            <li>
+              <li>
                 <Link
                   to="tasks"
-                  className={`text-gray-800 text-sm flex items-center  rounded-md px-4 py-2 transition-all ${pathname === '/dashboard/tasks' ? 'bg-[#0c172b] text-white bold' : 'hover:bg-gray-100'}`}
+                  onClick={handleLinkClick}
+                  className={`text-gray-800 text-sm flex items-center  rounded-md px-4 py-2 transition-all ${
+                    pathname === "/dashboard/tasks"
+                      ? "bg-[#0c172b] text-white bold"
+                      : "hover:bg-gray-100"
+                  }`}
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" className="w-[18px] h-[18px] mr-4"
-                    viewBox="0 0 60.123 60.123">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="currentColor"
+                    className="w-[18px] h-[18px] mr-4"
+                    viewBox="0 0 60.123 60.123"
+                  >
                     <path
                       d="M57.124 51.893H16.92a3 3 0 1 1 0-6h40.203a3 3 0 0 1 .001 6zm0-18.831H16.92a3 3 0 1 1 0-6h40.203a3 3 0 0 1 .001 6zm0-18.831H16.92a3 3 0 1 1 0-6h40.203a3 3 0 0 1 .001 6z"
-                      data-original="#000000" />
-                    <circle cx="4.029" cy="11.463" r="4.029" data-original="#000000" />
-                    <circle cx="4.029" cy="30.062" r="4.029" data-original="#000000" />
-                    <circle cx="4.029" cy="48.661" r="4.029" data-original="#000000" />
+                      data-original="#000000"
+                    />
+                    <circle
+                      cx="4.029"
+                      cy="11.463"
+                      r="4.029"
+                      data-original="#000000"
+                    />
+                    <circle
+                      cx="4.029"
+                      cy="30.062"
+                      r="4.029"
+                      data-original="#000000"
+                    />
+                    <circle
+                      cx="4.029"
+                      cy="48.661"
+                      r="4.029"
+                      data-original="#000000"
+                    />
                   </svg>
                   <span>Tasks</span>
                 </Link>
@@ -61,7 +94,12 @@ const Sidebar = () => {
               <li>
                 <Link
                   to="my-tasks"
-                  className={`text-gray-800 text-sm flex items-center  rounded-md px-4 py-2 transition-all ${pathname === '/dashboard/my-tasks' ? 'bg-[#0c172b] text-white bold' : 'hover:bg-gray-100'}`}
+                  onClick={handleLinkClick}
+                  className={`text-gray-800 text-sm flex items-center  rounded-md px-4 py-2 transition-all ${
+                    pathname === "/dashboard/my-tasks"
+                      ? "bg-[#0c172b] text-white bold"
+                      : "hover:bg-gray-100"
+                  }`}
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -94,7 +132,12 @@ const Sidebar = () => {
               <li>
                 <Link
                   to="projects"
-                  className={`text-gray-800 text-sm flex items-center  rounded-md px-4 py-2 transition-all ${pathname === '/dashboard/projects' ? 'bg-[#0c172b] text-white bold' : 'hover:bg-gray-100'}`}
+                  onClick={handleLinkClick}
+                  className={`text-gray-800 text-sm flex items-center  rounded-md px-4 py-2 transition-all ${
+                    pathname === "/dashboard/projects"
+                      ? "bg-[#0c172b] text-white bold"
+                      : "hover:bg-gray-100"
+                  }`}
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -113,7 +156,12 @@ const Sidebar = () => {
               <li>
                 <Link
                   to="my-projects"
-                  className={`text-gray-800 text-sm flex items-center  rounded-md px-4 py-2 transition-all ${pathname === '/dashboard/my-projects' ? 'bg-[#0c172b] text-white bold' : 'hover:bg-gray-100'}`}
+                  onClick={handleLinkClick}
+                  className={`text-gray-800 text-sm flex items-center  rounded-md px-4 py-2 transition-all ${
+                    pathname === "/dashboard/my-projects"
+                      ? "bg-[#0c172b] text-white bold"
+                      : "hover:bg-gray-100"
+                  }`}
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -139,7 +187,11 @@ const Sidebar = () => {
       </nav>
       <button
         id="toggle-sidebar"
-        className="lg:hidden w-8 h-8 z-[100] fixed top-[74px] left-[10px] cursor-pointer bg-[#fff200] flex items-center justify-center rounded-full outline-none transition-all duration-500"
+        className="lg:hidden w-8 h-8 z-[100] fixed top-[74px] left-[10px] cursor-pointer bg-[#0c172b] flex items-center justify-center rounded-full outline-none transition-all duration-500"
+        onClick={toggleSidebar}
+        style={{
+          left: isSidebarOpen ? "236px" : "10px"
+        }}
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
