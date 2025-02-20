@@ -4,6 +4,7 @@ import API from "../utils/api";
 import Cookies from "js-cookie";
 import { persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
+import { expireDate } from "../utils/decodeToken";
 
 interface AuthState {
   user: any | null;
@@ -19,6 +20,8 @@ const initialState: AuthState = {
   error: null,
   loading: false
 };
+
+const expires = (t: string) => expireDate(t) || 1
 
 // **🔹 Register a New User**
 export const registerUser = createAsyncThunk(
@@ -37,7 +40,7 @@ export const registerUser = createAsyncThunk(
       const token = response.data.access_token;
 
       Cookies.set("access_token", token, {
-        expires: 1,
+        expires: expires(token),
         path: "/",
         sameSite: "Strict",
         secure: process.env.NODE_ENV === "production"
@@ -61,7 +64,7 @@ export const loginUser = createAsyncThunk(
       const token = response.data.access_token;
 
       Cookies.set("access_token", token, {
-        expires: 1,
+        expires: expires(token),
         path: "/",
         sameSite: "Strict",
         secure: process.env.NODE_ENV === "production"
@@ -253,7 +256,7 @@ const authSlice = createSlice({
         state.token = action.payload.token;
         state.error = null;
         Cookies.set("access_token", action.payload.token, {
-          expires: 7,
+          expires: expires(action.payload.token),
           path: "/"
         });
       })
