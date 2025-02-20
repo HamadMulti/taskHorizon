@@ -1,8 +1,9 @@
 import axios from "axios";
-import Cookies from "js-cookie";
+
+const url = process.env.NODE_ENV === "production" ? process.env.VITE_API_URL : "http://localhost:5000";
 
 const API = axios.create({
-  baseURL: "https://taskhorizon.onrender.com",
+  baseURL: url,
   headers: {
     "Content-Type": "application/json",
     "Accept": "application/json",
@@ -10,12 +11,5 @@ const API = axios.create({
   withCredentials: true,
 });
 
-API.interceptors.request.use((config) => {
-  const token = Cookies.get("access_token");
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
-});
 
 export default API;
