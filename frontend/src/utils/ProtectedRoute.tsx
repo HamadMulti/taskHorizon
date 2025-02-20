@@ -1,11 +1,21 @@
 import { Navigate, Outlet } from "react-router-dom";
+import Loader from "./Loader";
 import { useSelector } from "react-redux";
 import { RootState } from "../app/store";
 
 const ProtectedRoute = () => {
-  const token = useSelector((state: RootState) => state.auth.token);
+  const { token, loading } = useSelector((state: RootState) => state.auth);
+  const isAuthenticated = !!token;
 
-  return token ? <Outlet /> : <Navigate to="/login" replace />;
+  if (loading) {
+    return (
+      <>
+        <Loader />
+      </>
+    );
+  }
+
+  return isAuthenticated ? <Outlet /> : <Navigate to="/login" replace />;
 };
 
 export default ProtectedRoute;
