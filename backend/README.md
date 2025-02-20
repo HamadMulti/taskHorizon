@@ -172,12 +172,15 @@ class User(db.Model):
 ### Authentication (`/auth`)
 
 - `POST /auth/register` - Register a new user
+
   ```json
   {
     "message": "User registered successfully" 
   }
   ```
+
 - `POST /auth/login` - Authenticate user and obtain a token
+
   ```json
   { 
     "message": "Ok",
@@ -195,19 +198,23 @@ class User(db.Model):
       } 
   }
   ```
+
 - `GET /auth/logout` - Logout the current user
+
   ```json
     { 
       "message": "Ok"
     }
     ```
 - `POST /auth/send-otp` - Send OTP for verification
+
   ```json
   {
     "message": "OTP sent successfully"
   }
   ```
 - `POST /auth/verify-otp` - Verify OTP code
+
   ```json
   {
     "access_token": "_xgchvjlhjoj0987769ft76r6ftf879tg08y9y0hg7XXXXXXX",
@@ -215,12 +222,14 @@ class User(db.Model):
   }
   ```
 - `POST /auth/forgot-password` - Initiate password reset
+
   ```json
   {
     "message": "Password reset email sent"
   }
   ```
 - `POST /auth/reset-password` - Reset user password
+
   ```json
   {
     "message": "Password has been updated successfully"
@@ -230,12 +239,14 @@ class User(db.Model):
 ### User Management (`/user`)
 
 - `PUT /user/update-profile` - Update user profile information
+
   ```json
   {
     "message": "Profile updated successfully"
   }
   ```
 - `GET /user/profile` - Retrieve user profile details
+
   ```json
   {
     "user": 
@@ -255,12 +266,14 @@ class User(db.Model):
 ### Task Management (`/tasks`)
 
 - `POST /tasks/` - Create a new task
+
   ```json
   {
     "message": "Task created successfully"
   }
   ```
 - `GET /tasks/` - Retrieve all tasks
+
   ```json
   {
     "tasks": 
@@ -275,24 +288,28 @@ class User(db.Model):
   }
   ```
 - `PUT /tasks/<int:task_id>` - Update a specific task
+
   ```json
   {
     "message": "Task updated successfully"
   }
   ```
 - `PUT /tasks/<int:task_id>/assign` - Assign a task to a user
+
   ```json
   {
     "message": "Task assigned successfully"
   }
   ```
 - `DELETE /tasks/<int:task_id>/archive` - Archive a task
+
   ```json
   {
     "message": "Task archived successfully"
   }
   ```
 - `GET /tasks/user-tasks` - Get tasks assigned to the current user
+
   ```json
   {
     "tasks":
@@ -307,6 +324,7 @@ class User(db.Model):
   }
   ```
 - `GET /tasks/team-tasks` - Get team-wide tasks
+
   ```json
   {
     "tasks": 
@@ -326,12 +344,14 @@ _Future Implementation: Tasks will be categorized under teams and admins for bet
 ### Project Management (`/projects`)
 
 - `POST /projects/` - Create a new project
+
   ```json
   { 
     "message": "Project created successfully"
   }
   ```
 - `GET /projects/` - Retrieve all projects
+
   ```json
   { 
     "projects": 
@@ -348,6 +368,7 @@ _Future Implementation: Tasks will be categorized under teams and admins for bet
   }
   ```
 - `GET /projects/user` - Retrieve projects associated with the current user
+
   ```json
   {
     "my_projects":
@@ -364,12 +385,14 @@ _Future Implementation: Tasks will be categorized under teams and admins for bet
   }
   ```
 - `PUT /projects/<int:project_id>` - Update a project
+
   ```json
   { 
     "message": "Project updated successfully"
   }
   ```
 - `DELETE /projects/<int:project_id>` - Delete a project
+
   ```json
   { 
     "message": "Project deleted successfully"
@@ -379,6 +402,7 @@ _Future Implementation: Tasks will be categorized under teams and admins for bet
 ### Analytics (`/analytics`)
 
 - `GET /analytics/user` - Get user activity analytics
+
   ```json
   { 
     "user_analytics": 
@@ -391,6 +415,7 @@ _Future Implementation: Tasks will be categorized under teams and admins for bet
   }
   ```
 - `GET /analytics/team-leader` - Get analytics for team leaders
+
   ```json
   {
     "team_leader_analytics": 
