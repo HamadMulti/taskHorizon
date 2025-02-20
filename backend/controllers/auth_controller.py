@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta
 import os
 from flask import request, jsonify
 from models.user import db, User
@@ -16,11 +17,21 @@ def get_cookie_secure_flag():
     return os.environ.get("FLASK_ENV") == "production"
 
 def _token_handler(user_id, message, **kwargs):
+    # sourcery skip: aware-datetime-for-utc
     token = generate_token(user_id)
     if not token:
         return jsonify({"error": "Token generation failed"}), 500
     response = make_response(jsonify({"message": message, "access_token": token, **kwargs}), 200)
-    response.set_cookie('access_token', token, path="/", httponly=True, secure=get_cookie_secure_flag(), samesite='Strict', expires=1)
+    response.set_cookie(
+        'access_token',
+        token,
+        path="/",
+        httponly=True,
+        secure=get_cookie_secure_flag(),
+        samesite='Strict',
+        max_age=3600,
+        expires=datetime.utcnow() + timedelta(hours=1) 
+    )
     return response
 
 def register_user():
