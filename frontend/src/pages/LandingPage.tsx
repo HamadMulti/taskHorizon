@@ -173,9 +173,9 @@ const LandingPage = () => {
                   xmlns="http://www.w3.org/2000/svg"
                 >
                   <path
-                    fill-rule="evenodd"
+                    fillRule="evenodd"
                     d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
-                    clip-rule="evenodd"
+                    clipRule="evenodd"
                   ></path>
                 </svg>
               </button>
@@ -286,11 +286,11 @@ const LandingPage = () => {
                     <g
                       fill="none"
                       className="stroke-yellow-600"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-miterlimit="10"
-                      stroke-width="40"
-                      clip-path="url(#a)"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeMiterlimit="10"
+                      strokeWidth="40"
+                      clipPath="url(#a)"
                       transform="matrix(1.33 0 0 -1.33 0 682.667)"
                     >
                       <path
@@ -336,7 +336,7 @@ const LandingPage = () => {
                     className="w-8 fill-yellow-600 mb-4 inline-block"
                     viewBox="0 0 24 24"
                   >
-                    <g fill-rule="evenodd" clip-rule="evenodd">
+                    <g fillRule="evenodd" clipRule="evenodd">
                       <path
                         d="M17.03 8.97a.75.75 0 0 1 0 1.06l-4.2 4.2a.75.75 0 0 1-1.154-.114l-1.093-1.639L8.03 15.03a.75.75 0 0 1-1.06-1.06l3.2-3.2a.75.75 0 0 1 1.154.114l1.093 1.639L15.97 8.97a.75.75 0 0 1 1.06 0z"
                         data-original="#000000"
@@ -416,9 +416,9 @@ const LandingPage = () => {
                     <g
                       fill="none"
                       className="stroke-yellow-600"
-                      stroke-miterlimit="10"
-                      stroke-width="30"
-                      clip-path="url(#a)"
+                      strokeMiterlimit="10"
+                      strokeWidth="30"
+                      clipPath="url(#a)"
                       transform="matrix(1.33 0 0 -1.33 0 682.667)"
                     >
                       <path
@@ -497,11 +497,11 @@ const LandingPage = () => {
                     <g
                       fill="none"
                       className="stroke-yellow-600"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-miterlimit="10"
-                      stroke-width="40"
-                      clip-path="url(#a)"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeMiterlimit="10"
+                      strokeWidth="40"
+                      clipPath="url(#a)"
                       transform="matrix(1.33 0 0 -1.33 0 682.667)"
                     >
                       <path
