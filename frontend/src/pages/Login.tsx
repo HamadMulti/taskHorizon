@@ -1,15 +1,15 @@
-import { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { loginUser } from "../features/authSlice";
-import { AppDispatch, RootState } from "../app/store";
+import { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth";
 
 const Login = () => {
   const [credentials, setCredentials] = useState({ email: "", password: "" });
-  const dispatch = useDispatch<AppDispatch>();
+  const { handleLogin, loading } = useAuth()
   const navigate = useNavigate();
-  const { loading, error } = useSelector((state: RootState) => state.auth);
   const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState({
+    error: ""
+  });
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -17,10 +17,20 @@ const Login = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    dispatch(loginUser(credentials))
-      .unwrap()
-      .then(() => navigate("/verify-otp"));
+    handleLogin(credentials)
+      .then(() => navigate("/verify-otp"))
+      .catch((e) => setError(e));
   };
+
+  useEffect(() => {
+    if (error.error) {
+      const timer = setTimeout(() => {
+        setError({ error: "" });
+      }, 3000);
+  
+      return () => clearTimeout(timer);
+    }
+  }, [error]);
 
   return (
     <div className="font-sans bg-white md:h-screen">
@@ -30,7 +40,7 @@ const Login = () => {
             <div className="mb-12">
               <h3 className="text-2xl font-bold text-yellow-400">Sign in</h3>
             </div>
-            {error && <p className="text-red-500">Invalid credentials</p>}
+            {error && <p className="text-red-500">{error.error}</p>}
             <div className="mt-8">
               <label className="text-white text-xs block mb-2">Email</label>
               <div className="relative flex items-center">

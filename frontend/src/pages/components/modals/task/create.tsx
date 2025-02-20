@@ -14,11 +14,10 @@ interface Task {
 }
 
 const CreateTaskModal: React.FC<CreateTaskModalProps> = ({ onSave, onClose }) => {
-  const [isOpen, setIsOpen] = useState(true); // Modal starts open
+  const [isOpen, setIsOpen] = useState(true);
 
-  // State for creating a new task
   const [title, setTitle] = useState("");
-  const [status, setStatus] = useState("pending"); // Default to "pending"
+  const [status, setStatus] = useState("pending");
   const [assignedTo, setAssignedTo] = useState("");
   const [description, setDescription] = useState("");
 
@@ -52,14 +51,14 @@ const CreateTaskModal: React.FC<CreateTaskModalProps> = ({ onSave, onClose }) =>
               onSubmit={(e) => {
                 e.preventDefault();
                 const newTask: Task = {
-                  id: Date.now(), // Simple unique ID generation (you can replace it with backend logic)
+                  id: Date.now(),
                   title,
                   status,
                   assigned_to: assignedTo,
                   description,
                 };
-                onSave(newTask); // Send new task to parent
-                setIsOpen(false); // Close after save
+                onSave(newTask);
+                setIsOpen(false);
               }}
             >
               {/* Title Input */}
@@ -118,7 +117,7 @@ const CreateTaskModal: React.FC<CreateTaskModalProps> = ({ onSave, onClose }) =>
                   type="button"
                   className="px-6 py-3 rounded-lg text-gray-800 text-sm bg-gray-200 hover:bg-gray-300"
                   onClick={() => {
-                    setIsOpen(false); // Close on cancel
+                    setIsOpen(false);
                     onClose();
                   }}
                 >

@@ -1,11 +1,9 @@
 import { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { registerUser } from "../features/authSlice";
-import { AppDispatch, RootState } from "../app/store";
 import { useNavigate, Link } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth";
 
 const Register = () => {
-  const { loading } = useSelector((state: RootState) => state.auth);
+  const { loading, handleRegister } = useAuth();
   const [userData, setUserData] = useState({
     username: "",
     email: "",
@@ -18,7 +16,6 @@ const Register = () => {
     password: "",
     confirmPassword: ""
   });
-  const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [showPassword2, setShowPassword2] = useState(false);
@@ -33,8 +30,7 @@ const Register = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    dispatch(registerUser(userData))
-      .unwrap()
+    handleRegister(userData)
       .then(() => navigate("/login"))
       .catch((error) => {
         setError(error);

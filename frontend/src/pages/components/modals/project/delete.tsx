@@ -1,13 +1,19 @@
 import { useState } from "react";
+import { useProjects } from "../../../../hooks/useProjects";
 
 interface DeleteModalProps {
-  id?: number;
-  title?: string;
-  onDelete?: (id: number) => void;
+  id: number;
+  name: string;
 }
 
-const DeleteModal: React.FC<DeleteModalProps> = ({ id, title, onDelete }) => {
+const DeleteProjectModal: React.FC<DeleteModalProps> = ({ id, name }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const { handleDeleteProject } = useProjects();
+
+  const deleteProject = () => {
+    handleDeleteProject(id)
+    setIsOpen(false);
+  }
 
   return (
     <>
@@ -53,7 +59,7 @@ const DeleteModal: React.FC<DeleteModalProps> = ({ id, title, onDelete }) => {
                 <path d="M11 17v-7a1 1 0 0 0-2 0v7a1 1 0 0 0 2 0Zm4 0v-7a1 1 0 0 0-2 0v7a1 1 0 0 0 2 0Z" />
               </svg>
               <h4 className="text-gray-800 text-base font-semibold mt-4">
-                Are you sure you want to delete {title}?
+                {`Are you sure you want to delete ${name}?`}
               </h4>
 
               {/* Buttons */}
@@ -68,10 +74,7 @@ const DeleteModal: React.FC<DeleteModalProps> = ({ id, title, onDelete }) => {
                 <button
                   type="button"
                   className="px-4 py-2 rounded-lg text-white text-sm bg-red-600 hover:bg-red-700"
-                  onClick={() => {
-                    onDelete(id); // Call delete function
-                    setIsOpen(false);
-                  }}
+                  onClick={deleteProject}
                 >
                   Delete
                 </button>
@@ -84,4 +87,4 @@ const DeleteModal: React.FC<DeleteModalProps> = ({ id, title, onDelete }) => {
   );
 };
 
-export default DeleteModal;
+export default DeleteProjectModal;

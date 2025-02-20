@@ -2,9 +2,10 @@ import { Navigate, Outlet } from "react-router-dom";
 import Loader from "./Loader";
 import { useAuth } from "../hooks/useAuth";
 
-const ProtectedRoute = () => {
-  const { token, loading } = useAuth();
-  const isAuthenticated = !!token;
+const Verified = () => {
+  const { loading, otpVerified } = useAuth();
+
+  console.log(otpVerified)
 
   if (loading) {
     return (
@@ -14,7 +15,7 @@ const ProtectedRoute = () => {
     );
   }
 
-  return isAuthenticated ? <Outlet /> : <Navigate to="/login" replace />;
+  return otpVerified ? <Outlet /> : <Navigate to="/verify-otp" replace />;
 };
 
-export default ProtectedRoute;
+export default Verified;

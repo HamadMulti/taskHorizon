@@ -9,7 +9,7 @@ interface Task {
 }
 
 interface EditTaskModalProps {
-  task?: Task;
+  task: Task;
   onSave: (updatedTask: Task) => void;
   onClose: () => void;
 }

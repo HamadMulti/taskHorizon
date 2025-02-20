@@ -11,6 +11,7 @@ interface AuthState {
   token: string | null;
   error: string | null;
   loading: boolean;
+  otpVerified: boolean;
 }
 
 const getTokenFromCookies = () => Cookies.get("access_token") || null;
@@ -18,7 +19,8 @@ const initialState: AuthState = {
   user: null,
   token: getTokenFromCookies(),
   error: null,
-  loading: false
+  loading: false,
+  otpVerified: false
 };
 
 const expires = (t: string) => expireDate(t) || 1
@@ -85,10 +87,10 @@ export const fetchUserDetails = createAsyncThunk(
       const { token, user } = state.auth;
 
       if (!token) {
-        throw new Error("No token found");
+        return null
       }
 
-      if (user) {
+      if (user && token) {
         console.log("User already exists. Skipping fetch.");
         return thunkAPI.rejectWithValue("User already exists");
       }
@@ -150,10 +152,11 @@ export const sendOTP = createAsyncThunk(
       const state: any = thunkAPI.getState();
       const { user } = state.auth;
       const email = user?.email
+      const token = state.auth.token ?? null;
       if (!email) {
         return thunkAPI.rejectWithValue("Email is missing.");
       }
-
+      API.defaults.headers.common["Authorization"] = `Bearer ${token}`;
       const response = await API.post("/auth/send-otp", { email });
       return response.data;
     } catch (error: any) {
@@ -169,10 +172,11 @@ export const verifyOTP = createAsyncThunk(
       const state: any = thunkAPI.getState();
       const { user } = state.auth;
       const email = user?.email
+      const token = state.auth.token ?? null;
       if (!email) {
         return thunkAPI.rejectWithValue("Email is missing.");
       }
-
+      API.defaults.headers.common["Authorization"] = `Bearer ${token}`;
       const response = await API.post("/auth/verify-otp", { email, otp });
       return response.data;
     } catch (error: any) {
@@ -294,9 +298,11 @@ const authSlice = createSlice({
       })
       .addCase(sendOTP.fulfilled, (state) => {
         state.loading = false;
+        state.otpVerified = false
       })
       .addCase(verifyOTP.fulfilled, (state) => {
         state.loading = false;
+        state.otpVerified = true
       })
       .addCase(forgotPassword.fulfilled, (state) => {
         state.loading = false;
@@ -311,7 +317,7 @@ const authSlice = createSlice({
 const persistConfig = {
   key: "auth",
   storage,
-  whitelist: ["token", "user"]
+  whitelist: ["token", "user", "otpVerified"]
 };
 
 export const { setCurrentUser } = authSlice.actions;

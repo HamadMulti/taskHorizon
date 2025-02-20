@@ -1,32 +1,30 @@
-interface Task {
+interface Project {
   id: number;
-  title: string;
-  status: string;
-  assigned_to: string;
+  name: string;
   description: string;
 }
 
-interface PreviewTaskModalProps {
-  task?: Task;
+interface PreviewProjectModalProps {
+  project?: Project;
   onClose: () => void;
 }
 
-const PreviewTaskModal: React.FC<PreviewTaskModalProps> = ({
-  task,
+const PreviewProjectModal: React.FC<PreviewProjectModalProps> = ({
+  project,
   onClose
 }) => {
   return (
     <div
       className="fixed inset-0 p-4 flex justify-center items-start w-full h-full z-50 bg-[#35343494] bg-opacity-50 pt-20"
-      aria-hidden={!task}
+      aria-hidden={!project}
     >
       <div className="w-full max-w-lg bg-white shadow-lg rounded-lg p-8 relative">
         {/* Header Section */}
         <div className="flex items-start border-b border-gray-300 pb-4">
           <div className="flex-1">
-            <h3 className="text-gray-800 text-xl font-bold">Task Preview</h3>
+            <h3 className="text-yellow-600 text-xl font-bold">Project Preview</h3>
             <p className="text-gray-600 text-sm mt-1">
-              Detailed view of the selected task.
+              Detailed view of the selected project.
             </p>
           </div>
 
@@ -42,24 +40,16 @@ const PreviewTaskModal: React.FC<PreviewTaskModalProps> = ({
           </svg>
         </div>
 
-        {/* Task Details */}
+        {/* Project Details */}
         <div className="my-8">
           <ul className="text-gray-800 space-y-4">
             <li className="flex flex-wrap gap-4 text-sm">
-              <strong>Title:</strong>
-              <span className="ml-auto">{task?.title}</span>
-            </li>
-            <li className="flex flex-wrap gap-4 text-sm">
-              <strong>Status:</strong>
-              <span className="ml-auto">{task?.status}</span>
-            </li>
-            <li className="flex flex-wrap gap-4 text-sm">
-              <strong>Assigned To:</strong>
-              <span className="ml-auto">{task?.assigned_to}</span>
+              <strong>Name:</strong>
+              <span className="ml-auto">{project?.name}</span>
             </li>
             <li className="flex flex-wrap gap-4 text-sm">
               <strong>Description:</strong>
-              <span className="ml-auto">{task?.description}</span>
+              <span className="ml-auto">{project?.description}</span>
             </li>
           </ul>
         </div>
@@ -68,17 +58,10 @@ const PreviewTaskModal: React.FC<PreviewTaskModalProps> = ({
         <div className="flex max-sm:flex-col items-center gap-4 mt-8">
           <button
             type="button"
-            className="text-sm px-4 py-2.5 w-full tracking-wide bg-transparent hover:bg-gray-50 text-gray-800 border border-gray-300 rounded-lg max-sm:order-1"
+            className="text-sm px-4 py-2.5 w-full tracking-wide bg-[#0c172b] hover:bg-gray-50 text-white border border-gray-300 rounded-lg max-sm:order-1"
             onClick={onClose}
           >
             Close
-          </button>
-          <button
-            type="button"
-            className="text-sm px-4 py-2.5 w-full tracking-wide bg-yellow-600 hover:bg-yellow-700 text-white rounded-lg"
-            onClick={() => alert("Task details previewed")}
-          >
-            More Details
           </button>
         </div>
       </div>
@@ -86,4 +69,4 @@ const PreviewTaskModal: React.FC<PreviewTaskModalProps> = ({
   );
 };
 
-export default PreviewTaskModal;
+export default PreviewProjectModal;

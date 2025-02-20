@@ -1,14 +1,12 @@
 import { useState, useEffect } from "react";
-import { useDispatch } from "react-redux";
-import { verifyOTP, sendOTP } from "../features/authSlice";
-import { AppDispatch } from "../app/store";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth";
 
 const VerifyOTP = () => {
   const [otp, setOtp] = useState("");
   const [timer, setTimer] = useState(60);
   const [isTimerActive, setIsTimerActive] = useState(true);
-  const dispatch = useDispatch<AppDispatch>();
+  const { handleSendOTP, handleVerifyOTP } = useAuth()
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -27,22 +25,26 @@ const VerifyOTP = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();    
-    dispatch(verifyOTP(otp))
-      .unwrap()
+    handleVerifyOTP(otp)
       .then(() => {
-        navigate("/dashboard/tasks");
+        navigate("/dashboard/projects");
       })
-      .catch((error) => alert("Error verifying OTP: " + error.message));
+      .catch((error) => {
+        alert("Error verifying OTP: " + error.error)
+        navigate(0)
+      });
   };
 
   const handleResendOTP = () => {
     setIsTimerActive(true);
     setTimer(60);
-    dispatch(sendOTP())
-      .unwrap()
+    handleSendOTP()
       .then(() => {
         alert("New OTP sent!");
-      }).catch((error) => alert("Error sending OTP: " + error.message));
+      }).catch((error) => {
+        alert("Error sending OTP: " + error.error)
+        navigate(0)}
+      );
   };
 
   return (

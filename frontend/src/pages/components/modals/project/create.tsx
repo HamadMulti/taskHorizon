@@ -1,21 +1,25 @@
 import { useState } from "react";
+import { useProjects } from "../../../../hooks/useProjects";
 
-interface CreateTaskModalProps {
-  onSave: (newTask: Task) => void;
+interface CreateProjectModalProps {
   onClose: () => void;
 }
 
-interface Task {
-  id: number;
-  name: string;
-  description?: string;
-}
-
-const CreateProjectModal: React.FC<CreateTaskModalProps> = ({ onSave, onClose }) => {
+const CreateProjectModal: React.FC<CreateProjectModalProps> = ({ onClose }) => {
+  const { handleCreateProject } = useProjects();
   const [isOpen, setIsOpen] = useState(true);
-
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
+  
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (name && description) {
+      await handleCreateProject(name, description);
+      setName("");
+      setDescription("");
+      setIsOpen(false);
+    }
+  };
 
   return (
     <>
@@ -24,10 +28,6 @@ const CreateProjectModal: React.FC<CreateTaskModalProps> = ({ onSave, onClose })
         <div
           className="fixed inset-0 p-4 flex justify-center items-start w-full h-full z-50 bg-[#35343494] bg-opacity-50 pt-20"
           aria-hidden={!isOpen}
-          onClick={() => {
-            setIsOpen(false);
-            onClose();
-          }}
         >
           {/* Modal Content */}
           <div className="w-full max-w-lg bg-white shadow-lg rounded-lg p-8 relative overflow-y-auto max-h-[80vh]">
@@ -42,32 +42,24 @@ const CreateProjectModal: React.FC<CreateTaskModalProps> = ({ onSave, onClose })
               ✕
             </button>
 
-            {/* Modal name */}
-            <h3 className="text-yellow-600 text-xl font-bold mb-4">Create New Task</h3>
+            {/* Modal Title */}
+            <h3 className="text-yellow-600 text-xl font-bold mb-4">Create New Project</h3>
 
             {/* Form */}
             <form
               className="space-y-4"
-              onSubmit={(e) => {
-                e.preventDefault();
-                const newTask: Task = {
-                  id: Date.now(),
-                  name,
-                  description,
-                };
-                onSave(newTask);
-                setIsOpen(false);
-              }}
+              onSubmit={handleSubmit}
             >
-              {/* name Input */}
+              {/* Name Input */}
               <div>
-                <label className="text-gray-800 text-sm mb-2 block">Task name</label>
+                <label className="text-gray-800 text-sm mb-2 block">Project Name</label>
                 <input
                   type="text"
                   placeholder="Enter project name"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   className="px-4 py-3 bg-gray-100 w-full text-gray-800 text-sm border-none focus:outline-yellow-600 focus:bg-transparent rounded-lg"
+                  required
                 />
               </div>
 
@@ -80,6 +72,7 @@ const CreateProjectModal: React.FC<CreateTaskModalProps> = ({ onSave, onClose })
                   rows={4}
                   onChange={(e) => setDescription(e.target.value)}
                   className="px-4 py-3 bg-gray-100 w-full text-gray-800 text-sm border-none focus:outline-yellow-600 focus:bg-transparent rounded-lg"
+                  required
                 />
               </div>
 
@@ -97,9 +90,9 @@ const CreateProjectModal: React.FC<CreateTaskModalProps> = ({ onSave, onClose })
                 </button>
                 <button
                   type="submit"
-                  className="px-6 py-3 rounded-lg text-white text-sm bg-yellow-600 hover:bg-yellow-700"
+                  className="px-6 py-3 rounded-lg text-white text-sm bg-[#0c172b] hover:bg-yellow-700"
                 >
-                  Create Task
+                  Create Project
                 </button>
               </div>
             </form>

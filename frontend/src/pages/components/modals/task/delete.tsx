@@ -1,9 +1,9 @@
 import { useState } from "react";
 
 interface DeleteModalProps {
-  id?: number;
-  title?: string;
-  onDelete?: (id: number) => void;
+  id: number;
+  title: string;
+  onDelete: (id: number) => void;
 }
 
 const DeleteModal: React.FC<DeleteModalProps> = ({ id, title, onDelete }) => {
@@ -69,7 +69,7 @@ const DeleteModal: React.FC<DeleteModalProps> = ({ id, title, onDelete }) => {
                   type="button"
                   className="px-4 py-2 rounded-lg text-white text-sm bg-red-600 hover:bg-red-700"
                   onClick={() => {
-                    onDelete(id); // Call delete function
+                    onDelete(id);
                     setIsOpen(false);
                   }}
                 >

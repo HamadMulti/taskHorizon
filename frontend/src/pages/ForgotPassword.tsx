@@ -14,7 +14,7 @@ const ForgotPassword = () => {
 
   return (
     <div className="flex justify-center items-center h-screen bg-gray-100">
-      <div className="bg-white p-6 rounded-lg shadow-md w-96">
+      <div className="bg-[#0C172C] p-6 rounded-lg shadow-md w-96">
         <h2 className="text-xl font-bold mb-4">Forgot Password</h2>
         <form onSubmit={handleSubmit}>
           <input type="email" placeholder="Enter email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full p-2 mb-3 border rounded" />
