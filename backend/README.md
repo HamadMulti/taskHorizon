@@ -376,7 +376,7 @@ _Future Implementation: Tasks will be categorized under teams and admins for bet
         "total_tasks": 15,
         "pending_tasks": 8, 
         "completed_tasks": 6,
-        "productivity_percentage": "40%" # as a number
+        "productivity_percentage": "40%" // as a number
       }
   }
   ```
