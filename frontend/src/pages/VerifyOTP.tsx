@@ -3,7 +3,6 @@ import { useDispatch } from "react-redux";
 import { verifyOTP, sendOTP } from "../features/authSlice";
 import { AppDispatch } from "../app/store";
 import { useNavigate } from "react-router-dom";
-import Cookie from "js-cookie";
 
 const VerifyOTP = () => {
   const [otp, setOtp] = useState("");
@@ -27,23 +26,23 @@ const VerifyOTP = () => {
   }, [isTimerActive, timer]);
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    dispatch(verifyOTP({ email: Cookie.get("_email") || "", otp }))
+    e.preventDefault();    
+    dispatch(verifyOTP(otp))
       .unwrap()
       .then(() => {
-        navigate("/dashboard")
-        Cookie.remove("_email");
-    });
+        navigate("/dashboard/tasks");
+      });
+      // .catch((error) => alert("Error verifying OTP: " + error.message));
   };
 
   const handleResendOTP = () => {
     setIsTimerActive(true);
     setTimer(60);
-    dispatch(sendOTP({ email: Cookie.get("_email") || "" }))
+    dispatch(sendOTP())
       .unwrap()
       .then(() => {
         alert("New OTP sent!");
-      });
+      }).catch((error) => alert("Error sending OTP: " + error.message));
   };
 
   return (
