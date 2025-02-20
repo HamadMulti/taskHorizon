@@ -12,8 +12,8 @@ def create_project():
     if not user:
         return jsonify({"error": "User not found"}), 404
 
-    if user.role not in ["admin", "team_leader"]:
-        return jsonify({"error": "Unauthorized"}), 403
+    # if user.role not in ["admin", "team_leader"]:
+    #     return jsonify({"error": "Unauthorized"}), 403 future implementation
 
     data = request.get_json()
     if not data or "name" not in data or "description" not in data:
@@ -38,6 +38,25 @@ def get_projects():
         "pages": projects.pages,
         "current_page": projects.page
     }), 200
+    
+
+@jwt_required()
+def get_user_projects():
+    user_id = get_jwt_identity()
+
+    page = request.args.get("page", 1, type=int)
+    per_page = request.args.get("per_page", 10, type=int)
+
+    projects = Project.query.filter_by(owner_id=user_id).paginate(page=page, per_page=per_page, error_out=False)
+    data = {
+        "my_projects": [{"id": p.id, "name": p.name, "description": p.description} for p in projects.items],
+        "total": projects.total,
+        "pages": projects.pages,
+        "current_page": projects.page
+    }
+    print(data)
+    return jsonify(data), 200
+
 
 
 @jwt_required()
@@ -52,7 +71,8 @@ def update_project(project_id):
     if not project:
         return jsonify({"error": "Project not found"}), 404
 
-    if user.role == "admin" or project.owner_id == user_id:
+    # if user.role == "admin" or project.owner_id == user_id: // future implementation
+    if user or project.owner_id == user_id:
         data = request.json
         project.name = data.get("name", project.name)
         project.description = data.get("description", project.description)
@@ -74,7 +94,8 @@ def delete_project(project_id):
     if not project:
         return jsonify({"error": "Project not found"}), 404
 
-    if user.role == "admin":
+    # if user.role == "admin":
+    if user or project.owner_id == user_id:
         db.session.delete(project)
         db.session.commit()
         return jsonify({"message": "Project deleted successfully"}), 200
