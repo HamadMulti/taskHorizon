@@ -15,6 +15,7 @@ import { useDispatch, useSelector } from "react-redux";
 import MyTask from "./pages/dashboard/body/tasks/MyTasks";
 import Task from "./pages/dashboard/body/tasks/Task";
 import Project from "./pages/dashboard/body/projects/Project";
+import Settings from "./pages/dashboard/body/settings/settings";
 
 function App() {
   const dispatch = useDispatch<AppDispatch>();
@@ -51,6 +52,7 @@ function App() {
             <Route path="my-tasks" element={<MyTask />} />
             <Route path="projects" element={<Project />} />
             <Route path="my-projects" element={<Project />} />
+            <Route path="settings" element={<Settings />} />
           </Route>
         </Route>
         <Route path="*" element={<NotFound />} />
