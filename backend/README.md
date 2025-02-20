@@ -180,9 +180,19 @@ class User(db.Model):
 - `POST /auth/login` - Authenticate user and obtain a token
   ```json
   { 
-    "message": message,
-    "access_token": token,
-    "OTP sent": user=profile
+    "message": "Ok",
+    "access_token": "jbuvyuctcyfg89t74esdfuky956r86d8XXXXX",
+    "message": OTP sent",
+    "user": {
+        "username": "John doe",
+        "email": "jhonedoe@mail.com",
+        "role": "user", // at the current moment we are using user as the administrator
+        "phone": "+1234567890",
+        "location": "london",
+        "gender": "male",
+        "primary_email": "doejohn@mail.com",
+        "verified": "false"
+      } 
   }
   ```
 - `GET /auth/logout` - Logout the current user
