@@ -13,12 +13,12 @@ def user_analytics():
 
     productivity_percentage = (completed_tasks / total_tasks * 100) if total_tasks else 0
 
-    return jsonify({
+    return jsonify({"user_analytics": {
         "total_tasks": total_tasks,
         "pending_tasks": pending_tasks,
         "completed_tasks": completed_tasks,
         "productivity_percentage": round(productivity_percentage, 2)
-    }), 200
+    }}), 200
 
 @jwt_required()
 def team_leader_analytics():
@@ -38,13 +38,13 @@ def team_leader_analytics():
         due_tasks = Task.query.filter(Task.assigned_to == u.id, Task.status == "Pending").count()
         productivity = (completed_tasks / total_tasks * 100) if total_tasks else 0
 
-        user_stats.append({
+        user_stats.append({"team_leader_analytics": {
             "user_id": u.id,
             "username": u.username,
             "total_tasks": total_tasks,
             "completed_tasks": completed_tasks,
             "due_tasks": due_tasks,
             "productivity_percentage": round(productivity, 2)
-        })
+        }})
 
     return jsonify({"team_analytics": user_stats}), 200
