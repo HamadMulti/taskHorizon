@@ -175,37 +175,38 @@ class User(db.Model):
 
   ```json
   {
-    "message": "User registered successfully" 
+    "message": "User registered successfully"
   }
   ```
 
 - `POST /auth/login` - Authenticate user and obtain a token
 
   ```json
-  { 
+  {
     "message": "Ok",
     "access_token": "jbuvyuctcyfg89t74esdfuky956r86d8XXXXX",
     "message": "OTP sent",
     "user": {
-        "username": "John doe",
-        "email": "jhonedoe@mail.com",
-        "role": "user",
-        "phone": "+1234567890",
-        "location": "london",
-        "gender": "male",
-        "primary_email": "doejohn@mail.com",
-        "verified": "false"
-      } 
+      "username": "John doe",
+      "email": "jhonedoe@mail.com",
+      "role": "user",
+      "phone": "+1234567890",
+      "location": "london",
+      "gender": "male",
+      "primary_email": "doejohn@mail.com",
+      "verified": "false"
+    }
   }
   ```
 
 - `GET /auth/logout` - Logout the current user
 
   ```json
-    { 
-      "message": "Ok"
-    }
-    ```
+  {
+    "message": "Ok"
+  }
+  ```
+
 - `POST /auth/send-otp` - Send OTP for verification
 
   ```json
@@ -213,6 +214,7 @@ class User(db.Model):
     "message": "OTP sent successfully"
   }
   ```
+
 - `POST /auth/verify-otp` - Verify OTP code
 
   ```json
@@ -221,6 +223,7 @@ class User(db.Model):
     "role": "user"
   }
   ```
+
 - `POST /auth/forgot-password` - Initiate password reset
 
   ```json
@@ -228,6 +231,7 @@ class User(db.Model):
     "message": "Password reset email sent"
   }
   ```
+
 - `POST /auth/reset-password` - Reset user password
 
   ```json
@@ -245,22 +249,22 @@ class User(db.Model):
     "message": "Profile updated successfully"
   }
   ```
+
 - `GET /user/profile` - Retrieve user profile details
 
   ```json
   {
-    "user": 
-      {
-        "username": "John doe",
-        "email": "jhonedoe@mail.com",
-        "role": "user",
-        "phone": "+1234567890",
-        "location": "london",
-        "gender": "male",
-        "primary_email": "doejohn@mail.com",
-        "verified": "false"
-      } 
+    "user": {
+      "username": "John doe",
+      "email": "jhonedoe@mail.com",
+      "role": "user",
+      "phone": "+1234567890",
+      "location": "london",
+      "gender": "male",
+      "primary_email": "doejohn@mail.com",
+      "verified": "false"
     }
+  }
   ```
 
 ### Task Management (`/tasks`)
@@ -272,21 +276,22 @@ class User(db.Model):
     "message": "Task created successfully"
   }
   ```
+
 - `GET /tasks/` - Retrieve all tasks
 
   ```json
   {
-    "tasks": 
-      [
-        {
-          "id": 1,
-          "title": "Creating UI otp",
-          "status": "pending",
-          "assigned_to": "doe"
-        }
-      ]
+    "tasks": [
+      {
+        "id": 1,
+        "title": "Creating UI otp",
+        "status": "pending",
+        "assigned_to": "doe"
+      }
+    ]
   }
   ```
+
 - `PUT /tasks/<int:task_id>` - Update a specific task
 
   ```json
@@ -294,6 +299,7 @@ class User(db.Model):
     "message": "Task updated successfully"
   }
   ```
+
 - `PUT /tasks/<int:task_id>/assign` - Assign a task to a user
 
   ```json
@@ -301,6 +307,7 @@ class User(db.Model):
     "message": "Task assigned successfully"
   }
   ```
+
 - `DELETE /tasks/<int:task_id>/archive` - Archive a task
 
   ```json
@@ -308,34 +315,34 @@ class User(db.Model):
     "message": "Task archived successfully"
   }
   ```
+
 - `GET /tasks/user-tasks` - Get tasks assigned to the current user
 
   ```json
   {
-    "tasks":
-      [
-        {
-          "id": 1,
-          "title": "OTP confirmations",
-          "status": "In-progress",
-          "assigned_to": "john"
-        }
-      ]
+    "tasks": [
+      {
+        "id": 1,
+        "title": "OTP confirmations",
+        "status": "In-progress",
+        "assigned_to": "john"
+      }
+    ]
   }
   ```
+
 - `GET /tasks/team-tasks` - Get team-wide tasks
 
   ```json
   {
-    "tasks": 
-      [
-        {
-          "id": 6,
-          "title": "Otps verifications",
-          "status": "in-progress",
-          "assigned_to": "johndoe"
-        }
-      ]
+    "tasks": [
+      {
+        "id": 6,
+        "title": "Otps verifications",
+        "status": "in-progress",
+        "assigned_to": "johndoe"
+      }
+    ]
   }
   ```
 
@@ -346,55 +353,57 @@ _Future Implementation: Tasks will be categorized under teams and admins for bet
 - `POST /projects/` - Create a new project
 
   ```json
-  { 
+  {
     "message": "Project created successfully"
   }
   ```
+
 - `GET /projects/` - Retrieve all projects
 
   ```json
-  { 
-    "projects": 
-      [
-        {
-          "id": 11, 
-          "name": "Weather APP",
-          "description": "Creating a terminal app for advising current weather"
-        }
-      ], 
+  {
+    "projects": [
+      {
+        "id": 11,
+        "name": "Weather APP",
+        "description": "Creating a terminal app for advising current weather"
+      }
+    ],
     "total": 30,
     "pages": 3,
     "current_page": 1
   }
   ```
+
 - `GET /projects/user` - Retrieve projects associated with the current user
 
   ```json
   {
-    "my_projects":
-      [
-        {
-          "id": 12,
-          "name": "Tacker",
-          "description": "A web app to track your small un-accounted expenditure"
-        }
-      ],
-      "total": 3,
-      "pages": 1,
-      "current_page": 1
+    "my_projects": [
+      {
+        "id": 12,
+        "name": "Tacker",
+        "description": "A web app to track your small un-accounted expenditure"
+      }
+    ],
+    "total": 3,
+    "pages": 1,
+    "current_page": 1
   }
   ```
+
 - `PUT /projects/<int:project_id>` - Update a project
 
   ```json
-  { 
+  {
     "message": "Project updated successfully"
   }
   ```
+
 - `DELETE /projects/<int:project_id>` - Delete a project
 
   ```json
-  { 
+  {
     "message": "Project deleted successfully"
   }
   ```
@@ -404,29 +413,28 @@ _Future Implementation: Tasks will be categorized under teams and admins for bet
 - `GET /analytics/user` - Get user activity analytics
 
   ```json
-  { 
-    "user_analytics": 
-      { 
-        "total_tasks": 15,
-        "pending_tasks": 8, 
-        "completed_tasks": 6,
-        "productivity_percentage": "40%"
-      }
+  {
+    "user_analytics": {
+      "total_tasks": 15,
+      "pending_tasks": 8,
+      "completed_tasks": 6,
+      "productivity_percentage": "40%"
+    }
   }
   ```
+
 - `GET /analytics/team-leader` - Get analytics for team leaders
 
   ```json
   {
-    "team_leader_analytics": 
-      { 
-        "user_id": 1,
-        "username": "John",
-        "total_tasks": 6,
-        "completed_tasks": 1,
-        "due_tasks": 4,
-        "productivity_percentage": "15%"
-      }
+    "team_leader_analytics": {
+      "user_id": 1,
+      "username": "John",
+      "total_tasks": 6,
+      "completed_tasks": 1,
+      "due_tasks": 4,
+      "productivity_percentage": "15%"
+    }
   }
   ```
 
@@ -469,7 +477,9 @@ Currently, the system operates with a standard user model. Future enhancements w
 - **Dockerized Deployment**: Using **NGINX** as a reverse proxy
 
 ## Learn More
+
 - If you want to learn more about the **Frontend**, click [here](https://github.com/HamadMulti/taskHorizon/blob/main/frontend/README.md).
+
 ## License
 
-This project is licensed under the MIT License.
+This project is licensed under the MIT License. Feel free to use and modify it!

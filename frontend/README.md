@@ -1,9 +1,11 @@
 # TaskHorizon Frontend
 
 ## Introduction
+
 TaskHorizon frontend is a web-based task management interface built using **React/Vite** with **Redux** for state management. It provides an intuitive and dynamic user interface for managing tasks, projects, and users. The frontend seamlessly interacts with the backend API to ensure smooth task tracking and project collaboration.
 
 ## Features
+
 - **User Authentication & Role-Based Access**
   - JWT-based authentication
   - Role management for **Admins, Team Leads, and Users**
@@ -20,6 +22,7 @@ TaskHorizon frontend is a web-based task management interface built using **Reac
   - **Dockerized deployment** on Vercel
 
 ## Project Structure
+
 ```
 taskHorizon/frontend/
 │── src/
@@ -36,11 +39,14 @@ taskHorizon/frontend/
 ```
 
 ## Installation Guide
+
 ### Prerequisites
+
 - **Node.js 16+**
 - **Git**
 
 ### Setup Instructions
+
 1. **Clone the Repository**
    ```sh
    git clone https://github.com/HamadMulti/taskHorizon.git
@@ -75,11 +81,11 @@ export default tseslint.config({
   languageOptions: {
     // other options...
     parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+      project: ["./tsconfig.node.json", "./tsconfig.app.json"],
+      tsconfigRootDir: import.meta.dirname
+    }
+  }
+});
 ```
 
 - Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
@@ -88,30 +94,32 @@ export default tseslint.config({
 
 ```js
 // eslint.config.js
-import react from 'eslint-plugin-react'
+import react from "eslint-plugin-react";
 
 export default tseslint.config({
   // Set the react version
-  settings: { react: { version: '18.3' } },
+  settings: { react: { version: "18.3" } },
   plugins: {
     // Add the react plugin
-    react,
+    react
   },
   rules: {
     // other rules...
     // Enable its recommended rules
     ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
+    ...react.configs["jsx-runtime"].rules
+  }
+});
 ```
 
 ## Deployment
+
 - **Vercel Hosting**: The frontend is deployed using Vercel for scalability and ease of maintenance.
 - **CORS Configuration**: Ensures proper communication with the backend API hosted on Render.
 - **Optimization**: Vite’s fast build time enhances performance for production deployment.
 
 ## Future Enhancements
+
 - **OAuth Authentication** (Google/GitHub integration)
 - **Real-time Notifications** for task updates
 - **Analytics Dashboard** for project insights
@@ -119,11 +127,13 @@ export default tseslint.config({
 - **Improved Error Handling** with centralized Redux error management
 
 ## Learn More
+
 - If you want to learn more about the **Backend**, click [here](https://github.com/HamadMulti/taskHorizon/blob/main/backend/README.md).
 
 ## Conclusion
+
 The TaskHorizon frontend provides a user-friendly and efficient interface for task and project management. With continuous improvements in UI/UX, security, and performance, the system is designed to enhance productivity and collaboration for users of all roles.
 
 ## License
-This project is licensed under the MIT License. Feel free to use and modify it!
 
+This project is licensed under the MIT License. Feel free to use and modify it!
