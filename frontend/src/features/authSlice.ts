@@ -20,12 +20,6 @@ const initialState: AuthState = {
   loading: false
 };
 
-if (initialState.token) {
-  API.defaults.headers.common["Authorization"] = `Bearer ${initialState.token}`;
-} else {
-  delete API.defaults.headers.common["Authorization"];
-}
-
 // **🔹 Register a New User**
 export const registerUser = createAsyncThunk(
   "auth/register",
@@ -43,7 +37,7 @@ export const registerUser = createAsyncThunk(
       const token = response.data.access_token;
 
       Cookies.set("access_token", token, {
-        expires: 7,
+        expires: 1,
         path: "/",
         sameSite: "Strict",
         secure: process.env.NODE_ENV === "production"
@@ -67,7 +61,7 @@ export const loginUser = createAsyncThunk(
       const token = response.data.access_token;
 
       Cookies.set("access_token", token, {
-        expires: 7,
+        expires: 1,
         path: "/",
         sameSite: "Strict",
         secure: process.env.NODE_ENV === "production"
@@ -127,7 +121,16 @@ export const updateProfile = createAsyncThunk(
     thunkAPI
   ) => {
     try {
+      const state: any = thunkAPI.getState();
+      const { token } = state.auth;
+
+      if (!token) {
+        throw new Error("No token found");
+      }
+
+      API.defaults.headers.common["Authorization"] = `Bearer ${token}`;
       const response = await API.put("/user/update-profile", profileData);
+      state.auth.user = response.data.user;
       return response.data;
     } catch (error: any) {
       return thunkAPI.rejectWithValue(
