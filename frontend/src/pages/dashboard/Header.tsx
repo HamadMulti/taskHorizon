@@ -1,18 +1,24 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from "react";
 import { User } from "./interface";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 const Header = ({
   user,
   error,
   loading
 }: {
-  user?: Partial<User>;
+  user: Partial<User>;
   loading?: any;
   error?: any;
 }) => {
   const [userName, setUserName] = useState<string | null>(null);
+  const { pathname } = useLocation();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
 
   useEffect(() => {
     if (user && user.username) {
@@ -31,10 +37,15 @@ const Header = ({
 
         <div
           id="collapseMenu"
-          className="max-lg:hidden lg:!block max-lg:before:fixed max-lg:before:bg-black max-lg:before:opacity-50 max-lg:before:inset-0 max-lg:before:z-50"
+          className={`lg:block max-lg:fixed max-lg:bg-white max-lg:w-1/2 max-lg:min-w-[300px] 
+            max-lg:top-0 max-lg:left-0 max-lg:p-6 max-lg:h-full max-lg:shadow-md max-lg:overflow-auto 
+            transition-all duration-500 z-50 ${
+              isMenuOpen ? "block" : "hidden"
+            }`}
         >
           <button
             id="toggleClose"
+            onClick={toggleMenu}
             className="lg:hidden fixed top-2 right-4 z-[100] rounded-full bg-white p-3"
           >
             <svg
@@ -80,9 +91,9 @@ const Header = ({
                 )}
                 <div className="dropdown-content hidden group-hover:block shadow-md p-2 bg-white rounded-md absolute top-9 right-0 w-56">
                   <div className="w-full">
-                  {/* <Link
+                    {/* <Link
                       to="/"
-                      className="text-sm text-gray-800 cursor-pointer flex items-center p-2 rounded-md hover:bg-gray-100 dropdown-item transition duration-300 ease-in-out"
+                      className={`text-sm text-gray-800 cursor-pointer flex items-center p-2 rounded-md ${pathname === '/dashboard/tasks' ? 'bg-[#0c172b] text-white bold' : 'hover:bg-gray-100'} dropdown-item transition duration-300 ease-in-out`}
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -102,8 +113,12 @@ const Header = ({
                       Dashboard
                     </Link> */}
                     <Link
-                      to="javascript:void(0)"
-                      className="text-sm text-gray-800 cursor-pointer flex items-center p-2 rounded-md hover:bg-gray-100 dropdown-item transition duration-300 ease-in-out"
+                      to="tasks"
+                      className={`text-sm text-gray-800 cursor-pointer flex items-center p-2 rounded-md ${
+                        pathname === "/dashboard/tasks"
+                          ? "bg-[#0c172b] text-white bold"
+                          : "hover:bg-gray-100"
+                      } dropdown-item transition duration-300 ease-in-out`}
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -127,7 +142,11 @@ const Header = ({
                     </Link>
                     <Link
                       to="projects"
-                      className="text-sm text-gray-800 cursor-pointer flex items-center p-2 rounded-md hover:bg-gray-100 dropdown-item transition duration-300 ease-in-out"
+                      className={`text-sm text-gray-800 cursor-pointer flex items-center p-2 rounded-md ${
+                        pathname === "/dashboard/projects"
+                          ? "bg-[#0c172b] text-white bold"
+                          : "hover:bg-gray-100"
+                      } dropdown-item transition duration-300 ease-in-out`}
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -150,7 +169,11 @@ const Header = ({
                     <hr className="my-2 -mx-2" />
                     <Link
                       to="settings"
-                      className="text-sm text-gray-800 cursor-pointer flex items-center p-2 rounded-md hover:bg-gray-100 dropdown-item transition duration-300 ease-in-out"
+                      className={`text-sm text-gray-800 cursor-pointer flex items-center p-2 rounded-md ${
+                        pathname === "/dashboard/settings"
+                          ? "bg-[#0c172b] text-white bold"
+                          : "hover:bg-gray-100"
+                      } dropdown-item transition duration-300 ease-in-out`}
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -166,8 +189,8 @@ const Header = ({
                     </Link>
                     {/* <hr className="my-2 -mx-2" /> */}
                     <button
-                      onClick={() =>{}}
-                      className="text-sm w-full text-gray-800 cursor-pointer flex items-center p-2 rounded-md hover:bg-gray-100 dropdown-item transition duration-300 ease-in-out"
+                      onClick={() => {}}
+                      className={`text-sm w-full text-gray-800 cursor-pointer flex items-center p-2 rounded-md hover:bg-gray-100 dropdown-item transition duration-300 ease-in-out`}
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -187,7 +210,11 @@ const Header = ({
             </div>
           </div>
         </div>
-        <button id="toggleOpen" className="lg:hidden !ml-7 outline-none">
+        <button
+          id="toggleOpen"
+          className="lg:hidden !ml-7 outline-none"
+          onClick={toggleMenu}
+        >
           <svg
             className="w-7 h-7"
             fill="#000"
