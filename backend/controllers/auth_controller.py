@@ -15,11 +15,11 @@ def generate_otp():
 def get_cookie_secure_flag():
     return os.environ.get("FLASK_ENV") == "production"
 
-def _token_handler(user_id, message):
+def _token_handler(user_id, message, **kwargs):
     token = generate_token(user_id)
     if not token:
         return jsonify({"error": "Token generation failed"}), 500
-    response = make_response(jsonify({"message": message, "access_token": token}), 200)
+    response = make_response(jsonify({"message": message, "access_token": token, **kwargs}), 200)
     response.set_cookie('access_token', token, path="/", httponly=True, secure=get_cookie_secure_flag(), samesite='Strict')
     return response
 
@@ -58,7 +58,17 @@ def _login_user_otp(user):
     user.otp = otp
     db.session.commit()
     send_otp_email(user.email, otp)
-    return _token_handler(user.id, "OTP sent")
+    profile = {
+                "username": user.username,
+                "email": user.email,
+                "role": user.role,
+                "phone": user.phone,
+                "location": user.location,
+                "gender": user.gender,
+                "primary_email": user.primary_email,
+                "verified": user.verified,
+            }
+    return _token_handler(user.id, "OTP sent", user=profile)
 
 
 
