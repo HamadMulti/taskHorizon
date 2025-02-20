@@ -20,7 +20,7 @@ def _token_handler(user_id, message, **kwargs):
     if not token:
         return jsonify({"error": "Token generation failed"}), 500
     response = make_response(jsonify({"message": message, "access_token": token, **kwargs}), 200)
-    response.set_cookie('access_token', token, path="/", httponly=True, secure=get_cookie_secure_flag(), samesite='Strict')
+    response.set_cookie('access_token', token, path="/", httponly=True, secure=get_cookie_secure_flag(), samesite='Strict', expires=1)
     return response
 
 def register_user():
