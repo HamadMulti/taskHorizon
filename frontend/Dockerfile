@@ -10,16 +10,14 @@ COPY . .
 
 RUN npm run build
 
-FROM nginx:alpine
+FROM node:20-alpine
 
-WORKDIR /usr/share/nginx/html
+WORKDIR /app
 
-RUN rm -rf ./*
+RUN npm install -g serve
 
 COPY --from=builder /app/dist .
 
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+ENV PORT 10000
 
-EXPOSE 80
-
-CMD ["nginx", "-g", "daemon off;"]
+CMD ["serve", "-s", ".", "-l", "10000"]
