@@ -10,7 +10,7 @@ import os
 jwt = JWTManager()
 mail = Mail()
 migrate = Migrate()
-front_end_url = os.getenv("FRONTEND_URL")
+front_end_url = os.getenv("FRONTEND_URL").split(",")
 
 def create_app():
     """Creates and configures the Flask application.
@@ -32,7 +32,7 @@ def create_app():
     db.init_app(app)
     jwt.init_app(app)
     mail.init_app(app)
-    CORS(app, supports_credentials=True, resources={r"/*": {"origins": [front_end_url]}})
+    CORS(app, supports_credentials=True, resources={r"/*": {"origins": front_end_url}})
     migrate.init_app(app, db)
 
     from routes.auth_routes import auth_bp
