@@ -95,7 +95,8 @@ export const fetchUserDetails = createAsyncThunk(
 
       API.defaults.headers.common["Authorization"] = `Bearer ${token}`;
       const response = await API.get("/user/profile");
-      return response.data.user;
+      const { user } = response.data.user;
+      return { user }
     } catch (error: any) {
       return thunkAPI.rejectWithValue(
         error.response?.data || "Failed to fetch user details"
@@ -252,16 +253,7 @@ export const subscribeUsers = createAsyncThunk(
 const authSlice = createSlice({
   name: "auth",
   initialState,
-  reducers: {
-    setCurrentUser(state, action: PayloadAction<any>) {
-      if (action.payload && action.payload.user) {
-        state.user = action.payload.user;
-      } else {
-        state.error = "User data is missing";
-      }
-      state.loading = false;
-    }
-  },
+  reducers: {},
   extraReducers: (builder) => {
     builder
       .addCase(registerUser.pending, (state) => {
@@ -305,7 +297,11 @@ const authSlice = createSlice({
         }
       })
       .addCase(fetchUserDetails.fulfilled, (state, action) => {
-        state.user = action.payload.user;
+        if (action.payload && action.payload.user) {
+          state.user = action.payload.user;
+        } else {
+          state.error = "User data is missing";
+        }
         state.loading = false;
       })
       .addCase(fetchUserDetails.rejected, (state, action) => {
@@ -372,6 +368,4 @@ const persistConfig = {
   storage,
   whitelist: ["token", "user", "otpVerified"]
 };
-
-export const { setCurrentUser } = authSlice.actions;
 export default persistReducer(persistConfig, authSlice.reducer);
