@@ -1,13 +1,12 @@
 import { useRef, useState } from "react";
 import FAQItem from "./FAQItem";
-import { useSelector } from "react-redux";
-import { RootState } from "../app/store";
 import { Link } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth";
 
 const LandingPage = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
-  const token = useSelector((state: RootState) => state.auth.token);
+  const { otpVerified  } = useAuth();
 
   const toggleOpenRef = useRef<HTMLButtonElement | null>(null);
   const toggleCloseRef = useRef<HTMLButtonElement | null>(null);
@@ -135,7 +134,7 @@ const LandingPage = () => {
             </div>
 
             <div className="flex ml-auto">
-              {token ? (
+              {otpVerified ? (
                 <>
                   <Link to="/dashboard"
                     className="bg-yellow-600 hover:bg-yellow-700 transition-all text-white rounded-full px-5 py-2.5"

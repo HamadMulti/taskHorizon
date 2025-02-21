@@ -5,7 +5,7 @@ const Loader = () => {
         <div>
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            className="spinner-6 w-10 h-10 shrink-0 animate-spin text-"
+            className="spinner-6 w-10 h-10 shrink-0 animate-spin text-white"
             viewBox="0 0 512.004 512.004"
           >
             <path
