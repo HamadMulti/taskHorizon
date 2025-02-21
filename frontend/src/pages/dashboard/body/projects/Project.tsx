@@ -99,7 +99,7 @@ const Project = () => {
                             ></path>
                           </svg>
                         </button>
-                        {isModalOpen && (
+                        {isModalOpen && selectedProject && (
                           <PreviewProjectModal
                             project={selectedProject}
                             onClose={() => setIsModalOpen(false)}

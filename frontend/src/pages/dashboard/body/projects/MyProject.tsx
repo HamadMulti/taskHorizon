@@ -171,7 +171,7 @@ const MyProject = () => {
                             />
                           </svg>
                         </button>
-                        {isEditing && (
+                        {isEditing && selectedProject && (
                           <EditProjectModal
                             project={selectedProject}
                             onClose={handleClose}
