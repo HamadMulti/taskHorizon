@@ -1,28 +1,26 @@
 import { useState } from "react";
 import { useProjects } from "../../../../hooks/useProjects";
 
-interface Project {
+interface EditProjectModalProps {
   id: number;
   name: string;
   description: string;
-}
-
-interface EditProjectModalProps {
-  project: Project;
   onClose: () => void;
 }
 
 const EditProjectModal: React.FC<EditProjectModalProps> = ({
-  project,
+  id,
+  name: _name,
+  description: _description,
   onClose
 }) => {
   const [isOpen, setIsOpen] = useState(true);
-  const [name, setName] = useState(project?.name || "");
-  const [description, setDescription] = useState(project?.description || "");
+  const [name, setName] = useState(_name || "");
+  const [description, setDescription] = useState(_description || "");
   const { handleUpdateProject } = useProjects();
 
   const handleUpdate = () => {
-    handleUpdateProject(project.id, name, description);
+    handleUpdateProject(id, name, description);
     setIsOpen(false);
     onClose();
   };

@@ -37,7 +37,7 @@ const DeleteProjectModal: React.FC<DeleteModalProps> = ({ id, name }) => {
           className="fixed inset-0 flex justify-center items-center w-full h-full z-50 bg-[#35343494] bg-opacity-50"
           aria-hidden={!isOpen}
         >
-          <div className="w-full max-w-lg bg-white shadow-lg rounded-lg p-6 relative">
+          <div className="w-full max-w-2xl bg-white shadow-lg rounded-lg p-6 relative">
             {/* Close Button */}
             <button
               className="absolute top-3 right-3 text-gray-400 hover:text-red-500"

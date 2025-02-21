@@ -97,7 +97,9 @@ const Project = () => {
                         </button>
                         {isModalOpen && (
                           <PreviewProjectModal
-                            project={project}
+                            id={project.id}
+                            name={project.name}
+                            description={project.description}
                             onClose={() => setIsModalOpen(false)}
                           />
                         )}

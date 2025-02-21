@@ -1,28 +1,28 @@
-interface Project {
+interface PreviewProjectModalProps {
   id: number;
   name: string;
   description: string;
-}
-
-interface PreviewProjectModalProps {
-  project?: Project;
   onClose: () => void;
 }
 
 const PreviewProjectModal: React.FC<PreviewProjectModalProps> = ({
-  project,
+  id,
+  name,
+  description,
   onClose
 }) => {
   return (
     <div
       className="fixed inset-0 p-4 flex justify-center items-start w-full h-full z-50 bg-[#35343494] bg-opacity-50 pt-20"
-      aria-hidden={!project}
+      aria-hidden={!id}
     >
       <div className="w-full max-w-lg bg-white shadow-lg rounded-lg p-8 relative">
         {/* Header Section */}
         <div className="flex items-start border-b border-gray-300 pb-4">
           <div className="flex-1">
-            <h3 className="text-yellow-600 text-xl font-bold">Project Preview</h3>
+            <h3 className="text-yellow-600 text-xl font-bold">
+              Project Preview
+            </h3>
             <p className="text-gray-600 text-sm mt-1">
               Detailed view of the selected project.
             </p>
@@ -45,11 +45,11 @@ const PreviewProjectModal: React.FC<PreviewProjectModalProps> = ({
           <ul className="text-gray-800 space-y-4">
             <li className="flex flex-wrap gap-4 text-sm">
               <strong>Name:</strong>
-              <span className="ml-auto">{project?.name}</span>
+              <span className="ml-auto">{name}</span>
             </li>
             <li className="flex flex-wrap gap-4 text-sm">
               <strong>Description:</strong>
-              <span className="ml-auto">{project?.description}</span>
+              <span className="ml-auto">{description}</span>
             </li>
           </ul>
         </div>
