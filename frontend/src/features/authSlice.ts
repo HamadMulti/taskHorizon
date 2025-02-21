@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import API from "../utils/api";
 import Cookies from "js-cookie";
 import { persistReducer } from "redux-persist";
@@ -41,16 +41,8 @@ export const registerUser = createAsyncThunk(
   ) => {
     try {
       const response = await API.post("/auth/register", userData);
-      const token = response.data.access_token;
-
-      Cookies.set("access_token", token, {
-        expires: expires(token),
-        path: "/",
-        sameSite: "Strict",
-        secure: process.env.NODE_ENV === "production"
-      });
-
-      return { token };
+      const { error, message } = response.data;
+      return { error, message };
     } catch (error: any) {
       return thunkAPI.rejectWithValue(
         error.response?.data || "Registration failed"
@@ -74,6 +66,8 @@ export const loginUser = createAsyncThunk(
         sameSite: "Strict",
         secure: process.env.NODE_ENV === "production"
       });
+      localStorage.setItem("user", user);
+      localStorage.setItem("token", token);
       return { token, user };
     } catch (error: any) {
       return thunkAPI.rejectWithValue(error.response?.data || "Login failed");
@@ -87,16 +81,23 @@ export const fetchUserDetails = createAsyncThunk(
   async (_, thunkAPI) => {
     try {
       const state: any = thunkAPI.getState();
-      const { token, user } = state.auth;
+      let { token, user } = state.auth;
 
-      if (user && token) {
+      if (!user && !token ){
+        token = localStorage.getItem("token");
+        user = localStorage.getItem("user")
+        return thunkAPI.rejectWithValue("User not found");
+      }
+
+      console.log(`I am token ->: ${token}\n I am user ${user}`);
+
+      if (!!user && !!token) {
         return thunkAPI.rejectWithValue("User already exists");
       }
 
       API.defaults.headers.common["Authorization"] = `Bearer ${token}`;
       const response = await API.get("/user/profile");
-      const { user } = response.data.user;
-      return { user }
+      return response.data.user;
     } catch (error: any) {
       return thunkAPI.rejectWithValue(
         error.response?.data || "Failed to fetch user details"
@@ -253,7 +254,11 @@ export const subscribeUsers = createAsyncThunk(
 const authSlice = createSlice({
   name: "auth",
   initialState,
-  reducers: {},
+  reducers: {
+    setCurrentUser(state, action: PayloadAction<any>) {
+      state.user = action.payload.user;
+    }
+  },
   extraReducers: (builder) => {
     builder
       .addCase(registerUser.pending, (state) => {
@@ -261,7 +266,8 @@ const authSlice = createSlice({
       })
       .addCase(registerUser.fulfilled, (state, action) => {
         state.loading = false;
-        state.token = action.payload.token;
+        state.message = action.payload.message;
+        state.error = action.payload.error;
       })
       .addCase(registerUser.rejected, (state, action) => {
         state.loading = false;
@@ -368,4 +374,6 @@ const persistConfig = {
   storage,
   whitelist: ["token", "user", "otpVerified"]
 };
+
+export const { setCurrentUser } = authSlice.actions;
 export default persistReducer(persistConfig, authSlice.reducer);
