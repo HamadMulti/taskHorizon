@@ -8,7 +8,7 @@ interface Project {
 }
 
 interface EditProjectModalProps {
-  project?: Project;
+  project: Project;
   onClose: () => void;
 }
 
@@ -22,7 +22,7 @@ const EditProjectModal: React.FC<EditProjectModalProps> = ({
   const { handleUpdateProject } = useProjects();
 
   const handleUpdate = () => {
-    handleUpdateProject(project.id, name, description);
+    handleUpdateProject(project?.id, name, description);
     setIsOpen(false);
     onClose();
   };
