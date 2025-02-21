@@ -254,7 +254,12 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     setCurrentUser(state, action: PayloadAction<any>) {
-      state.user = action.payload.user;
+      if (action.payload && action.payload.user) {
+        state.user = action.payload.user;
+      } else {
+        state.error = "User data is missing";
+      }
+      state.loading = false;
     }
   },
   extraReducers: (builder) => {
