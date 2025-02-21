@@ -10,6 +10,7 @@ interface AuthState {
   user: any | null;
   token: string | null;
   error: string | null;
+  message: string | null;
   loading: boolean;
   otpVerified: boolean;
 }
@@ -19,6 +20,7 @@ const initialState: AuthState = {
   user: null,
   token: getTokenFromCookies(),
   error: null,
+  message: null,
   loading: false,
   otpVerified: false
 };
@@ -186,7 +188,8 @@ export const forgotPassword = createAsyncThunk(
   async (email: string, thunkAPI) => {
     try {
       const response = await API.post("/auth/forgot-password", { email });
-      return response.data;
+      const { error, message } = response.data
+      return { error, message };
     } catch (error: any) {
       return thunkAPI.rejectWithValue(error.response.data);
     }
@@ -195,7 +198,7 @@ export const forgotPassword = createAsyncThunk(
 
 export const resetPassword = createAsyncThunk(
   "auth/resetPassword",
-  async (data: { token: string; newPassword: string }, thunkAPI) => {
+  async (data: { token: string; password: string }, thunkAPI) => {
     try {
       const response = await API.post("/auth/reset-password", data);
       return response.data;
@@ -220,6 +223,27 @@ export const hydrateAuthState = createAsyncThunk(
       return { token };
     } catch (error: any) {
       return { token: null, error: error };
+    }
+  }
+);
+
+// **🔹 Subscribe to Our News Letter**
+export const subscribeUsers = createAsyncThunk(
+  "auth/subscribe",
+  async (
+    userData: {
+      email: string;
+    },
+    thunkAPI
+  ) => {
+    try {
+      const response = await API.post("/user/subscribe", userData);
+      const { message, error } = response.data;
+      return { message, error }
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data.error
+      );
     }
   }
 );
@@ -286,6 +310,7 @@ const authSlice = createSlice({
       .addCase(logoutUser.fulfilled, (state) => {
         state.user = null;
         state.token = null;
+        state.otpVerified = false
       })
       .addCase(updateProfile.fulfilled, (state, action) => {
         state.loading = false;
@@ -299,11 +324,39 @@ const authSlice = createSlice({
         state.loading = false;
         state.otpVerified = true
       })
-      .addCase(forgotPassword.fulfilled, (state) => {
+      .addCase(forgotPassword.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(forgotPassword.fulfilled, (state, action) => {
         state.loading = false;
+        state.message = action.payload.message;
+        state.error = action.payload.error
+      })
+      .addCase(forgotPassword.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
+      .addCase(resetPassword.pending, (state) => {
+        state.loading = true;
       })
       .addCase(resetPassword.fulfilled, (state) => {
         state.loading = false;
+      })
+      .addCase(resetPassword.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
+      .addCase(subscribeUsers.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(subscribeUsers.fulfilled, (state, action) => {
+        state.loading = false;
+        state.message = action.payload.message;
+        state.error = action.payload.error;
+      })
+      .addCase(subscribeUsers.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
       });
   }
 });

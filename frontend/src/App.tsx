@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/dashboard/Layout";
@@ -8,9 +8,7 @@ import ForgotPassword from "./pages/ForgotPassword";
 import VerifyOTP from "./pages/VerifyOTP";
 import ProtectedRoute from "./utils/ProtectedRoute";
 import NotFound from "./utils/NotFound";
-import {
-  hydrateAuthState,
-} from "./features/authSlice";
+import { hydrateAuthState } from "./features/authSlice";
 import { useEffect } from "react";
 import { AppDispatch } from "./app/store";
 import { useDispatch } from "react-redux";
@@ -18,10 +16,10 @@ import { useDispatch } from "react-redux";
 // import Task from "./pages/dashboard/body/tasks/Task";
 import Project from "./pages/dashboard/body/projects/Project";
 import Settings from "./pages/dashboard/body/settings/settings";
-import { decodeToken } from "./utils/decodeToken";
 import Verified from "./utils/VerifiedUser";
 import MyProject from "./pages/dashboard/body/projects/MyProject";
 import { useAuth } from "./hooks/useAuth";
+import { decodeToken } from "./utils/decodeToken";
 
 function App() {
   const dispatch = useDispatch<AppDispatch>();
@@ -42,9 +40,8 @@ function App() {
           const timer = setTimeout(() => {
             handleLogout();
             alert("Your session has expired. Please log in again.");
-            window.location.href = "/login";
+            <Navigate to="/login" replace />
           }, timeLeft);
-
           return () => clearTimeout(timer);
         }
       }

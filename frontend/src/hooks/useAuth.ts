@@ -9,7 +9,8 @@ import {
   verifyOTP,
   forgotPassword,
   resetPassword,
-  hydrateAuthState
+  hydrateAuthState,
+  subscribeUsers,
 } from "../features/authSlice";
 import { RootState, AppDispatch } from "../app/store";
 
@@ -79,12 +80,22 @@ export const useAuth = () => {
     return dispatch(forgotPassword(email)).unwrap();
   };
 
-  const handleResetPassword = async (token: string, newPassword: string) => {
-    return dispatch(resetPassword({ token, newPassword })).unwrap();
+  const handleResetPassword = async (token: string, password: string) => {
+    return dispatch(resetPassword({ token, password })).unwrap();
   };
 
   const handleHydrateAuth = async () => {
     return dispatch(hydrateAuthState());
+  };
+
+  const handleSubscriber = async (
+    data: {
+    email: string,
+    }
+  ) => {
+    return dispatch(
+      subscribeUsers(data)
+    ).unwrap();
   };
 
   return {
@@ -102,6 +113,7 @@ export const useAuth = () => {
     handleVerifyOTP,
     handleForgotPassword,
     handleResetPassword,
-    handleHydrateAuth
+    handleHydrateAuth,
+    handleSubscriber
   };
 };

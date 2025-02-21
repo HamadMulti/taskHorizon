@@ -6,7 +6,7 @@ const VerifyOTP = () => {
   const [otp, setOtp] = useState("");
   const [timer, setTimer] = useState(60);
   const [isTimerActive, setIsTimerActive] = useState(true);
-  const { handleSendOTP, handleVerifyOTP } = useAuth()
+  const { handleSendOTP, handleVerifyOTP, handleLogout } = useAuth()
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -47,6 +47,8 @@ const VerifyOTP = () => {
       );
   };
 
+  const logout = (() => handleLogout())
+
   return (
     <div className="flex justify-center items-center h-screen bg-[#0C172C]">
       <div className="bg-white p-6 rounded-lg shadow-md w-96">
@@ -59,9 +61,14 @@ const VerifyOTP = () => {
             onChange={(e) => setOtp(e.target.value)}
             className="w-full p-2 mb-3 rounded border border-gray-300 focus:border-yellow-400"
           />
+          <div className="min-w-full flex justify-between items-center gap-4 py-2">
+          <button type="button" onClick={logout} className="text-gray-800 w-full p-2 rounded bg-red-500 hover:bg-red-700 focus:outline-none pl-2 pr-8 py-3 outline-none">
+            Logout
+          </button>
           <button type="submit" className="text-gray-800 w-full p-2 rounded bg-yellow-400 hover:bg-yellow-500 focus:outline-none pl-2 pr-8 py-3 outline-none">
             Verify
           </button>
+        </div>
         </form>
 
         <div className="text-center mt-4">

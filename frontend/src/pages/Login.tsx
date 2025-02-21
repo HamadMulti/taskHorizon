@@ -4,7 +4,7 @@ import { useAuth } from "../hooks/useAuth";
 
 const Login = () => {
   const [credentials, setCredentials] = useState({ email: "", password: "" });
-  const { handleLogin, loading } = useAuth()
+  const { handleLogin, loading } = useAuth();
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState({
@@ -27,7 +27,7 @@ const Login = () => {
       const timer = setTimeout(() => {
         setError({ error: "" });
       }, 3000);
-  
+
       return () => clearTimeout(timer);
     }
   }, [error]);
@@ -91,7 +91,7 @@ const Login = () => {
               <div className="relative flex items-center">
                 <input
                   name="password"
-                  type={showPassword ? 'text' : 'password'}
+                  type={showPassword ? "text" : "password"}
                   required
                   className="w-full bg-transparent text-sm text-white border-b border-gray-300 focus:border-yellow-400 pl-2 pr-8 py-3 outline-none"
                   placeholder="Enter password"
@@ -115,6 +115,31 @@ const Login = () => {
                 </svg>
               </div>
             </div>
+            <div className="flex flex-wrap items-center justify-between gap-4 mt-6">
+              <div className="flex items-center">
+                <input
+                  id="remember-me"
+                  name="remember-me"
+                  type="checkbox"
+                  className="h-4 w-4 shrink-0 text-yellow-600 focus:ring-yellow-500 border-gray-300 rounded"
+                />
+                <label
+                  htmlFor="remember-me"
+                  className="ml-3 block text-sm text-white"
+                >
+                  Remember me
+                </label>
+              </div>
+              <div>
+                <Link
+                  to="/forgot-password"
+                  className="text-yellow-600 font-semibold text-sm hover:underline"
+                >
+                  Forgot Password?
+                </Link>
+              </div>
+            </div>
+
             <div className="mt-8">
               <button
                 type="submit"
