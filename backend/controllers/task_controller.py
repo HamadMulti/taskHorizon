@@ -6,6 +6,15 @@ from models.user import User
 
 @jwt_required()
 def create_task():
+    """Creates a new task.
+
+    This endpoint creates a new task with the provided title, description, and project ID. The task is initially unassigned.
+
+    Returns:
+        Response: A JSON response indicating the success or failure of the task creation.
+        - 201: Task created successfully.
+        - 403: Unauthorized access.
+    """
     user_id = get_jwt_identity()
     user = User.query.get(user_id)
     
@@ -23,6 +32,15 @@ def create_task():
 
 @jwt_required()
 def get_tasks():
+    """Retrieves all tasks.
+
+    This endpoint retrieves all tasks from the database.
+
+    Returns:
+        Response: A JSON response containing a list of all tasks.
+        - 200: Tasks retrieved successfully.
+        - 403: Unauthorized access.
+    """
     user_id = get_jwt_identity()
     user = User.query.get(user_id)
     
@@ -41,6 +59,16 @@ def get_tasks():
     return jsonify({"error": "Unauthorized"}), 403
 @jwt_required()
 def assign_task(task_id):
+    """Assigns a task to a user.
+
+    This endpoint assigns a task to a user by updating the task's assignee. It also logs the assignment in the task history.
+
+    Returns:
+        Response: A JSON response indicating the success or failure of the task assignment.
+        - 200: Task assigned successfully.
+        - 403: Unauthorized access.
+        - 404: Task not found.
+    """
     user_id = get_jwt_identity()
     user = User.query.get(user_id)
     task = Task.query.get(task_id)
@@ -66,6 +94,16 @@ def assign_task(task_id):
 
 @jwt_required()
 def update_task(task_id):
+    """Updates a task.
+
+    This endpoint updates an existing task with the provided data. It also logs the update in the task history.
+
+    Returns:
+        Response: A JSON response indicating the success or failure of the task update.
+        - 200: Task updated successfully.
+        - 403: Unauthorized access.
+        - 404: Task not found.
+    """
     user_id = get_jwt_identity()
     user = User.query.get(user_id)
     task = Task.query.get(task_id)
@@ -89,6 +127,16 @@ def update_task(task_id):
 
 @jwt_required()
 def archive_task(task_id):
+    """Archives a task.
+
+    This endpoint archives a task by moving it to the archived tasks table. It retrieves the task by ID, and if found, creates a copy in the ArchivedTask table and deletes the original task.
+
+    Returns:
+        Response: A JSON response indicating the success or failure of the task archival.
+        - 200: Task archived successfully.
+        - 403: Unauthorized access.
+        - 404: Task not found.
+    """
     user_id = get_jwt_identity()
     user = User.query.get(user_id)
     task = Task.query.get(task_id)
@@ -110,7 +158,14 @@ def archive_task(task_id):
 
 @jwt_required()
 def get_user_tasks():
-    """User can view their assigned & unassigned tasks"""
+    """Retrieves tasks assigned to the current user.
+
+    This endpoint retrieves all tasks assigned to the currently logged-in user or unassigned tasks.
+
+    Returns:
+        Response: A JSON response containing a list of tasks.
+        - 200: Tasks retrieved successfully.
+    """
     user_id = get_jwt_identity()
     tasks = Task.query.filter(
         (Task.assigned_to == user_id) | (Task.assigned_to is None)
@@ -119,7 +174,15 @@ def get_user_tasks():
 
 @jwt_required()
 def get_team_tasks():
-    """Team Leader can view all tasks assigned to users"""
+    """Retrieves all tasks.
+
+    This endpoint retrieves all tasks. This is intended for team leaders, but currently retrieves all tasks regardless of user role.
+
+    Returns:
+        Response: A JSON response containing a list of tasks.
+        - 200: Tasks retrieved successfully.
+        - 403: Unauthorized access.
+    """
     user_id = get_jwt_identity()
     user = User.query.get(user_id)
 

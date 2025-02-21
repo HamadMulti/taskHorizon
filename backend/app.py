@@ -13,6 +13,10 @@ migrate = Migrate()
 front_end_url = os.getenv("FRONTEND_URL")
 
 def create_app():
+    """Creates and configures the Flask application.
+
+    This function initializes the Flask app, configures extensions (database, JWT, mail, CORS, migration), registers blueprints, and returns the app instance.
+    """
     app = Flask(__name__)
     app.config["SQLALCHEMY_DATABASE_URI"] = CurrentConfig.SQLALCHEMY_DATABASE_URI
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = CurrentConfig.SQLALCHEMY_TRACK_MODIFICATIONS

@@ -5,7 +5,22 @@ from models.user import User
 
 @jwt_required()
 def user_analytics():
-    """User views their own analytics: total tasks, pending/completed ratio"""
+    """
+    Retrieve analytics for the current user based on their tasks.
+
+    This function fetches the total number of tasks assigned to the user,
+    the number of pending tasks, and the number of completed tasks. It also
+    calculates the user's productivity percentage based on the ratio of
+    completed tasks to total tasks.
+
+    Returns:
+        Response: A JSON response containing the user's analytics, including:
+            - total_tasks (int): The total number of tasks assigned to the user.
+            - pending_tasks (int): The number of tasks that are pending.
+            - completed_tasks (int): The number of tasks that are completed.
+            - productivity_percentage (float): The user's productivity percentage,
+                rounded to two decimal places.
+    """
     user_id = get_jwt_identity()
     total_tasks = Task.query.filter_by(assigned_to=user_id).count()
     pending_tasks = Task.query.filter_by(assigned_to=user_id, status="Pending").count()
@@ -22,7 +37,16 @@ def user_analytics():
 
 @jwt_required()
 def team_leader_analytics():
-    """Team leader views analytics of all users in the project"""
+    """
+    Retrieve analytics for team leaders.
+    This function retrieves the analytics data for team leaders, including the total tasks,
+    completed tasks, due tasks, and productivity percentage for each user in the system.
+    It ensures that only users with the role of "team_leader" can access this data.
+    Returns:
+        Response: A JSON response containing the analytics data for each user if the
+                    requesting user is a team leader. Otherwise, returns an error message
+                    with a 403 status code.
+    """
     user_id = get_jwt_identity()
     user = User.query.get(user_id)
 
