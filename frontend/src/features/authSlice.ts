@@ -64,6 +64,7 @@ export const loginUser = createAsyncThunk(
     try {
       const response = await API.post("/auth/login", credentials);
       const token = response.data.access_token;
+      const {user} = response.data;
 
       Cookies.set("access_token", token, {
         expires: expires(token),
@@ -71,7 +72,7 @@ export const loginUser = createAsyncThunk(
         sameSite: "Strict",
         secure: process.env.NODE_ENV === "production"
       });
-      return { token };
+      return { token, user };
     } catch (error: any) {
       return thunkAPI.rejectWithValue(error.response?.data || "Login failed");
     }
@@ -86,12 +87,7 @@ export const fetchUserDetails = createAsyncThunk(
       const state: any = thunkAPI.getState();
       const { token, user } = state.auth;
 
-      if (!token) {
-        return null
-      }
-
       if (user && token) {
-        console.log("User already exists. Skipping fetch.");
         return thunkAPI.rejectWithValue("User already exists");
       }
 
@@ -99,7 +95,6 @@ export const fetchUserDetails = createAsyncThunk(
       const response = await API.get("/user/profile");
       return response.data.user;
     } catch (error: any) {
-      console.error("Fetch User Details Error:", error);
       return thunkAPI.rejectWithValue(
         error.response?.data || "Failed to fetch user details"
       );
@@ -108,11 +103,11 @@ export const fetchUserDetails = createAsyncThunk(
 );
 
 // **🔹 Logout User**
-export const logoutUser = createAsyncThunk("auth/logout", async () => {
+export const logoutUser = createAsyncThunk("auth/logout", async (_, thunkAPI) => {
   try {
     await API.get("/auth/logout");
   } catch (error: any) {
-    console.error("Logout failed", error);
+    return thunkAPI.rejectWithValue(error.response.data);
   }
 
   Cookies.remove("access_token");
@@ -224,8 +219,7 @@ export const hydrateAuthState = createAsyncThunk(
       }
       return { token };
     } catch (error: any) {
-      console.warn("Hydrate Auth Error:", error);
-      return { token: null };
+      return { token: null, error: error };
     }
   }
 );
@@ -258,6 +252,7 @@ const authSlice = createSlice({
       .addCase(loginUser.fulfilled, (state, action) => {
         state.loading = false;
         state.token = action.payload.token;
+        state.user = action.payload.user
         state.error = null;
         Cookies.set("access_token", action.payload.token, {
           expires: expires(action.payload.token),
@@ -281,7 +276,7 @@ const authSlice = createSlice({
         }
       })
       .addCase(fetchUserDetails.fulfilled, (state, action) => {
-        state.user = action.payload;
+        state.user = action.payload.user;
         state.loading = false;
       })
       .addCase(fetchUserDetails.rejected, (state, action) => {

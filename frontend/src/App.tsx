@@ -9,13 +9,11 @@ import VerifyOTP from "./pages/VerifyOTP";
 import ProtectedRoute from "./utils/ProtectedRoute";
 import NotFound from "./utils/NotFound";
 import {
-  fetchUserDetails,
   hydrateAuthState,
-  logoutUser
 } from "./features/authSlice";
 import { useEffect } from "react";
-import { AppDispatch, RootState } from "./app/store";
-import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch } from "./app/store";
+import { useDispatch } from "react-redux";
 // import MyTask from "./pages/dashboard/body/tasks/MyTasks";
 // import Task from "./pages/dashboard/body/tasks/Task";
 import Project from "./pages/dashboard/body/projects/Project";
@@ -23,20 +21,15 @@ import Settings from "./pages/dashboard/body/settings/settings";
 import { decodeToken } from "./utils/decodeToken";
 import Verified from "./utils/VerifiedUser";
 import MyProject from "./pages/dashboard/body/projects/MyProject";
+import { useAuth } from "./hooks/useAuth";
 
 function App() {
   const dispatch = useDispatch<AppDispatch>();
-  const { user, token } = useSelector((state: RootState) => state.auth);
+  const { token, handleLogout } = useAuth();
 
   useEffect(() => {
     dispatch(hydrateAuthState());
   }, [dispatch]);
-
-  useEffect(() => {
-    if (!user && user === null) {
-      dispatch(fetchUserDetails());
-    }
-  }, [dispatch, user]);
 
   useEffect(() => {
     if (token) {
@@ -47,7 +40,7 @@ function App() {
 
         if (timeLeft > 0) {
           const timer = setTimeout(() => {
-            dispatch(logoutUser());
+            handleLogout();
             alert("Your session has expired. Please log in again.");
             window.location.href = "/login";
           }, timeLeft);
@@ -56,7 +49,7 @@ function App() {
         }
       }
     }
-  }, [dispatch, token]);
+  }, [handleLogout, token]);
 
   return (
     <Router>

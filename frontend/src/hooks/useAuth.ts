@@ -37,7 +37,7 @@ export const useAuth = () => {
   };
 
   const handleFetchUser = async () => {
-    return dispatch(fetchUserDetails()).unwrap();
+    return dispatch(fetchUserDetails());
   };
 
   const handleLogout = async () => {
@@ -84,7 +84,7 @@ export const useAuth = () => {
   };
 
   const handleHydrateAuth = async () => {
-    return dispatch(hydrateAuthState()).unwrap();
+    return dispatch(hydrateAuthState());
   };
 
   return {

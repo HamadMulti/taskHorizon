@@ -5,8 +5,6 @@ import { useAuth } from "../hooks/useAuth";
 const Verified = () => {
   const { loading, otpVerified } = useAuth();
 
-  console.log(otpVerified)
-
   if (loading) {
     return (
       <>
