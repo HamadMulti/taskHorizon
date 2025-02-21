@@ -49,3 +49,18 @@ def new_registration_email(email):
     msg = Message("Welcome to our platform", sender=my_email, recipients=[email])
     msg.body = "Welcome to our platform. We are glad to have you here."
     mail.send(msg)
+    
+    
+def new_subscriber_mail(email):
+    """
+    Sends a Subscription email to a user.
+
+    Args:
+        email (str): The recipient's email address.
+
+    Returns:
+        None
+    """
+    msg = Message("Thank You for Subscribing!", sender=my_email, recipients=[email])
+    msg.body = "Hello,\n\nThank you for subscribing to our newsletter! Stay tuned for updates.\n\nBest Regards,\nThe Team"
+    mail.send(msg)

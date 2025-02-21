@@ -1,7 +1,9 @@
+import re
 from flask import request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
+from models.subscribe import Subscriber
+from utils.mailer import new_subscriber_mail
 from models.user import db, User
-from utils.security import hash_password
 
 
 @jwt_required()
@@ -45,16 +47,16 @@ def get_profile():
     user = User.query.get(user_id)
     if user:
         profile = {
-                "username": user.username,
-                "email": user.email,
-                "role": user.role,
-                "phone": user.phone,
-                "location": user.location,
-                "gender": user.gender,
-                "primary_email": user.primary_email,
-                "verified": user.verified,
-            }
-        
+            "username": user.username,
+            "email": user.email,
+            "role": user.role,
+            "phone": user.phone,
+            "location": user.location,
+            "gender": user.gender,
+            "primary_email": user.primary_email,
+            "verified": user.verified,
+        }
+
         return jsonify({"user": profile}), 200
 
     return jsonify({"error": "Unauthorized"}), 403
@@ -87,8 +89,38 @@ def get_profiles():
                 "gender": u.gender,
                 "primary_email": u.primary_email,
                 "verified": u.verified,
-        } for u in users]}
-        
+            } for u in users]}
+
         return jsonify(profiles), 200
 
     return jsonify({"error": "Unauthorized"}), 403
+
+def is_valid_email(email):
+    """Check if email is valid using regex"""
+    email_regex = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
+    return re.match(email_regex, email)
+
+def subscribe_user():
+    data = request.json
+    email = data.get("email")
+
+    if not email or not is_valid_email(email):
+        return jsonify({'error': 'Invalid email format!'}), 400
+
+    existing_user = Subscriber.query.filter(Subscriber.email.ilike(email)).first()
+
+    if existing_user:
+        return jsonify({'error': 'Email already subscribed!'}), 400
+
+    try:
+        new_user = Subscriber(email=email)
+        db.session.add(new_user)
+        db.session.commit()
+        new_subscriber_mail(email)
+        return jsonify({"message": "Congratulations! You have successfully subscribed."}), 200
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": "Subscription failed. Please try again."}), 500
+
+    

@@ -23,7 +23,7 @@ class DevelopmentConfig(Config):
     This class inherits from the base Config class and sets specific settings for development, including debug mode and the database URI.
     """
     DEBUG = True
-    SQLALCHEMY_DATABASE_URI = os.getenv("DEV_DATABASE_URL", "sqlite:///./development.sqlite3")
+    SQLALCHEMY_DATABASE_URI = os.getenv("DEV_DATABASE_URL")
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 class ProductionConfig(Config):

@@ -91,7 +91,6 @@ def get_user_projects():
         "pages": projects.pages,
         "current_page": projects.page
     }
-    print(data)
     return jsonify(data), 200
 
 

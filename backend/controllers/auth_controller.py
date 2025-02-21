@@ -236,8 +236,10 @@ def reset_password():
     data = request.json
     token = data.get("token")
     new_password = data.get("password")
+    print(token)
+    print(new_password)
 
-    if not token or not new_password:
+    if token is None or new_password is None:
         return jsonify({"error": "Token and password are required"}), 400
 
     try:
