@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/dashboard/Layout";
@@ -18,38 +18,21 @@ import Project from "./pages/dashboard/body/projects/Project";
 import Settings from "./pages/dashboard/body/settings/settings";
 import Verified from "./utils/VerifiedUser";
 import MyProject from "./pages/dashboard/body/projects/MyProject";
-import { useAuth } from "./hooks/useAuth";
-import { decodeToken } from "./utils/decodeToken";
+import SessionManager from "./components/SessionManager";
 
 function App() {
   const dispatch = useDispatch<AppDispatch>();
-  const { token, handleLogout } = useAuth();
 
   useEffect(() => {
-    dispatch(hydrateAuthState());
-  }, [dispatch]);
-
-  useEffect(() => {
-    if (token) {
-      const decoded = decodeToken(token);
-      if (decoded) {
-        const expiryTime = decoded.exp * 1000;
-        const timeLeft = expiryTime - Date.now();
-
-        if (timeLeft > 0) {
-          const timer = setTimeout(() => {
-            handleLogout();
-            alert("Your session has expired. Please log in again.");
-            <Navigate to="/login" replace />
-          }, timeLeft);
-          return () => clearTimeout(timer);
-        }
-      }
+    const persistedAuth = localStorage.getItem("persist:auth");
+    if (!persistedAuth) {
+      dispatch(hydrateAuthState());
     }
-  }, [handleLogout, token]);
+  }, [dispatch]);
 
   return (
     <Router>
+      <SessionManager />
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<Login />} />

@@ -15,6 +15,7 @@ const Project = () => {
     useProjects();
   const [page, setCurrentPage] = useState(currentPage);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedProject, setSelectedProject] = useState<Project>();
 
   return (
     <>
@@ -72,7 +73,10 @@ const Project = () => {
                         <button
                           className="mr-4"
                           title="View"
-                          onClick={() => setIsModalOpen(true)}
+                          onClick={() => {
+                            setIsModalOpen(true)
+                            setSelectedProject(project)
+                          }}
                         >
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -97,9 +101,7 @@ const Project = () => {
                         </button>
                         {isModalOpen && (
                           <PreviewProjectModal
-                            id={project.id}
-                            name={project.name}
-                            description={project.description}
+                            project={selectedProject}
                             onClose={() => setIsModalOpen(false)}
                           />
                         )}

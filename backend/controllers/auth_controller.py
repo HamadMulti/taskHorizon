@@ -61,7 +61,7 @@ def _token_handler(user_id, message, **kwargs):
         secure=get_cookie_secure_flag(),
         samesite='Strict',
         max_age=3600,
-        expires=datetime.utcnow() + timedelta(hours=1) 
+        expires=datetime.utcnow() + timedelta(hours=4) 
     )
     return response
 
@@ -100,7 +100,17 @@ def register_user():
     db.session.commit()
     if user:
         new_registration_email(user.email)
-        return _token_handler(user.id, "User registered successfully")
+        profile = {
+                "username": user.username,
+                "email": user.email,
+                "role": user.role,
+                "phone": user.phone,
+                "location": user.location,
+                "gender": user.gender,
+                "primary_email": user.primary_email,
+                "verified": user.verified,
+            }
+        return _token_handler(user.id, "User registered successfully", user=profile)
     return jsonify({"error": "User registration failed"}), 500
 
 

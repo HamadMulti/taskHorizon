@@ -41,8 +41,17 @@ export const registerUser = createAsyncThunk(
   ) => {
     try {
       const response = await API.post("/auth/register", userData);
-      const { error, message } = response.data;
-      return { error, message };
+      const { error, message, user } = response.data;
+      const token = response.data.access_token;
+      Cookies.set("access_token", token, {
+        expires: expires(token),
+        path: "/",
+        sameSite: "Strict",
+        secure: process.env.NODE_ENV === "production"
+      });
+      localStorage.setItem("user", user.user);
+      localStorage.setItem("token", token);
+      return { error, message, user, token };
     } catch (error: any) {
       return thunkAPI.rejectWithValue(
         error.response?.data || "Registration failed"
@@ -57,15 +66,15 @@ export const loginUser = createAsyncThunk(
   async (credentials: { email: string; password: string }, thunkAPI) => {
     try {
       const response = await API.post("/auth/login", credentials);
-      const {user, token } = response.data;
-      console.log(user, token)
+      const token = response.data.access_token;
+      const {user} = response.data;
       Cookies.set("access_token", token, {
         expires: expires(token),
         path: "/",
         sameSite: "Strict",
         secure: process.env.NODE_ENV === "production"
       });
-      localStorage.setItem("user", user);
+      localStorage.setItem("user", user.user);
       localStorage.setItem("token", token);
       return { token, user };
     } catch (error: any) {
@@ -87,9 +96,6 @@ export const fetchUserDetails = createAsyncThunk(
         user = localStorage.getItem("user")
         return thunkAPI.rejectWithValue("User not found");
       }
-
-      console.log(`I am token ->: ${token}\n I am user ${user}`);
-
       if (!!user && !!token) {
         return thunkAPI.rejectWithValue("User already exists");
       }
@@ -267,6 +273,8 @@ const authSlice = createSlice({
         state.loading = false;
         state.message = action.payload.message;
         state.error = action.payload.error;
+        state.token = action.payload.token;
+        state.user = action.payload.user;
       })
       .addCase(registerUser.rejected, (state, action) => {
         state.loading = false;
@@ -279,11 +287,6 @@ const authSlice = createSlice({
         state.loading = false;
         state.token = action.payload.token;
         state.user = action.payload.user
-        state.error = null;
-        Cookies.set("access_token", action.payload.token, {
-          expires: expires(action.payload.token),
-          path: "/"
-        });
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;

@@ -25,6 +25,7 @@ const MyProject = () => {
   const [isCreating, setIsCreating] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const [selectedProject, setSelectedProject] = useState<MyProject>();
 
   const handleClose = () => {
     setIsCreating(false);
@@ -140,16 +141,20 @@ const MyProject = () => {
                         </button>
                         {isModalOpen && (
                           <PreviewProjectModal
-                            id={project.id}
-                            name={project.name}
-                            description={project.description}
-                            onClose={() => setIsModalOpen(false)}
+                            project={selectedProject}
+                            onClose={() => {
+                              setIsModalOpen(false)
+                              setSelectedProject(project)
+                            }}
                           />
                         )}
                         <button
                           className="mr-4"
                           title="Edit"
-                          onClick={() => setIsEditing(true)}
+                          onClick={() => {
+                            setIsEditing(true)
+                            setSelectedProject(project)
+                          }}
                         >
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -168,9 +173,7 @@ const MyProject = () => {
                         </button>
                         {isEditing && (
                           <EditProjectModal
-                            id={project.id}
-                            name={project.name}
-                            description={project.description}
+                            project={selectedProject}
                             onClose={handleClose}
                           />
                         )}

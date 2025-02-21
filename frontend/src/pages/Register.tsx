@@ -31,7 +31,7 @@ const Register = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     handleRegister(userData)
-      .then(() => navigate("/login"))
+      .then(() => navigate("/verify-otp"))
       .catch((error) => {
         setError(error);
       });
