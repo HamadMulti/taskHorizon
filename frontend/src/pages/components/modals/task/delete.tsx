@@ -1,13 +1,19 @@
 import { useState } from "react";
+import { useTasks } from "../../../../hooks/useTasks";
 
 interface DeleteModalProps {
   id: number;
   title: string;
-  onDelete: (id: number) => void;
 }
 
-const DeleteModal: React.FC<DeleteModalProps> = ({ id, title, onDelete }) => {
+const DeleteTaskModal: React.FC<DeleteModalProps> = ({ id, title }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const { archiveTaskById } = useTasks();
+
+  const deleteProject = () => {
+    archiveTaskById(id)
+    setIsOpen(false);
+  }
 
   return (
     <>
@@ -41,7 +47,7 @@ const DeleteModal: React.FC<DeleteModalProps> = ({ id, title, onDelete }) => {
             </button>
 
             {/* Modal Content */}
-            <div className="my-4 text-center">
+            <div className="my-4 text-center relative">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="w-14 fill-red-500 inline"
@@ -52,15 +58,15 @@ const DeleteModal: React.FC<DeleteModalProps> = ({ id, title, onDelete }) => {
                 />
                 <path d="M11 17v-7a1 1 0 0 0-2 0v7a1 1 0 0 0 2 0Zm4 0v-7a1 1 0 0 0-2 0v7a1 1 0 0 0 2 0Z" />
               </svg>
-              <h4 className="text-gray-800 text-base font-semibold mt-4">
-                Are you sure you want to delete {title}?
+              <h4 className="text-gray-800 text-base font-semibold mt-4 text-wrap">
+                {`Are you sure you want to delete ${title}?`}
               </h4>
 
               {/* Buttons */}
               <div className="text-center space-x-4 mt-8">
                 <button
                   type="button"
-                  className="px-4 py-2 rounded-lg text-gray-800 text-sm bg-gray-200 hover:bg-gray-300"
+                  className="px-4 py-2 rounded-lg text-white text-sm bg-[#0c172b] hover:bg-[#0c172bea]"
                   onClick={() => setIsOpen(false)}
                 >
                   Cancel
@@ -68,10 +74,7 @@ const DeleteModal: React.FC<DeleteModalProps> = ({ id, title, onDelete }) => {
                 <button
                   type="button"
                   className="px-4 py-2 rounded-lg text-white text-sm bg-red-600 hover:bg-red-700"
-                  onClick={() => {
-                    onDelete(id);
-                    setIsOpen(false);
-                  }}
+                  onClick={deleteProject}
                 >
                   Delete
                 </button>
@@ -84,4 +87,4 @@ const DeleteModal: React.FC<DeleteModalProps> = ({ id, title, onDelete }) => {
   );
 };
 
-export default DeleteModal;
+export default DeleteTaskModal;

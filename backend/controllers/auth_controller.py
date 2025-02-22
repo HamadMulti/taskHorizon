@@ -60,7 +60,7 @@ def _token_handler(user_id, message, **kwargs):
         httponly=True,
         secure=get_cookie_secure_flag(),
         samesite='Strict',
-        max_age=3600,
+        max_age=14400,
         expires=datetime.utcnow() + timedelta(hours=4) 
     )
     return response

@@ -1,10 +1,5 @@
-interface Task {
-  id: number;
-  title: string;
-  status: string;
-  assigned_to: string;
-  description: string;
-}
+import { Task } from "../../../../features/taskSlice";
+
 
 interface PreviewTaskModalProps {
   task?: Task;
@@ -68,17 +63,10 @@ const PreviewTaskModal: React.FC<PreviewTaskModalProps> = ({
         <div className="flex max-sm:flex-col items-center gap-4 mt-8">
           <button
             type="button"
-            className="text-sm px-4 py-2.5 w-full tracking-wide bg-transparent hover:bg-gray-50 text-gray-800 border border-gray-300 rounded-lg max-sm:order-1"
+            className="text-sm px-4 py-2.5 w-full tracking-wide bg-[#0c172b] hover:bg-[#0c172bea] text-white border border-gray-300 rounded-lg max-sm:order-1"
             onClick={onClose}
           >
             Close
-          </button>
-          <button
-            type="button"
-            className="text-sm px-4 py-2.5 w-full tracking-wide bg-yellow-600 hover:bg-yellow-700 text-white rounded-lg"
-            onClick={() => alert("Task details previewed")}
-          >
-            More Details
           </button>
         </div>
       </div>

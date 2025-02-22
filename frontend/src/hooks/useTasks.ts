@@ -7,32 +7,68 @@ import {
   createTask,
   updateTask,
   assignTask,
-  archiveTask
+  archiveTask,
 } from "../features/taskSlice";
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
+import { selectFilteredMyTasks, selectFilteredTasks, selectFilteredTeamTasks } from "../utils/taskSelector";
 
 export const useTasks = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { tasks, loading, error } = useSelector(
-    (state: RootState) => state.tasks
-  );
+  const {
+    totalTasks,
+    totalMyTasks,
+    totalTeamTasks,
+    totalPages,
+    totalMyPages,
+    totalTeamPages,
+    loading,
+    error,
+  } = useSelector((state: RootState) => state.tasks);
+  const tasks = useSelector(selectFilteredTeamTasks);
+  const my_tasks = useSelector(selectFilteredMyTasks);
+  const team_tasks = useSelector(selectFilteredTasks);
+
+  const [taskPage, setTaskPage] = useState(1);
+  const [myTaskPage, setMyTaskPage] = useState(1);
+  const [teamTaskPage, setTeamTaskPage] = useState(1);
+
+  const isMounted = useRef(false);
 
   useEffect(() => {
-      dispatch(fetchTasksDetails());
-  }, [dispatch]);
+    if (!isMounted.current) {
+      isMounted.current = true;
+      return;
+    }
+    dispatch(fetchTasksDetails({ page: taskPage }));
+  }, [dispatch, taskPage]);
+  
+  useEffect(() => {
+    if (!isMounted.current) {
+      return;
+    }
+    dispatch(fetchMyTasksDetails({ page: myTaskPage }));
+  }, [dispatch, myTaskPage]);
+  
+  useEffect(() => {
+    if (!isMounted.current) {
+      return;
+    }
+    dispatch(fetchTeamTasksDetails({ page: teamTaskPage }));
+  }, [dispatch, teamTaskPage]);
 
-  const getMyTasks = () => {
-    dispatch(fetchMyTasksDetails());
+  const getMyTasks = (page = 1) => {
+    setMyTaskPage(page);
   };
 
-  const getTeamTasks = () => {
-    dispatch(fetchTeamTasksDetails());
+  const getTeamTasks = (page = 1) => {
+    setTeamTaskPage(page);
   };
 
   const addTask = (taskData: {
     title: string;
+    status: string;
     description: string;
-    projectId: number;
+    project_id: number;
   }) => {
     dispatch(createTask(taskData));
   };
@@ -40,8 +76,9 @@ export const useTasks = () => {
   const editTask = (taskData: {
     id: number;
     title: string;
+    status: string;
     description: string;
-    projectId: number;
+    project_id: number;
   }) => {
     dispatch(updateTask(taskData));
   };
@@ -49,8 +86,9 @@ export const useTasks = () => {
   const assignTaskToUser = (taskData: {
     id: number;
     title: string;
+    status: string;
     description: string;
-    projectId: number;
+    project_id: number;
   }) => {
     dispatch(assignTask(taskData));
   };
@@ -61,13 +99,25 @@ export const useTasks = () => {
 
   return {
     tasks,
+    my_tasks,
+    team_tasks,
+    totalTasks,
+    totalMyTasks,
+    totalTeamTasks,
+    totalPages,
+    totalMyPages,
+    totalTeamPages,
+    taskPage,
+    myTaskPage,
+    teamTaskPage,
     loading,
     error,
+    setTaskPage,
     getMyTasks,
     getTeamTasks,
     addTask,
     editTask,
     assignTaskToUser,
-    archiveTaskById
+    archiveTaskById,
   };
 };

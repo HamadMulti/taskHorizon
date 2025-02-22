@@ -3,6 +3,7 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from models.task import db, Task, TaskHistory
 from models.archive import ArchivedTask
 from models.user import User
+from sqlalchemy import or_
 
 
 @jwt_required()
@@ -43,13 +44,14 @@ def get_tasks():
         - 200: Tasks retrieved successfully.
         - 403: Unauthorized access.
     """
+    page = request.args.get("page", 1, type=int)
+    per_page = request.args.get("per_page", 10, type=int)
     user_id = get_jwt_identity()
     user = User.query.get(user_id)
 
-    page = request.args.get("page", 1, type=int)
-    per_page = request.args.get("per_page", 10, type=int)
-
     tasks = Task.query.paginate(page=page, per_page=per_page, error_out=False)
+    
+    print(tasks)
 
     if not tasks:
         return jsonify({"error": "Tasks not found"}), 404
@@ -133,7 +135,7 @@ def update_task(task_id):
     if user:
         data = request.json
         history = TaskHistory(task_id=task.id, updated_by=user.id, old_status=task.status,
-                                new_status=data.get("status", task.status))
+                              new_status=data.get("status", task.status))
         db.session.add(history)
 
         task.title = data.get("title", task.title)
@@ -182,26 +184,25 @@ def archive_task(task_id):
 def get_user_tasks():
     """Retrieves tasks assigned to the current user.
 
-    This endpoint retrieves all tasks assigned to the currently logged-in user or unassigned tasks.
-
     Returns:
         Response: A JSON response containing a list of tasks.
         - 200: Tasks retrieved successfully.
     """
-    user_id = get_jwt_identity()
     page = request.args.get("page", 1, type=int)
     per_page = request.args.get("per_page", 10, type=int)
+    user_id = get_jwt_identity()
 
-    tasks = Task.query.filter(
-        (Task.assigned_to == user_id).paginate(page=page, per_page=per_page, error_out=False) | (
-            Task.assigned_to is None).paginate(page=page, per_page=per_page, error_out=False)
-    ).all()
+    tasks_query = Task.query.filter(Task.assigned_to == user_id)
+
+    paginated_tasks = tasks_query.paginate(page=page, per_page=per_page, error_out=False)
+
     return jsonify({
-        "tasks": [{"id": t.id, "title": t.title, "status": t.status, "assigned_to": t.assigned_to} for t in tasks],
-        "total": tasks.total,
-        "pages": tasks.pages,
-        "current_page": tasks.page
+        "my_tasks": [{"id": t.id, "title": t.title, "status": t.status, "assigned_to": t.assigned_to} for t in paginated_tasks.items],
+        "total": paginated_tasks.total,
+        "pages": paginated_tasks.pages,
+        "current_page": paginated_tasks.page
     }), 200
+
 
 
 @jwt_required()
@@ -215,6 +216,8 @@ def get_team_tasks():
         - 200: Tasks retrieved successfully.
         - 403: Unauthorized access.
     """
+    page = request.args.get("page", 1, type=int)
+    per_page = request.args.get("per_page", 10, type=int)
     user_id = get_jwt_identity()
     user = User.query.get(user_id)
 
@@ -222,6 +225,10 @@ def get_team_tasks():
     #     return jsonify({"error": "Unauthorized"}), 403
 
     if user:
-        tasks = Task.query.all()
-        return jsonify({"tasks": [{"id": t.id, "title": t.title, "status": t.status, "assigned_to": t.assigned_to} for t in tasks]}), 200
+        tasks = Task.query.paginate(page=page, per_page=per_page, error_out=False)
+        return jsonify({"team_tasks": [{"id": t.id, "title": t.title, "status": t.status, "assigned_to": t.assigned_to} for t in tasks],
+                        "total": tasks.total,
+                        "pages": tasks.pages,
+                        "current_page": tasks.page
+                        }), 200
     return jsonify({"error": "Unauthorized"}), 403

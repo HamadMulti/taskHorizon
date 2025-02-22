@@ -9,14 +9,18 @@ import {
 } from "../features/projectSlice";
 import { RootState, AppDispatch } from "../app/store";
 import { useLocation } from "react-router-dom";
+import { selectMyProjects, selectProjects } from "../utils/projectSelectors";
 
 export const useProjects = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { pathname } = useLocation();
+  const [isOpen, setIsOpen] = useState(false);
 
-  const { projects = [], my_projects = [], loading, error } = useSelector(
+  const { loading, error } = useSelector(
     (state: RootState) => state.projects
   );
+  const my_projects = useSelector(selectMyProjects);
+  const projects = useSelector(selectProjects);
 
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -95,6 +99,12 @@ export const useProjects = () => {
     my_currentPage,
     my_totalPages,
     my_totalProjects,
+    fetchMyProjectSelector: async () => {
+      if (!isOpen && my_projects.length === 0) {
+        await dispatch(fetchMyProjects({ page: my_currentPage })).unwrap()
+      }
+      setIsOpen(true);
+    },
     handleCreateProject: async (name: string, description: string) => {
       try {
         await dispatch(createProject({ name, description })).unwrap();

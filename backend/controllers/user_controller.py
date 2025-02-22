@@ -76,29 +76,43 @@ def get_profiles():
     """
     user_id = get_jwt_identity()
     user = User.query.get(user_id)
-    if user:
-        users = User.query.all()
-        profiles = {
-            "users": [{
-                "id": u.id,
-                "username": u.username,
-                "email": u.email,
-                "role": u.role,
-                "phone": u.phone,
-                "location": u.location,
-                "gender": u.gender,
-                "primary_email": u.primary_email,
-                "verified": u.verified,
-            } for u in users]}
 
-        return jsonify(profiles), 200
+    page = request.args.get("page", 1, type=int)
+    per_page = request.args.get("per_page", 10, type=int)
 
-    return jsonify({"error": "Unauthorized"}), 403
+    if not user:
+        return jsonify({"error": "User not found or unauthorized"}), 403
+
+    users = User.query.paginate(page=page, per_page=per_page, error_out=False)
+
+    if not users:
+        return jsonify({"message": "No users found", "users": []}), 200
+
+    profiles = {
+        "users": [{
+            "id": u.id,
+            "username": u.username,
+            "email": u.email,
+            "role": u.role,
+            "phone": u.phone,
+            "location": u.location,
+            "gender": u.gender,
+            "primary_email": u.primary_email,
+            "verified": u.verified,
+        } for u in users],
+        "total": users.total,
+        "pages": users.pages,
+        "current_page": users.page
+    }
+
+    return jsonify(profiles), 200
+
 
 def is_valid_email(email):
     """Check if email is valid using regex"""
     email_regex = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
     return re.match(email_regex, email)
+
 
 def subscribe_user():
     data = request.json
@@ -122,5 +136,3 @@ def subscribe_user():
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": "Subscription failed. Please try again."}), 500
-
-    

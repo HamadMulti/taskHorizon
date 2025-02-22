@@ -2,6 +2,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import authReducer from "../features/authSlice";
 import taskReducer from "../features/taskSlice";
 import projectReducer from "../features/projectSlice";
+import userReducer  from "../features/userSlice";
 import { persistStore } from "redux-persist";
 
 export const store = configureStore({
@@ -9,6 +10,7 @@ export const store = configureStore({
     auth: authReducer,
     tasks: taskReducer,
     projects: projectReducer,
+    users: userReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

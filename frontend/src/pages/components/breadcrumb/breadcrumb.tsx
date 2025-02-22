@@ -4,13 +4,20 @@ const Breadcrumbs = () => {
   const location = useLocation();
   const pathnames = location.pathname.split("/").filter((x) => x);
 
+  const formatBreadcrumb = (text: string) => {
+    return text
+      .split("-")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
+  };
+
   return (
     <nav
       className="flex px-4 py-2 bg-transparent rounded-lg"
       aria-label="Breadcrumb"
     >
       <ol className="inline-flex items-center space-x-2 text-gray-700">
-        {/* Disabled Home */}
+        {/* Home Link */}
         <li className="inline-flex items-center">
           <Link
             to="/dashboard/projects"
@@ -55,17 +62,19 @@ const Breadcrumbs = () => {
 
               {isLast ? (
                 <span className="text-sm font-medium text-gray-500">
-                  {value}
+                  {formatBreadcrumb(value)}
                 </span>
               ) : isFirstAfterHome ? (
-                <li className="inline-flex items-center">
-                  <span className="inline-flex items-center text-sm font-medium text-gray-500 cursor-not-allowed">
-                    {value.charAt(0).toUpperCase() + value.slice(1)}
-                  </span>
-                </li>
+                <span className="text-sm font-medium text-gray-700 hover:text-yellow-600">
+                  <li className="inline-flex items-center">
+                    <span className="inline-flex items-center text-sm font-medium text-gray-500 cursor-not-allowed">
+                      {formatBreadcrumb(value)}
+                    </span>
+                  </li>
+                </span>
               ) : (
                 <span className="text-sm font-medium text-gray-500 cursor-not-allowed">
-                  {value.charAt(0).toUpperCase() + value.slice(1)}
+                  {formatBreadcrumb(value)}
                 </span>
               )}
             </li>

@@ -1,6 +1,6 @@
-export function truncateText(text: string, maxLength: number): string {
-  if (text.length <= maxLength) {
-    return text;
+export function truncateText(text: string | undefined, maxLength: number): string {
+  if (!text) {
+    return "";
   }
-  return text.slice(0, maxLength);
+  return maxLength > text.length ? text : text.slice(0, maxLength);
 }

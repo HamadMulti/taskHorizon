@@ -1,25 +1,42 @@
 import { useState } from "react";
+import { useTasks } from "../../../../hooks/useTasks";
+import UserDropdown from "../../dropdowns/UserSelector";
+import ProjectDropdown from "../../dropdowns/ProjectSelector";
 
 interface CreateTaskModalProps {
-  onSave: (newTask: Task) => void;
   onClose: () => void;
 }
 
-interface Task {
-  id: number;
-  title: string;
-  status: string;
-  assigned_to: string;
-  description?: string;
-}
-
-const CreateTaskModal: React.FC<CreateTaskModalProps> = ({ onSave, onClose }) => {
+const CreateTaskModal: React.FC<CreateTaskModalProps> = ({ onClose }) => {
   const [isOpen, setIsOpen] = useState(true);
 
   const [title, setTitle] = useState("");
   const [status, setStatus] = useState("pending");
-  const [assignedTo, setAssignedTo] = useState("");
   const [description, setDescription] = useState("");
+  const { addTask, loading } = useTasks();
+  const [selectedUser, setSelectedUser] = useState("");
+  const [selectedProject, setSelectedProject] = useState("");
+
+  const handleUserSelect = (user: string) => {
+    setSelectedUser(user);
+  };
+  const handleCreate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const data = {
+      title: title || "",
+      status: status || "",
+      assigned_to: selectedUser || "",
+      description,
+      project_id: Number(selectedProject)
+    };
+    console.log(data, selectedProject)
+    if (!!title && !!selectedProject) {
+      await addTask(data);
+      setIsOpen(false);
+      setTitle("");
+      onClose();
+    }
+  };
 
   return (
     <>
@@ -43,27 +60,17 @@ const CreateTaskModal: React.FC<CreateTaskModalProps> = ({ onSave, onClose }) =>
             </button>
 
             {/* Modal Title */}
-            <h3 className="text-yellow-600 text-xl font-bold mb-4">Create New Task</h3>
+            <h3 className="text-yellow-600 text-xl font-bold mb-4">
+              Create New Task
+            </h3>
 
             {/* Form */}
-            <form
-              className="space-y-4"
-              onSubmit={(e) => {
-                e.preventDefault();
-                const newTask: Task = {
-                  id: Date.now(),
-                  title,
-                  status,
-                  assigned_to: assignedTo,
-                  description,
-                };
-                onSave(newTask);
-                setIsOpen(false);
-              }}
-            >
+            <form className="space-y-4" onSubmit={handleCreate}>
               {/* Title Input */}
               <div>
-                <label className="text-gray-800 text-sm mb-2 block">Task Title</label>
+                <label className="text-gray-800 text-sm mb-2 block">
+                  Title
+                </label>
                 <input
                   type="text"
                   placeholder="Enter task title"
@@ -75,7 +82,9 @@ const CreateTaskModal: React.FC<CreateTaskModalProps> = ({ onSave, onClose }) =>
 
               {/* Status Input */}
               <div>
-                <label className="text-gray-800 text-sm mb-2 block">Status</label>
+                <label className="text-gray-800 text-sm mb-2 block">
+                  Status
+                </label>
                 <select
                   value={status}
                   onChange={(e) => setStatus(e.target.value)}
@@ -89,19 +98,29 @@ const CreateTaskModal: React.FC<CreateTaskModalProps> = ({ onSave, onClose }) =>
 
               {/* Assigned To Input */}
               <div>
-                <label className="text-gray-800 text-sm mb-2 block">Assigned To</label>
-                <input
-                  type="text"
-                  placeholder="Enter assigned person"
-                  value={assignedTo}
-                  onChange={(e) => setAssignedTo(e.target.value)}
-                  className="px-4 py-3 bg-gray-100 w-full text-gray-800 text-sm border-none focus:outline-yellow-600 focus:bg-transparent rounded-lg"
-                />
+                <label className="text-gray-800 text-sm mb-2 block">
+                  Assigned To
+                </label>
+                <div>
+                  <UserDropdown onSelect={handleUserSelect} />
+                </div>
+              </div>
+
+              {/* Project Id To Input */}
+              <div>
+                <label className="text-gray-800 text-sm mb-2 block">
+                  Project
+                </label>
+                <div>
+                  <ProjectDropdown onSelect={setSelectedProject} />
+                </div>
               </div>
 
               {/* Description Input */}
               <div>
-                <label className="text-gray-800 text-sm mb-2 block">Description</label>
+                <label className="text-gray-800 text-sm mb-2 block">
+                  Description
+                </label>
                 <textarea
                   placeholder="Enter task description"
                   value={description}
@@ -127,7 +146,22 @@ const CreateTaskModal: React.FC<CreateTaskModalProps> = ({ onSave, onClose }) =>
                   type="submit"
                   className="px-6 py-3 rounded-lg text-white text-sm bg-yellow-600 hover:bg-yellow-700"
                 >
-                  Create Task
+                  {loading ? (
+                    <>
+                      Loading
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="18px"
+                        fill="#fff"
+                        className="ml-2 inline animate-spin"
+                        viewBox="0 0 24 24"
+                      >
+                        <path d="M12 22c5.421 0 10-4.579 10-10h-2c0 4.337-3.663 8-8 8s-8-3.663-8-8c0-4.336 3.663-8 8-8V2C6.579 2 2 6.58 2 12c0 5.421 4.579 10 10 10z" />
+                      </svg>
+                    </>
+                  ) : (
+                    "Create Task"
+                  )}
                 </button>
               </div>
             </form>

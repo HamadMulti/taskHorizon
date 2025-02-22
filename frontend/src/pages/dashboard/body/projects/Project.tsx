@@ -92,7 +92,7 @@ const Project = () => {
                             xmlns="http://www.w3.org/2000/svg"
                             width="20"
                             fill="currentColor"
-                            className="w-3 fill-yellow-500 hover:fill-yellow-700"
+                            className="w-6 fill-yellow-500 hover:fill-yellow-700"
                             viewBox="0 0 64 64"
                           >
                             <path

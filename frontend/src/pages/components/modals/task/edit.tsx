@@ -1,31 +1,47 @@
 import { useState } from "react";
+import { useTasks } from "../../../../hooks/useTasks";
 
-interface Task {
-  id: number;
-  title: string;
-  status: string;
-  assigned_to: string;
-  description: string;
-}
 
 interface EditTaskModalProps {
-  task: Task;
-  onSave: (updatedTask: Task) => void;
+  task: {
+    id: number;
+    title: string;
+    status: string;
+    assigned_to?: string;
+    description: string;
+    project_id: number;
+  };
   onClose: () => void;
 }
 
 const EditTaskModal: React.FC<EditTaskModalProps> = ({
   task,
-  onSave,
   onClose
 }) => {
   const [isOpen, setIsOpen] = useState(true); // Modal starts open
 
   const [title, setTitle] = useState(task?.title);
   const [status, setStatus] = useState(task?.status);
-  const [assignedTo, setAssignedTo] = useState(task?.assigned_to);
+  const [assigned_to, setAssignedTo] = useState(task?.assigned_to);
   const [description, setDescription] = useState(task?.description || "");
+  const {project_id, id } = task
+  const { editTask } = useTasks();
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handleUpdate = (e: any) => {
+    e.preventDefault();
+    const data = {
+      id,
+      title: title || "",
+      status: status || "",
+      assigned_to: assigned_to || "",
+      description,
+      project_id,
+    };
+    editTask(data);
+    setIsOpen(false);
+    onClose();
+  };
   return (
     <>
       {/* Modal Overlay */}
@@ -53,17 +69,7 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({
             {/* Form */}
             <form
               className="space-y-4"
-              onSubmit={(e) => {
-                e.preventDefault();
-                onSave({
-                  id: task.id,
-                  title,
-                  status,
-                  assigned_to: assignedTo,
-                  description
-                });
-                setIsOpen(false); // Close after save
-              }}
+              onSubmit={handleUpdate}
             >
               {/* Title Input */}
               <div>
@@ -103,7 +109,7 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({
                 <input
                   type="text"
                   placeholder="Enter assigned person"
-                  value={assignedTo}
+                  value={assigned_to}
                   onChange={(e) => setAssignedTo(e.target.value)}
                   className="px-4 py-3 bg-gray-100 w-full text-gray-800 text-sm border-none focus:outline-yellow-600 focus:bg-transparent rounded-lg"
                 />
@@ -129,8 +135,8 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({
                   type="button"
                   className="px-6 py-3 rounded-lg text-gray-800 text-sm bg-gray-200 hover:bg-gray-300"
                   onClick={() => {
-                    setIsOpen(false); // Close on cancel
-                    onClose();
+                    setIsOpen(false)
+                    onClose()
                   }}
                 >
                   Cancel

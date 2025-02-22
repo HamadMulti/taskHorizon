@@ -4,6 +4,7 @@ import API from "../utils/api";
 import { RootState } from "../app/store";
 
 interface Project {
+  status: string;
   id: number;
   name: string;
   description: string;

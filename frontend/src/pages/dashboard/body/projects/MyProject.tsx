@@ -7,6 +7,7 @@ import EditProjectModal from "../../../components/modals/project/edit";
 import Pagination from "../../../components/pagination/pagination";
 import { useState } from "react";
 import { truncateText } from "../../../../utils/truncate";
+import { useLocation } from "react-router-dom";
 
 interface MyProject {
   id: number;
@@ -27,7 +28,7 @@ const MyProject = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [selectedProject, setSelectedProject] = useState<MyProject>();
-
+  const { pathname } = useLocation();
   const handleClose = () => {
     setIsCreating(false);
     setIsEditing(false);
@@ -36,19 +37,16 @@ const MyProject = () => {
   return (
     <>
       <div className="overflow-x-auto">
-        <div className="min-w-full bg-white flex items-center justify-between py-4 px-6">
-          {/* <h3 className="text-yellow-600 text-md font-bold px-4">
-            Your Projects
-          </h3> */}
+        <div className={`${pathname === "/dashboard/my-projects" ? "w-fit absolute z-1000 top-0 max-md:top-9 max-md:right-0 max-sm:top-0 max-sm:right-18 right-20 bg-transparent flex items-center justify-end py-4 px-8" : "hidden w-0 content-none clear-none"}`}>
           <button
-            className="flex items-center justify-center p-2 gap-1 rounded shadow-2xs cursor-pointer bg-[#0c172b] hover:bg-[#0c172bee] "
+            className="flex items-center justify-center p-2 gap-1 rounded text-gray-100 shadow-2xs cursor-pointer bg-[#0c172b] hover:bg-[#0c172bee] "
             title="Add"
             onClick={() => setIsCreating(true)}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="currentColor"
-              className="w-5 fill-white hover:fill-white"
+              className="w-5 fill-gray-100 hover:fill-gray-200"
               viewBox="0 0 24 24"
             >
               <path
@@ -64,6 +62,7 @@ const MyProject = () => {
                 data-original="#000000"
               />
             </svg>
+            Add Project
           </button>
           {isCreating && <CreateProjectModal onClose={handleClose} />}
         </div>
