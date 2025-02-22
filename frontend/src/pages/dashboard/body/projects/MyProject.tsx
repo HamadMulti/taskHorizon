@@ -6,6 +6,7 @@ import PreviewProjectModal from "../../../components/modals/project/preview";
 import EditProjectModal from "../../../components/modals/project/edit";
 import Pagination from "../../../components/pagination/pagination";
 import { useState } from "react";
+import { truncateText } from "../../../../utils/truncate";
 
 interface MyProject {
   id: number;
@@ -36,7 +37,9 @@ const MyProject = () => {
     <>
       <div className="overflow-x-auto">
         <div className="min-w-full bg-white flex items-center justify-between py-4 px-6">
-          <h3 className="text-yellow-600 text-md font-bold px-4">Your Projects</h3>
+          {/* <h3 className="text-yellow-600 text-md font-bold px-4">
+            Your Projects
+          </h3> */}
           <button
             className="flex items-center justify-center p-2 gap-1 rounded shadow-2xs cursor-pointer bg-[#0c172b] hover:bg-[#0c172bee] "
             title="Add"
@@ -87,7 +90,7 @@ const MyProject = () => {
               {my_projects.length === 0 ? (
                 <tbody className="whitespace-nowrap flex">
                   <tr className="min-w-full flex justify-center py-6 items-center flex-col">
-                    { " "}
+                    {" "}
                   </tr>
                   <tr className="min-w-full flex justify-center gap-2.5 py-6 items-start flex-col">
                     <img
@@ -99,9 +102,7 @@ const MyProject = () => {
                     </span>
                   </tr>
                   <tr className="min-w-full flex justify-center py-6 items-center flex-col">
-                    <span>
-                      {" "}
-                    </span>{ " "}
+                    <span> </span>{" "}
                   </tr>
                 </tbody>
               ) : (
@@ -110,13 +111,25 @@ const MyProject = () => {
                     <tr className="even:bg-yellow-50" key={project.id}>
                       <td className="p-4 text-sm text-black">{project.name}</td>
                       <td className="p-4 text-sm text-black">
-                        {project.description}
+                      {truncateText(project.description, 30)}
+                        <span
+                          className="text-yellow-500 font-lighter cursor-pointer"
+                          onClick={() => {
+                            setIsModalOpen(true);
+                            setSelectedProject(project);
+                          }}
+                        >
+                          ...view for more details
+                        </span>
                       </td>
                       <td className="p-4">
                         <button
                           className="mr-4"
                           title="View"
-                          onClick={() => setIsModalOpen(true)}
+                          onClick={() => {
+                            setIsModalOpen(true)
+                            setSelectedProject(project)
+                          }}
                         >
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -139,12 +152,11 @@ const MyProject = () => {
                             ></path>
                           </svg>
                         </button>
-                        {isModalOpen && (
+                        {isModalOpen && selectedProject && (
                           <PreviewProjectModal
                             project={selectedProject}
                             onClose={() => {
-                              setIsModalOpen(false)
-                              setSelectedProject(project)
+                              setIsModalOpen(false);;
                             }}
                           />
                         )}
@@ -152,8 +164,8 @@ const MyProject = () => {
                           className="mr-4"
                           title="Edit"
                           onClick={() => {
-                            setIsEditing(true)
-                            setSelectedProject(project)
+                            setIsEditing(true);
+                            setSelectedProject(project);
                           }}
                         >
                           <svg
@@ -191,8 +203,14 @@ const MyProject = () => {
         </table>
         <div className="flex justify-between py-4 px-6">
           <span className="text-gray-500">Total Pages | {my_totalPages}</span>
-        <Pagination currentPage={page} totalPages={my_totalPages} onPageChange={setCurrentPage} />
-        <span className="text-gray-500">{my_totalProjects} | Number Of Items</span>
+          <Pagination
+            currentPage={page}
+            totalPages={my_totalPages}
+            onPageChange={setCurrentPage}
+          />
+          <span className="text-gray-500">
+            {my_totalProjects} | Number Of Items
+          </span>
         </div>
       </div>
     </>

@@ -3,6 +3,7 @@ import { useProjects } from "../../../../hooks/useProjects";
 import SkeletonTable from "../../../components/loaders/SkeletonTable";
 import PreviewProjectModal from "../../../components/modals/project/preview";
 import Pagination from "../../../components/pagination/pagination";
+import { truncateText } from "../../../../utils/truncate";
 
 interface Project {
   id: number;
@@ -20,9 +21,9 @@ const Project = () => {
   return (
     <>
       <div className="overflow-x-auto">
-        <div className="min-w-full bg-white flex items-center justify-between py-4 px-6">
+        {/* <div className="min-w-full bg-white flex items-center justify-between py-4 px-6">
           <h3 className="text-yellow-600 text-md font-bold px-4">Projects</h3>
-        </div>
+        </div> */}
         <table className="min-w-full bg-white">
           <thead className="bg-gray-800 whitespace-nowrap">
             <tr>
@@ -67,22 +68,31 @@ const Project = () => {
                     <tr className="even:bg-yellow-50" key={project.id}>
                       <td className="p-4 text-sm text-black">{project.name}</td>
                       <td className="p-4 text-sm text-black">
-                        {project.description}
+                        {truncateText(project.description, 30)}
+                        <span
+                          className="text-yellow-500 font-lighter cursor-pointer"
+                          onClick={() => {
+                            setIsModalOpen(true);
+                            setSelectedProject(project);
+                          }}
+                        >
+                          ...view for more details
+                        </span>
                       </td>
                       <td className="p-4">
                         <button
                           className="mr-4"
                           title="View"
                           onClick={() => {
-                            setIsModalOpen(true)
-                            setSelectedProject(project)
+                            setIsModalOpen(true);
+                            setSelectedProject(project);
                           }}
                         >
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
                             width="20"
                             fill="currentColor"
-                            className="w-5 fill-yellow-500 hover:fill-yellow-700"
+                            className="w-3 fill-yellow-500 hover:fill-yellow-700"
                             viewBox="0 0 64 64"
                           >
                             <path
