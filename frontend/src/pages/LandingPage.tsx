@@ -2,16 +2,22 @@ import { useEffect, useRef, useState } from "react";
 import FAQItem from "./FAQItem";
 import { Link } from "react-scroll";
 import { useAuth } from "../hooks/useAuth";
-import { Link as Linky } from "react-router-dom";
+import { Link as Linky, useNavigate } from "react-router-dom";
 
 const LandingPage = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
-  const { otpVerified, user, token, handleSubscriber } = useAuth();
+  const { otpVerified, user, token, handleSubscriber, handleLogout } = useAuth();
   const [userData, setUserData] = useState({
     email: ""
   });
   const [error, setError] = useState("");
+  const navigate = useNavigate();
+
+  const logoutUser = () => {
+    handleLogout()
+    .then(() => navigate("/login"));
+  }
 
   const toggleOpenRef = useRef<HTMLButtonElement | null>(null);
   const toggleCloseRef = useRef<HTMLButtonElement | null>(null);
@@ -193,10 +199,17 @@ const LandingPage = () => {
                 <>
                   <Linky
                     to="/dashboard/projects"
-                    className="bg-yellow-600 hover:bg-yellow-700 transition-all text-white rounded-full px-5 py-2.5"
+                    className="text-yellow-600 hover:underline px-2 font-lighter items-center flex"
                   >
                     Dashboard
                   </Linky>
+                  <button
+                    onClick={logoutUser}
+                    className="font-semibold border-none outline-none bg-yellow-600 hover:bg-yellow-700 transition-all text-white rounded-full px-5 sm:max-md:-py-1.5 py-2.5"
+                  >
+                    Logout
+                  </button>
+                  
                 </>
               ) : (
                 <>

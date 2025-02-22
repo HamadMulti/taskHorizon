@@ -90,7 +90,7 @@ const CreateProjectModal: React.FC<CreateProjectModalProps> = ({ onClose }) => {
                 </button>
                 <button
                   type="submit"
-                  className="px-6 py-3 rounded-lg text-white text-sm bg-[#0c172b] hover:bg-yellow-700"
+                  className="px-6 py-3 rounded-lg text-white text-sm bg-[#0c172b] hover:bg-[#0c172bea]"
                 >
                   Create Project
                 </button>

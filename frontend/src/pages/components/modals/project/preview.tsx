@@ -22,7 +22,9 @@ const PreviewProjectModal: React.FC<PreviewProjectModalProps> = ({
         {/* Header Section */}
         <div className="flex items-start border-b border-gray-300 pb-4">
           <div className="flex-1">
-            <h3 className="text-yellow-600 text-xl font-bold">Project Preview</h3>
+            <h3 className="text-yellow-600 text-xl font-bold">
+              Project Preview
+            </h3>
             <p className="text-gray-600 text-sm mt-1">
               Detailed view of the selected project.
             </p>
@@ -41,15 +43,19 @@ const PreviewProjectModal: React.FC<PreviewProjectModalProps> = ({
         </div>
 
         {/* Project Details */}
-        <div className="my-8">
+        <div className="my-8 relative">
           <ul className="text-gray-800 space-y-4">
             <li className="flex flex-wrap gap-4 text-sm">
               <strong>Name:</strong>
               <span className="ml-auto">{project?.name}</span>
             </li>
-            <li className="flex flex-wrap gap-4 text-sm">
-              <strong>Description:</strong>
-              <span className="ml-auto">{project?.description}</span>
+            <li className="flex flex-col items-start flex-wrap gap-4 text-sm">
+              <div className="flex flex-col relative">
+                <span>
+                  <strong>Description:</strong>
+                </span>
+                <p className="text-wrap">{project?.description}</p>
+              </div>
             </li>
           </ul>
         </div>
@@ -58,7 +64,7 @@ const PreviewProjectModal: React.FC<PreviewProjectModalProps> = ({
         <div className="flex max-sm:flex-col items-center gap-4 mt-8">
           <button
             type="button"
-            className="text-sm px-4 py-2.5 w-full tracking-wide bg-[#0c172b] hover:bg-gray-50 text-white border border-gray-300 rounded-lg max-sm:order-1"
+            className="text-sm px-4 py-2.5 w-full tracking-wide bg-[#0c172b] hover:bg-[#0c172bea] text-white border border-gray-300 rounded-lg max-sm:order-1"
             onClick={onClose}
           >
             Close

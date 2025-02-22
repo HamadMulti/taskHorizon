@@ -299,6 +299,10 @@ const authSlice = createSlice({
         state.loading = false;
         state.token = action.payload.token;
       })
+      .addCase(hydrateAuthState.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
       .addCase(fetchUserDetails.pending, (state) => {
         if (!state.user) {
           state.loading = true;
@@ -316,22 +320,50 @@ const authSlice = createSlice({
         state.loading = false;
         state.error = action.payload as string;
       })
+      .addCase(logoutUser.pending, (state) => {
+        state.loading = true;
+      })
       .addCase(logoutUser.fulfilled, (state) => {
         state.user = null;
         state.token = null;
         state.otpVerified = false
       })
+      .addCase(logoutUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
+      .addCase(updateProfile.pending, (state) => {
+        state.loading = true;
+      })
       .addCase(updateProfile.fulfilled, (state, action) => {
         state.loading = false;
         state.user = action.payload.user;
+      })
+      .addCase(updateProfile.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
+      .addCase(sendOTP.pending, (state) => {
+        state.loading = true;
       })
       .addCase(sendOTP.fulfilled, (state) => {
         state.loading = false;
         state.otpVerified = false
       })
+      .addCase(sendOTP.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
+      .addCase(verifyOTP.pending, (state) => {
+        state.loading = true;
+      })
       .addCase(verifyOTP.fulfilled, (state) => {
         state.loading = false;
         state.otpVerified = true
+      })
+      .addCase(verifyOTP.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
       })
       .addCase(forgotPassword.pending, (state) => {
         state.loading = true;

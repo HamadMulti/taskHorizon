@@ -100,7 +100,7 @@ const EditProjectModal: React.FC<EditProjectModalProps> = ({
                 </button>
                 <button
                   type="submit"
-                  className="px-6 py-3 rounded-lg text-white text-sm bg-yellow-600 hover:bg-yellow-700"
+                  className="px-6 py-3 rounded-lg text-white text-sm bg-[#0c172b] hover:bg-[#0c172bea]"
                 >
                   Save Changes
                 </button>

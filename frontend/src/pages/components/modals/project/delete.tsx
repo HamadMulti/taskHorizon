@@ -37,7 +37,7 @@ const DeleteProjectModal: React.FC<DeleteModalProps> = ({ id, name }) => {
           className="fixed inset-0 flex justify-center items-center w-full h-full z-50 bg-[#35343494] bg-opacity-50"
           aria-hidden={!isOpen}
         >
-          <div className="w-full max-w-2xl bg-white shadow-lg rounded-lg p-6 relative">
+          <div className="w-full max-w-lg bg-white shadow-lg rounded-lg p-6 relative">
             {/* Close Button */}
             <button
               className="absolute top-3 right-3 text-gray-400 hover:text-red-500"
@@ -47,7 +47,7 @@ const DeleteProjectModal: React.FC<DeleteModalProps> = ({ id, name }) => {
             </button>
 
             {/* Modal Content */}
-            <div className="my-4 text-center">
+            <div className="my-4 text-center relative">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="w-14 fill-red-500 inline"
@@ -58,7 +58,7 @@ const DeleteProjectModal: React.FC<DeleteModalProps> = ({ id, name }) => {
                 />
                 <path d="M11 17v-7a1 1 0 0 0-2 0v7a1 1 0 0 0 2 0Zm4 0v-7a1 1 0 0 0-2 0v7a1 1 0 0 0 2 0Z" />
               </svg>
-              <h4 className="text-gray-800 text-base font-semibold mt-4">
+              <h4 className="text-gray-800 text-base font-semibold mt-4 text-wrap">
                 {`Are you sure you want to delete ${name}?`}
               </h4>
 
@@ -66,7 +66,7 @@ const DeleteProjectModal: React.FC<DeleteModalProps> = ({ id, name }) => {
               <div className="text-center space-x-4 mt-8">
                 <button
                   type="button"
-                  className="px-4 py-2 rounded-lg text-gray-800 text-sm bg-gray-200 hover:bg-gray-300"
+                  className="px-4 py-2 rounded-lg text-white text-sm bg-[#0c172b] hover:bg-[#0c172bea]"
                   onClick={() => setIsOpen(false)}
                 >
                   Cancel

@@ -1,13 +1,12 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
 
 const Header = () => {
   const [userName, setUserName] = useState<string | null>(null);
   const { pathname } = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-
+  const navigate = useNavigate();
   const { handleLogout, loading, user: _user } = useAuth()
 
   const toggleMenu = () => {
@@ -16,6 +15,7 @@ const Header = () => {
 
   const logoutUser = () => {
     handleLogout()
+    .then(() => navigate("/login"));
   }
 
   useEffect(() => {
