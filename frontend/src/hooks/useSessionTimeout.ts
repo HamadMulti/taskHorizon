@@ -19,7 +19,7 @@ export function useSessionTimeout() {
             handleLogout();
             alert("Your session has expired. Please log in again.");
             navigate("/login");
-            navigate(0)
+            navigate(0);
           }, timeLeft);
 
           return () => clearTimeout(timer);

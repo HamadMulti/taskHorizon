@@ -14,8 +14,9 @@ const Header = () => {
   };
 
   const logoutUser = () => {
-    handleLogout()
-    .then(() => navigate("/login"));
+    handleLogout();
+    navigate("/login");
+    navigate(0);
   }
 
   useEffect(() => {

@@ -48,7 +48,11 @@ const VerifyOTP = () => {
       });
   };
 
-  const logout = () => handleLogout();
+  const logout = () => {
+    handleLogout();
+    navigate("/login")
+    navigate(0);
+  }
 
   return (
     <div className="flex justify-center items-center h-screen bg-[#0C172C]">
