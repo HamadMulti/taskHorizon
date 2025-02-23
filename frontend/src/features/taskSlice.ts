@@ -55,6 +55,11 @@ export const fetchTasksDetails = createAsyncThunk(
     try {
       const state = thunkAPI.getState() as RootState;
       const token = state.auth.token ?? null;
+      const { tasks } = state.tasks;
+
+      if (!!tasks && !!token) {
+        return thunkAPI.rejectWithValue("Tasks already exists");
+      }
       API.defaults.headers.common["Authorization"] = `Bearer ${token}`;
       const response = await API.get(`/tasks?page=${page}`);
       return response.data;
@@ -73,6 +78,11 @@ export const fetchMyTasksDetails = createAsyncThunk(
     try {
       const state = thunkAPI.getState() as RootState;
       const token = state.auth.token ?? null;
+      const { tasks } = state.tasks;
+
+      if (!!tasks && !!token) {
+        return thunkAPI.rejectWithValue("Tasks already exists");
+      }
       API.defaults.headers.common["Authorization"] = `Bearer ${token}`;
       const response = await API.get(`/tasks/user-tasks?page=${page}`);
       return response.data;
@@ -91,6 +101,11 @@ export const fetchTeamTasksDetails = createAsyncThunk(
     try {
       const state = thunkAPI.getState() as RootState;
       const token = state.auth.token ?? null;
+      const { tasks } = state.tasks;
+
+      if (!!tasks && !!token) {
+        return thunkAPI.rejectWithValue("Tasks already exists");
+      }
       API.defaults.headers.common["Authorization"] = `Bearer ${token}`;
       const response = await API.get(`/tasks/team-tasks?page=${page}`);
       return response.data;
