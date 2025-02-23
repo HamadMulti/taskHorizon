@@ -11,11 +11,11 @@ import EditTaskModal from "../../../components/modals/task/edit";
 import DeleteTaskModal from "../../../components/modals/task/delete";
 
 const Tasks = () => {
-  const { tasks, loading, taskPage, setTaskPage, totalPages, totalTasks } =
+  const { tasks, loading, currentPage, totalPages, totalTasks } =
     useTasks();
   const [isCreating, setIsCreating] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-
+  const [page, setCurrentPage] = useState(currentPage);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedTask, setSelectedTask] = useState<Task>();
   const { pathname } = useLocation();
@@ -190,9 +190,9 @@ const Tasks = () => {
         <div className="flex justify-between py-4 px-6">
           <span className="text-gray-500">Total Pages | {totalPages}</span>
           <Pagination
-            currentPage={taskPage}
+            currentPage={page}
             totalPages={totalPages}
-            onPageChange={setTaskPage}
+            onPageChange={setCurrentPage}
           />
           <span className="text-gray-500">{totalTasks} | Number Of Items</span>
         </div>

@@ -50,7 +50,7 @@ def get_tasks():
     user = User.query.get(user_id)
 
     tasks = Task.query.paginate(page=page, per_page=per_page, error_out=False)
-    
+
     print(tasks)
 
     if not tasks:
@@ -102,7 +102,7 @@ def assign_task(task_id):
         new_assignee = data.get("assigned_to")
 
         history = TaskHistory(task_id=task.id, updated_by=user.id,
-                                old_assignee=task.assigned_to, new_assignee=new_assignee)
+                              old_assignee=task.assigned_to, new_assignee=new_assignee)
         db.session.add(history)
 
         task.assigned_to = new_assignee
@@ -171,7 +171,7 @@ def archive_task(task_id):
 
     if user:
         archived_task = ArchivedTask(task_id=task.id, title=task.title, description=task.description,
-                                        status=task.status, assigned_to=task.assigned_to, project_id=task.project_id, deleted_by=user.id)
+                                     status=task.status, assigned_to=task.assigned_to, project_id=task.project_id, deleted_by=user.id)
         db.session.add(archived_task)
 
         db.session.delete(task)
@@ -204,7 +204,6 @@ def get_user_tasks():
     }), 200
 
 
-
 @jwt_required()
 def get_team_tasks():
     """Retrieves all tasks.
@@ -226,9 +225,11 @@ def get_team_tasks():
 
     if user:
         tasks = Task.query.paginate(page=page, per_page=per_page, error_out=False)
-        return jsonify({"team_tasks": [{"id": t.id, "title": t.title, "status": t.status, "assigned_to": t.assigned_to} for t in tasks],
-                        "total": tasks.total,
-                        "pages": tasks.pages,
-                        "current_page": tasks.page
-                        }), 200
+        return jsonify(
+            {
+                "team_tasks": [{"id": t.id, "title": t.title, "status": t.status, "assigned_to": t.assigned_to} for t in tasks],
+                "total": tasks.total,
+                "pages": tasks.pages,
+                "current_page": tasks.page
+            }), 200
     return jsonify({"error": "Unauthorized"}), 403

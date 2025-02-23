@@ -14,40 +14,38 @@ export interface Task {
   due_date?: Date;
 }
 
-interface PaginatedResponse {
-  tasks?: Task[];
-  my_tasks?: Task[];
-  team_tasks?: Task[];
-  total: number;
-  pages: number;
-}
-
 interface TaskState {
   tasks: Task[];
   my_tasks: Task[];
   team_tasks: Task[];
-  totalTasks: number;
-  totalMyTasks: number;
-  totalTeamTasks: number;
-  totalPages: number;
-  totalMyPages: number;
-  totalTeamPages: number;
   loading: boolean;
   error: string | null;
+  currentPage: number;
+  my_currentPage: number;
+  team_currentPage: number;
+  totalPages: number;
+  my_totalPages: number;
+  team_totalPages: number;
+  totalTasks: number;
+  my_totalTasks: number;
+  team_totalTasks: number;
 }
 
 const initialState: TaskState = {
   tasks: [],
   my_tasks: [],
   team_tasks: [],
-  totalTasks: 0,
-  totalMyTasks: 0,
-  totalTeamTasks: 0,
-  totalPages: 1,
-  totalMyPages: 1,
-  totalTeamPages: 1,
   loading: false,
   error: null,
+  currentPage: 1,
+  my_currentPage: 1,
+  team_currentPage: 1,
+  totalPages: 1,
+  my_totalPages: 1,
+  team_totalPages: 1,
+  totalTasks: 0,
+  my_totalTasks: 0,
+  team_totalTasks: 0
 };
 
 // Fetch All Tasks with Pagination
@@ -56,16 +54,10 @@ export const fetchTasksDetails = createAsyncThunk(
   async ({ page = 1 }: { page: number }, thunkAPI) => {
     try {
       const state = thunkAPI.getState() as RootState;
-      const { token } = state.auth;
-
-      if (!token) {
-        throw new Error("No token found");
-      }
-
+      const token = state.auth.token ?? null;
       API.defaults.headers.common["Authorization"] = `Bearer ${token}`;
       const response = await API.get(`/tasks?page=${page}`);
-      console.log(response)
-      return response.data as PaginatedResponse;
+      return response.data;
     } catch (error: any) {
       return thunkAPI.rejectWithValue(
         error.response?.data || "Failed to fetch tasks details"
@@ -80,15 +72,10 @@ export const fetchMyTasksDetails = createAsyncThunk(
   async ({ page = 1 }: { page: number }, thunkAPI) => {
     try {
       const state = thunkAPI.getState() as RootState;
-      const { token } = state.auth;
-
-      if (!token) {
-        throw new Error("No token found");
-      }
-
+      const token = state.auth.token ?? null;
       API.defaults.headers.common["Authorization"] = `Bearer ${token}`;
       const response = await API.get(`/tasks/user-tasks?page=${page}`);
-      return response.data as PaginatedResponse;
+      return response.data;
     } catch (error: any) {
       return thunkAPI.rejectWithValue(
         error.response?.data || "Failed to fetch my task details"
@@ -103,15 +90,10 @@ export const fetchTeamTasksDetails = createAsyncThunk(
   async ({ page = 1 }: { page: number }, thunkAPI) => {
     try {
       const state = thunkAPI.getState() as RootState;
-      const { token } = state.auth;
-
-      if (!token) {
-        throw new Error("No token found");
-      }
-
+      const token = state.auth.token ?? null;
       API.defaults.headers.common["Authorization"] = `Bearer ${token}`;
       const response = await API.get(`/tasks/team-tasks?page=${page}`);
-      return response.data as PaginatedResponse;
+      return response.data;
     } catch (error: any) {
       return thunkAPI.rejectWithValue(
         error.response?.data || "Failed to fetch team task details"
@@ -123,18 +105,21 @@ export const fetchTeamTasksDetails = createAsyncThunk(
 // Create Task
 export const createTask = createAsyncThunk(
   "tasks/createTask",
-  async (taskData: {  title: string; status: string; description: string; project_id: number }, thunkAPI) => {
+  async (
+    taskData: {
+      title: string;
+      status: string;
+      description: string;
+      project_id: number;
+    },
+    thunkAPI
+  ) => {
     try {
       const state = thunkAPI.getState() as RootState;
-      const { token } = state.auth;
-
-      if (!token) {
-        throw new Error("No token found");
-      }
-
+      const token = state.auth.token ?? null;
       API.defaults.headers.common["Authorization"] = `Bearer ${token}`;
       const response = await API.post("/tasks/", taskData);
-      console.log(response)
+      console.log(response);
       return response.data;
     } catch (error: any) {
       return thunkAPI.rejectWithValue(
@@ -147,15 +132,19 @@ export const createTask = createAsyncThunk(
 // Update Task
 export const updateTask = createAsyncThunk(
   "tasks/updateTask",
-  async (taskData: { id: number; title: string; status: string; description: string; project_id: number }, thunkAPI) => {
+  async (
+    taskData: {
+      id: number;
+      title: string;
+      status: string;
+      description: string;
+      project_id: number;
+    },
+    thunkAPI
+  ) => {
     try {
       const state = thunkAPI.getState() as RootState;
-      const { token } = state.auth;
-
-      if (!token) {
-        throw new Error("No token found");
-      }
-
+      const token = state.auth.token ?? null;
       API.defaults.headers.common["Authorization"] = `Bearer ${token}`;
       const response = await API.put(`/tasks/${taskData.id}`, taskData);
       return response.data;
@@ -170,15 +159,18 @@ export const updateTask = createAsyncThunk(
 // Assign Task
 export const assignTask = createAsyncThunk(
   "tasks/assignTask",
-  async (taskData: { id: number; title: string; description: string; project_id: number }, thunkAPI) => {
+  async (
+    taskData: {
+      id: number;
+      title: string;
+      description: string;
+      project_id: number;
+    },
+    thunkAPI
+  ) => {
     try {
       const state = thunkAPI.getState() as RootState;
-      const { token } = state.auth;
-
-      if (!token) {
-        throw new Error("No token found");
-      }
-
+      const token = state.auth.token ?? null;
       API.defaults.headers.common["Authorization"] = `Bearer ${token}`;
       const response = await API.put(`/tasks/${taskData.id}/assign`, taskData);
       return response.data;
@@ -196,12 +188,7 @@ export const archiveTask = createAsyncThunk(
   async (id: number, thunkAPI) => {
     try {
       const state = thunkAPI.getState() as RootState;
-      const { token } = state.auth;
-
-      if (!token) {
-        throw new Error("No token found");
-      }
-
+      const token = state.auth.token ?? null;
       API.defaults.headers.common["Authorization"] = `Bearer ${token}`;
       await API.delete(`/tasks/${id}/archive`);
       return id;
@@ -224,10 +211,15 @@ const taskSlice = createSlice({
         state.loading = true;
       })
       .addCase(fetchTasksDetails.fulfilled, (state, action) => {
+        if (action.payload && action.payload.tasks) {
+          state.tasks = action.payload.tasks;
+          state.currentPage = action.payload.current_page;
+          state.totalPages = action.payload.pages;
+          state.totalTasks = action.payload.total;
+        } else {
+          state.error = "Tasks data is missing";
+        }
         state.loading = false;
-        state.tasks = action.payload.tasks || [];
-        state.totalTasks = action.payload.total;
-        state.totalPages = action.payload.pages;
       })
       .addCase(fetchTasksDetails.rejected, (state, action) => {
         state.loading = false;
@@ -237,10 +229,14 @@ const taskSlice = createSlice({
         state.loading = true;
       })
       .addCase(fetchMyTasksDetails.fulfilled, (state, action) => {
+        if (action.payload && action.payload.tasks) {
+          state.my_tasks = action.payload.my_tasks;
+          state.my_totalTasks = action.payload.total;
+          state.my_totalPages = action.payload.pages;
+        } else {
+          state.error = "Tasks data is missing";
+        }
         state.loading = false;
-        state.my_tasks = action.payload.my_tasks || [];
-        state.totalMyTasks = action.payload.total;
-        state.totalMyPages = action.payload.pages;
       })
       .addCase(fetchMyTasksDetails.rejected, (state, action) => {
         state.loading = false;
@@ -250,10 +246,14 @@ const taskSlice = createSlice({
         state.loading = true;
       })
       .addCase(fetchTeamTasksDetails.fulfilled, (state, action) => {
+        if (action.payload && action.payload.tasks) {
+          state.team_tasks = action.payload.team_tasks;
+          state.team_totalTasks = action.payload.total;
+          state.team_totalPages = action.payload.pages;
+        } else {
+          state.error = "Tasks data is missing";
+        }
         state.loading = false;
-        state.team_tasks = action.payload.team_tasks || [];
-        state.totalTeamTasks = action.payload.total;
-        state.totalTeamPages = action.payload.pages;
       })
       .addCase(fetchTeamTasksDetails.rejected, (state, action) => {
         state.loading = false;
@@ -273,7 +273,7 @@ const taskSlice = createSlice({
         state.loading = true;
       })
       .addCase(updateTask.fulfilled, (state, action) => {
-        const index = state.tasks.findIndex((task) => task.id === action.payload.id);
+        const index = state.tasks.findIndex((p) => p.id === action.payload.id);
         if (index !== -1) {
           state.tasks[index] = action.payload;
         }
@@ -286,7 +286,9 @@ const taskSlice = createSlice({
         state.loading = true;
       })
       .addCase(assignTask.fulfilled, (state, action) => {
-        const index = state.tasks.findIndex((task) => task.id === action.payload.id);
+        const index = state.tasks.findIndex(
+          (task) => task.id === action.payload.id
+        );
         if (index !== -1) {
           state.tasks[index] = action.payload;
         }
@@ -304,8 +306,8 @@ const taskSlice = createSlice({
       .addCase(archiveTask.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
-      })
-  },
+      });
+  }
 });
 
 export default taskSlice.reducer;

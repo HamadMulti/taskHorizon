@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, make_response, request
 from models import db
 from flask_jwt_extended import JWTManager
 from flask_mail import Mail
@@ -10,13 +10,11 @@ import os
 jwt = JWTManager()
 mail = Mail()
 migrate = Migrate()
-front_end_url = os.getenv("FRONTEND_URL").split(",")
+front_end_urls = os.getenv("FRONTEND_URL").split(",")
+front_end_url = [url.strip() for url in front_end_urls]
+
 
 def create_app():
-    """Creates and configures the Flask application.
-
-    This function initializes the Flask app, configures extensions (database, JWT, mail, CORS, migration), registers blueprints, and returns the app instance.
-    """
     app = Flask(__name__)
     app.config["SQLALCHEMY_DATABASE_URI"] = CurrentConfig.SQLALCHEMY_DATABASE_URI
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = CurrentConfig.SQLALCHEMY_TRACK_MODIFICATIONS
@@ -32,8 +30,20 @@ def create_app():
     db.init_app(app)
     jwt.init_app(app)
     mail.init_app(app)
-    CORS(app, supports_credentials=True, resources={r"/*": {"origins": front_end_url}})
     migrate.init_app(app, db)
+    CORS(app, resources={r"/*": {"origins": front_end_url,
+            "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"], "supports_credentials": True}})
+
+    @app.before_request
+    def handle_preflight():
+        if request.method == "OPTIONS":
+            origin = request.headers.get("Origin")
+            response = make_response()
+            response.headers["Access-Control-Allow-Origin"] = origin
+            response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS"
+            response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
+            response.headers["Access-Control-Allow-Credentials"] = "true"
+            return response
 
     from routes.auth_routes import auth_bp
     from routes.user_routes import user_bp
@@ -46,6 +56,7 @@ def create_app():
     app.register_blueprint(project_bp, url_prefix="/projects")
 
     return app
+
 
 if __name__ == "__main__":
     app = create_app()

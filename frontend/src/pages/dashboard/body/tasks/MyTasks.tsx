@@ -11,11 +11,11 @@ import { Task } from "../../../../features/taskSlice";
 import CreateTaskModal from "../../../components/modals/task/create";
 
 const MyTasks = () => {
-  const { my_tasks, loading, taskPage, setTaskPage, totalPages, totalTasks } =
+  const { my_tasks, loading, my_currentPage, my_totalPages, my_totalTasks } =
     useTasks();
   const [isCreating, setIsCreating] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-
+  const [page, setCurrentPage] = useState(my_currentPage);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedTask, setSelectedTask] = useState<Task>();
   const { pathname } = useLocation();
@@ -188,13 +188,13 @@ const MyTasks = () => {
           )}
         </table>
         <div className="flex justify-between py-4 px-6">
-          <span className="text-gray-500">Total Pages | {totalPages}</span>
+          <span className="text-gray-500">Total Pages | {my_totalPages}</span>
           <Pagination
-            currentPage={taskPage}
-            totalPages={totalPages}
-            onPageChange={setTaskPage}
+            currentPage={page}
+            totalPages={my_totalPages}
+            onPageChange={setCurrentPage}
           />
-          <span className="text-gray-500">{totalTasks} | Number Of Items</span>
+          <span className="text-gray-500">{my_totalTasks} | Number Of Items</span>
         </div>
       </div>
     </>

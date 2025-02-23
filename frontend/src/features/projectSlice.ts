@@ -43,7 +43,6 @@ export const fetchProjects = createAsyncThunk(
       const state = thunkAPI.getState() as RootState;
       const token = state.auth.token ?? null;
       API.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-
       const response = await API.get(`/projects/?page=${page}`);
       return response.data;
     } catch (error: any) {
