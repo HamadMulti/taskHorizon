@@ -62,7 +62,7 @@ export const fetchTasksDetails = createAsyncThunk(
       }
       API.defaults.headers.common["Authorization"] = `Bearer ${token}`;
       const response = await API.get(`/tasks?page=${page}`);
-      return response.data;
+      return response.data.tasks;
     } catch (error: any) {
       return thunkAPI.rejectWithValue(
         error.response?.data || "Failed to fetch tasks details"
@@ -78,14 +78,14 @@ export const fetchMyTasksDetails = createAsyncThunk(
     try {
       const state = thunkAPI.getState() as RootState;
       const token = state.auth.token ?? null;
-      const { tasks } = state.tasks;
+      const { my_tasks } = state.tasks;
 
-      if (!!tasks && !!token) {
+      if (!!my_tasks && !!token) {
         return thunkAPI.rejectWithValue("Tasks already exists");
       }
       API.defaults.headers.common["Authorization"] = `Bearer ${token}`;
       const response = await API.get(`/tasks/user-tasks?page=${page}`);
-      return response.data;
+      return response.data.my_tasks;
     } catch (error: any) {
       return thunkAPI.rejectWithValue(
         error.response?.data || "Failed to fetch my task details"
@@ -101,14 +101,14 @@ export const fetchTeamTasksDetails = createAsyncThunk(
     try {
       const state = thunkAPI.getState() as RootState;
       const token = state.auth.token ?? null;
-      const { tasks } = state.tasks;
+      const { team_tasks } = state.tasks;
 
-      if (!!tasks && !!token) {
+      if (!!team_tasks && !!token) {
         return thunkAPI.rejectWithValue("Tasks already exists");
       }
       API.defaults.headers.common["Authorization"] = `Bearer ${token}`;
       const response = await API.get(`/tasks/team-tasks?page=${page}`);
-      return response.data;
+      return response.data.team_tasks;
     } catch (error: any) {
       return thunkAPI.rejectWithValue(
         error.response?.data || "Failed to fetch team task details"
