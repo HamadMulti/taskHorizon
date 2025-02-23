@@ -20,6 +20,12 @@ def create_app():
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = CurrentConfig.SQLALCHEMY_TRACK_MODIFICATIONS
     app.config["SECRET_KEY"] = CurrentConfig.SECRET_KEY
     app.config["JWT_SECRET_KEY"] = CurrentConfig.JWT_SECRET_KEY
+    app.config["JWT_TOKEN_LOCATION"] = CurrentConfig.JWT_TOKEN_LOCATION
+    app.config["JWT_COOKIE_SECURE"] = CurrentConfig.JWT_COOKIE_SECURE
+    app.config["JWT_COOKIE_SAMESITE"] = CurrentConfig.JWT_COOKIE_SAMESITE
+    app.config["JWT_ACCESS_COOKIE_PATH"] = CurrentConfig.JWT_ACCESS_COOKIE_PATH
+    app.config["JWT_REFRESH_COOKIE_PATH"] = CurrentConfig.JWT_REFRESH_COOKIE_PATH
+    app.config["JWT_COOKIE_CSRF_PROTECT"] = CurrentConfig.JWT_COOKIE_CSRF_PROTECT
     app.config["MAIL_SERVER"] = CurrentConfig.MAIL_SERVER
     app.config["MAIL_PORT"] = CurrentConfig.MAIL_PORT
     app.config["MAIL_USE_TLS"] = CurrentConfig.MAIL_USE_TLS
