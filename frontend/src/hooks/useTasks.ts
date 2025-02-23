@@ -45,8 +45,8 @@ export const useTasks = () => {
             fetchTasksDetails({ page: currentPage })
           ).unwrap();
 
-          setTotalPages(taskData.pages);
-          setTotalTasks(taskData.total);
+          setTotalPages((prev) => (prev !== taskData.pages ? taskData.pages : prev));
+          setTotalTasks((prev) => (prev !== taskData.total ? taskData.total : prev));
         } catch (error) {
           console.error("Error fetching projects:", error);
         }
@@ -54,6 +54,9 @@ export const useTasks = () => {
 
       fetchData();
     }
+  }, [currentPage, dispatch, my_currentPage, pathname, team_currentPage]);
+
+  useEffect(() => {
     if (pathname === "/dashboard/my-tasks") {
       const fetchMyData = async () => {
         try {
@@ -61,8 +64,8 @@ export const useTasks = () => {
             fetchMyTasksDetails({ page: my_currentPage })
           ).unwrap();
 
-          setMyTotalPages(myTasksData.pages);
-          setMyTotalTasks(myTasksData.total);
+          setMyTotalPages((prev) => (prev !== myTasksData.pages ? myTasksData.pages : prev));
+          setMyTotalTasks((prev) => (prev !== myTasksData.total ? myTasksData.total : prev));
         } catch (error) {
           console.error("Error fetching users projects:", error);
         }
@@ -70,6 +73,9 @@ export const useTasks = () => {
 
       fetchMyData();
     }
+  }, [currentPage, dispatch, my_currentPage, pathname, team_currentPage]);
+
+  useEffect(() => {
     if (pathname === "/dashboard/team-tasks") {
       const fetchTeamData = async () => {
         try {
@@ -77,8 +83,8 @@ export const useTasks = () => {
             fetchTeamTasksDetails({ page: team_currentPage })
           ).unwrap();
 
-          setTeamTotalPages(myTeamData.pages);
-          setTeamTotalTasks(myTeamData.total);
+          setTeamTotalPages((prev) => (prev !== myTeamData.pages ? myTeamData.pages : prev ));
+          setTeamTotalTasks((prev) => (prev !== myTeamData.total ? myTeamData.total : prev));
         } catch (error) {
           console.error("Error fetching users projects:", error);
         }
