@@ -46,7 +46,7 @@ export const registerUser = createAsyncThunk(
       Cookies.set("access_token", token, {
         expires: expires(token),
         path: "/",
-        sameSite: "Strict",
+        sameSite: "Lax",
         secure: process.env.NODE_ENV === "production"
       });
       localStorage.setItem("user", user.user);
@@ -71,7 +71,7 @@ export const loginUser = createAsyncThunk(
       Cookies.set("access_token", token, {
         expires: expires(token),
         path: "/",
-        sameSite: "Strict",
+        sameSite: "Lax",
         secure: process.env.NODE_ENV === "production"
       });
       localStorage.setItem("user", user.user);

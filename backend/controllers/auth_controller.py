@@ -59,7 +59,7 @@ def _token_handler(user_id, message, **kwargs):
         path="/",
         httponly=True,
         secure=get_cookie_secure_flag(),
-        samesite='Strict',
+        samesite='Lax',
         max_age=14400,
         expires=datetime.utcnow() + timedelta(hours=4) 
     )
@@ -170,7 +170,7 @@ def logout_user():
     """
     response = make_response(jsonify({"message": "Successfully logged out"}), 200)
     response.set_cookie('access_token', '', expires=0, httponly=True,
-                        secure=get_cookie_secure_flag(), samesite='Strict')
+                        secure=get_cookie_secure_flag(), samesite='Lax')
     return response
 
 
