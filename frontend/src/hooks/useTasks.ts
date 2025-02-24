@@ -9,7 +9,7 @@ import {
   assignTask,
   archiveTask
 } from "../features/taskSlice";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import {
   selectFilteredMyTasks,
   selectFilteredTasks,
@@ -18,115 +18,70 @@ import {
 import { useLocation } from "react-router-dom";
 
 export const useTasks = () => {
-  const { loading, error } = useSelector((state: RootState) => state.tasks);
   const dispatch = useDispatch<AppDispatch>();
   const { pathname } = useLocation();
+
+  const {
+    currentPage,
+    my_currentPage,
+    team_currentPage,
+    totalPages,
+    my_totalPages,
+    team_totalPages,
+    totalTasks,
+    my_totalTasks,
+    team_totalTasks,
+    loading,
+    error
+  } = useSelector((state: RootState) => state.tasks);
+
   const tasks = useSelector(selectFilteredTasks);
   const my_tasks = useSelector(selectFilteredMyTasks);
   const team_tasks = useSelector(selectFilteredTeamTasks);
 
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [totalTasks, setTotalTasks] = useState(0);
-
-  const [my_currentPage, setMyCurrentPage] = useState(1);
-  const [my_totalPages, setMyTotalPages] = useState(1);
-  const [my_totalTasks, setMyTotalTasks] = useState(0);
-
-  const [team_currentPage, setTeamCurrentPage] = useState(1);
-  const [team_totalPages, setTeamTotalPages] = useState(1);
-  const [team_totalTasks, setTeamTotalTasks] = useState(0);
-
   useEffect(() => {
     if (pathname === "/dashboard/tasks") {
-      const fetchData = async () => {
-        try {
-          const taskData = await dispatch(
-            fetchTasksDetails({ page: currentPage })
-          ).unwrap();
-
-          setTotalPages((prev) => (prev !== taskData.pages ? taskData.pages : prev));
-          setTotalTasks((prev) => (prev !== taskData.total ? taskData.total : prev));
-        } catch (error) {
-          console.error("Error fetching projects:", error);
-        }
-      };
-
-      fetchData();
+      dispatch(fetchTasksDetails({ page: currentPage }));
+    } else if (pathname === "/dashboard/my-tasks") {
+      dispatch(fetchMyTasksDetails({ page: my_currentPage }));
+    } else if (pathname === "/dashboard/team-tasks") {
+      dispatch(fetchTeamTasksDetails({ page: team_currentPage }));
     }
-  }, [currentPage, dispatch, my_currentPage, pathname, team_currentPage]);
-
-  useEffect(() => {
-    if (pathname === "/dashboard/my-tasks") {
-      const fetchMyData = async () => {
-        try {
-          const myTasksData = await dispatch(
-            fetchMyTasksDetails({ page: my_currentPage })
-          ).unwrap();
-
-          setMyTotalPages((prev) => (prev !== myTasksData.pages ? myTasksData.pages : prev));
-          setMyTotalTasks((prev) => (prev !== myTasksData.total ? myTasksData.total : prev));
-        } catch (error) {
-          console.error("Error fetching users projects:", error);
-        }
-      };
-
-      fetchMyData();
-    }
-  }, [currentPage, dispatch, my_currentPage, pathname, team_currentPage]);
-
-  useEffect(() => {
-    if (pathname === "/dashboard/team-tasks") {
-      const fetchTeamData = async () => {
-        try {
-          const myTeamData = await dispatch(
-            fetchTeamTasksDetails({ page: team_currentPage })
-          ).unwrap();
-
-          setTeamTotalPages((prev) => (prev !== myTeamData.pages ? myTeamData.pages : prev ));
-          setTeamTotalTasks((prev) => (prev !== myTeamData.total ? myTeamData.total : prev));
-        } catch (error) {
-          console.error("Error fetching users projects:", error);
-        }
-      };
-
-      fetchTeamData();
-    }
-  }, [currentPage, dispatch, my_currentPage, pathname, team_currentPage]);
+  }, [dispatch, pathname, currentPage, my_currentPage, team_currentPage]);
 
   const nextPage = () => {
-    if (currentPage < totalPages) {
-      setCurrentPage((prevPage) => prevPage + 1);
+    if (pathname === "/dashboard/tasks" && currentPage < totalPages) {
+      dispatch(fetchTasksDetails({ page: currentPage + 1 }));
     }
-    if (my_currentPage < my_totalPages) {
-      setMyCurrentPage((prevPage) => prevPage + 1);
+    if (pathname === "/dashboard/my-tasks" && my_currentPage < my_totalPages) {
+      dispatch(fetchMyTasksDetails({ page: my_currentPage + 1 }));
     }
-    if (team_currentPage < team_totalPages) {
-      setTeamCurrentPage((prevPage) => prevPage + 1);
+    if (pathname === "/dashboard/team-tasks" && team_currentPage < team_totalPages) {
+      dispatch(fetchTeamTasksDetails({ page: team_currentPage + 1 }));
     }
   };
 
   const prevPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage((prevPage) => prevPage - 1);
+    if (pathname === "/dashboard/tasks" && currentPage > 1) {
+      dispatch(fetchTasksDetails({ page: currentPage - 1 }));
     }
-    if (my_currentPage > 1) {
-      setMyCurrentPage((prevPage) => prevPage - 1);
+    if (pathname === "/dashboard/my-tasks" && my_currentPage > 1) {
+      dispatch(fetchMyTasksDetails({ page: my_currentPage - 1 }));
     }
-    if (team_currentPage > 0) {
-      setTeamCurrentPage((prevPage) => prevPage - 1);
+    if (pathname === "/dashboard/team-tasks" && team_currentPage > 1) {
+      dispatch(fetchTeamTasksDetails({ page: team_currentPage - 1 }));
     }
   };
 
   const setPage = (page: number) => {
-    if (page >= 1 && page <= totalPages) {
-      setCurrentPage(page);
+    if (pathname === "/dashboard/tasks" && page >= 1 && page <= totalPages) {
+      dispatch(fetchTasksDetails({ page }));
     }
-    if (page >= 1 && page <= my_totalPages) {
-      setMyCurrentPage(page);
+    if (pathname === "/dashboard/my-tasks" && page >= 1 && page <= my_totalPages) {
+      dispatch(fetchMyTasksDetails({ page }));
     }
-    if (page >= 1 && page <= team_totalPages) {
-      setMyCurrentPage(page);
+    if (pathname === "/dashboard/team-tasks" && page >= 1 && page <= team_totalPages) {
+      dispatch(fetchTeamTasksDetails({ page }));
     }
   };
 
@@ -145,55 +100,26 @@ export const useTasks = () => {
     totalPages,
     my_totalPages,
     team_totalPages,
-    addTask: async (taskData: {
-      title: string;
-      status: string;
-      description: string;
-      project_id: number;
-    }) => {
+    addTask: async (taskData: { title: string; status: string; description: string; project_id: number }) => {
       try {
-        await dispatch(createTask(taskData)).unwrap();
-        await dispatch(fetchTasksDetails({ page: currentPage })).unwrap();
-        await dispatch(fetchMyTasksDetails({ page: my_currentPage })).unwrap();
-        await dispatch(
-          fetchTeamTasksDetails({ page: team_currentPage })
-        ).unwrap();
+        await dispatch(createTask(taskData));
+        dispatch(fetchTasksDetails({ page: currentPage }));
       } catch (error) {
         console.error("Error creating task:", error);
       }
     },
-    editTask: async (taskData: {
-      id: number;
-      title: string;
-      status: string;
-      description: string;
-      project_id: number;
-    }) => {
+    editTask: async (taskData: { id: number; title: string; status: string; description: string; project_id: number }) => {
       try {
         await dispatch(updateTask(taskData));
-        await dispatch(fetchTasksDetails({ page: currentPage })).unwrap();
-        await dispatch(fetchMyTasksDetails({ page: my_currentPage })).unwrap();
-        await dispatch(
-          fetchTeamTasksDetails({ page: team_currentPage })
-        ).unwrap();
+        dispatch(fetchTasksDetails({ page: currentPage }));
       } catch (error) {
         console.error("Error updating task:", error);
       }
     },
-    assignTaskToUser: async (taskData: {
-      id: number;
-      title: string;
-      status: string;
-      description: string;
-      project_id: number;
-    }) => {
+    assignTaskToUser: async (taskData: { id: number; title: string; status: string; description: string; project_id: number }) => {
       try {
-        dispatch(assignTask(taskData));
-        await dispatch(fetchTasksDetails({ page: currentPage })).unwrap();
-        await dispatch(fetchMyTasksDetails({ page: my_currentPage })).unwrap();
-        await dispatch(
-          fetchTeamTasksDetails({ page: team_currentPage })
-        ).unwrap();
+        await dispatch(assignTask(taskData));
+        dispatch(fetchTasksDetails({ page: currentPage }));
       } catch (error) {
         console.error("Error assigning task:", error);
       }
@@ -201,13 +127,9 @@ export const useTasks = () => {
     archiveTaskById: async (id: number) => {
       try {
         await dispatch(archiveTask(id));
-        await dispatch(fetchTasksDetails({ page: currentPage })).unwrap();
-        await dispatch(fetchMyTasksDetails({ page: my_currentPage })).unwrap();
-        await dispatch(
-          fetchTeamTasksDetails({ page: team_currentPage })
-        ).unwrap();
+        dispatch(fetchTasksDetails({ page: currentPage }));
       } catch (error) {
-        console.error("Error deleting task:", error);
+        console.error("Error archiving task:", error);
       }
     },
     nextPage,

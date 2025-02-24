@@ -57,7 +57,7 @@ export const fetchTasksDetails = createAsyncThunk(
       const token = state.auth.token ?? null;
       API.defaults.headers.common["Authorization"] = `Bearer ${token}`;
       const response = await API.get(`/tasks?page=${page}`);
-      return response.data.tasks;
+      return response.data;
     } catch (error: any) {
       return thunkAPI.rejectWithValue(
         error.response?.data || "Failed to fetch tasks details"
@@ -75,7 +75,7 @@ export const fetchMyTasksDetails = createAsyncThunk(
       const token = state.auth.token ?? null;
       API.defaults.headers.common["Authorization"] = `Bearer ${token}`;
       const response = await API.get(`/tasks/user-tasks?page=${page}`);
-      return response.data.my_tasks;
+      return response.data;
     } catch (error: any) {
       return thunkAPI.rejectWithValue(
         error.response?.data || "Failed to fetch my task details"
@@ -93,7 +93,7 @@ export const fetchTeamTasksDetails = createAsyncThunk(
       const token = state.auth.token ?? null;
       API.defaults.headers.common["Authorization"] = `Bearer ${token}`;
       const response = await API.get(`/tasks/team-tasks?page=${page}`);
-      return response.data.team_tasks;
+      return response.data;
     } catch (error: any) {
       return thunkAPI.rejectWithValue(
         error.response?.data || "Failed to fetch team task details"
@@ -229,10 +229,11 @@ const taskSlice = createSlice({
         state.loading = true;
       })
       .addCase(fetchMyTasksDetails.fulfilled, (state, action) => {
-        if (action.payload && action.payload.tasks) {
+        if (action.payload && action.payload.my_tasks) {
           state.my_tasks = action.payload.my_tasks;
           state.my_totalTasks = action.payload.total;
           state.my_totalPages = action.payload.pages;
+          state.my_currentPage = action.payload.current_page;
         } else {
           state.error = "Tasks data is missing";
         }
@@ -246,10 +247,11 @@ const taskSlice = createSlice({
         state.loading = true;
       })
       .addCase(fetchTeamTasksDetails.fulfilled, (state, action) => {
-        if (action.payload && action.payload.tasks) {
+        if (action.payload && action.payload.team_tasks) {
           state.team_tasks = action.payload.team_tasks;
           state.team_totalTasks = action.payload.total;
           state.team_totalPages = action.payload.pages;
+          state.team_currentPage = action.payload.current_page;
         } else {
           state.error = "Tasks data is missing";
         }

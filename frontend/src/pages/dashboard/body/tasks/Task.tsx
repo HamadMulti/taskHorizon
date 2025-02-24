@@ -19,6 +19,7 @@ const Tasks = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedTask, setSelectedTask] = useState<Task>();
   const { pathname } = useLocation();
+  console.log(tasks);
   const handleClose = () => {
     setIsCreating(false);
     setIsEditing(false);

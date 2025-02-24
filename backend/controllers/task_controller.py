@@ -51,19 +51,16 @@ def get_tasks():
 
     tasks = Task.query.paginate(page=page, per_page=per_page, error_out=False)
 
-    print(tasks)
-
     if not tasks:
         return jsonify({"error": "Tasks not found"}), 404
 
     # if user.role == "admin":
     #     tasks = Task.query.all()
     # elif user.role == "team_leader":
-    #     tasks = Task.query.filter((Task.project_id == user.project_id)| (Task.project_id is None)).all()
+    #     tasks = Task.query.filter((Task.project_id == user.project_id)).paginate(page=page, per_page=per_page, error_out=False)
     # else:
     #     tasks = Task.query.filter(
-    #         (Task.assigned_to == user_id) | (Task.assigned_to is None)
-    #     ).all()
+    #         (Task.assigned_to == user_id)).paginate(page=page, per_page=per_page, error_out=False)
     if user:
         return jsonify(
             {
@@ -102,7 +99,7 @@ def assign_task(task_id):
         new_assignee = data.get("assigned_to")
 
         history = TaskHistory(task_id=task.id, updated_by=user.id,
-                              old_assignee=task.assigned_to, new_assignee=new_assignee)
+                                old_assignee=task.assigned_to, new_assignee=new_assignee)
         db.session.add(history)
 
         task.assigned_to = new_assignee

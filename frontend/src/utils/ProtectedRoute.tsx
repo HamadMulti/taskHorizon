@@ -5,7 +5,7 @@ import { useEffect } from "react";
 
 const ProtectedRoute = () => {
   const { token, loading, handleFetchUser } = useAuth();
-  const isAuthenticated = !!token;
+  const isAuthenticated = !!token; 
 
   useEffect(() => {
       handleFetchUser();
