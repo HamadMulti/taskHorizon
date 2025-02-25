@@ -28,45 +28,45 @@ const Tasks = () => {
   return (
     <>
       <div className="overflow-x-auto">
-      {role === "admin" || role === "team_leader" ? (
-              <>
-        <div
-          className={`${
-            pathname === "/dashboard/tasks"
-              ? "w-fit absolute z-1000 top-0 max-md:top-9 max-md:right-0 max-sm:top-0 max-sm:right-18 right-20 bg-transparent flex items-center justify-end py-4 px-8"
-              : "hidden w-0 content-none clear-none"
-          }`}
-        >
-          <button
-            className="flex items-center justify-center p-2 gap-2 rounded text-gray-100 shadow-2xs cursor-pointer bg-[#0c172b] hover:bg-[#0c172bee] "
-            title="Add"
-            onClick={() => setIsCreating(true)}
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="currentColor"
-              className="w-5 fill-gray-100 hover:fill-gray-200"
-              viewBox="0 0 24 24"
+        {role === "admin" || role === "team_leader" ? (
+          <>
+            <div
+              className={`${
+                pathname === "/dashboard/tasks"
+                  ? "w-fit absolute z-1000 top-0 max-md:top-9 max-md:right-0 max-sm:top-0 max-sm:right-18 right-20 bg-transparent flex items-center justify-end py-4 px-8"
+                  : "hidden w-0 content-none clear-none"
+              }`}
             >
-              <path
-                d="M18 2c2.206 0 4 1.794 4 4v12c0 2.206-1.794 4-4 4H6c-2.206 0-4-1.794-4-4V6c0-2.206 1.794-4 4-4zm0-2H6a6 6 0 0 0-6 6v12a6 6 0 0 0 6 6h12a6 6 0 0 0 6-6V6a6 6 0 0 0-6-6z"
-                data-original="#000000"
-              />
-              <path
-                d="M12 18a1 1 0 0 1-1-1V7a1 1 0 0 1 2 0v10a1 1 0 0 1-1 1z"
-                data-original="#000000"
-              />
-              <path
-                d="M6 12a1 1 0 0 1 1-1h10a1 1 0 0 1 0 2H7a1 1 0 0 1-1-1z"
-                data-original="#000000"
-              />
-            </svg>
-            Add
-          </button>
-          {isCreating && <CreateTaskModal onClose={handleClose} />}
-        </div>
-        </>
-        ): null}
+              <button
+                className="flex items-center justify-center p-2 gap-2 rounded text-gray-100 shadow-2xs cursor-pointer bg-[#0c172b] hover:bg-[#0c172bee] "
+                title="Add"
+                onClick={() => setIsCreating(true)}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="currentColor"
+                  className="w-5 fill-gray-100 hover:fill-gray-200"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    d="M18 2c2.206 0 4 1.794 4 4v12c0 2.206-1.794 4-4 4H6c-2.206 0-4-1.794-4-4V6c0-2.206 1.794-4 4-4zm0-2H6a6 6 0 0 0-6 6v12a6 6 0 0 0 6 6h12a6 6 0 0 0 6-6V6a6 6 0 0 0-6-6z"
+                    data-original="#000000"
+                  />
+                  <path
+                    d="M12 18a1 1 0 0 1-1-1V7a1 1 0 0 1 2 0v10a1 1 0 0 1-1 1z"
+                    data-original="#000000"
+                  />
+                  <path
+                    d="M6 12a1 1 0 0 1 1-1h10a1 1 0 0 1 0 2H7a1 1 0 0 1-1-1z"
+                    data-original="#000000"
+                  />
+                </svg>
+                Add
+              </button>
+              {isCreating && <CreateTaskModal onClose={handleClose} />}
+            </div>
+          </>
+        ) : null}
         <table className="min-w-full bg-white">
           <thead className="bg-gray-800 whitespace-nowrap">
             <tr>
