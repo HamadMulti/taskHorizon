@@ -39,23 +39,26 @@ export const useUsers = () => {
     }
   }, [dispatch, pathname]);
 
-  const handleCreate = async (data: { username: string; email: string }) => {
-    return dispatch(createUser(data)).unwrap();
-  };
-
   return {
     users,
     loading,
     error,
     isOpen,
     fetchUsers,
-    handleCreate,
+    handleCreate: async (data: { username: string; email: string }) => {
+      try {
+        await dispatch(createUser(data)).unwrap();
+        await dispatch(fetchUsersDetails()).unwrap();
+      } catch (error) {
+        console.error("Error creating user:", error);
+      }
+    },  
     handleUpdateUsers: async (id: number, username: string, email: string) => {
       try {
         await dispatch(updatesProfile({ id, username, email })).unwrap();
         await dispatch(fetchUsersDetails()).unwrap();
       } catch (error) {
-        console.error("Error updating project:", error);
+        console.error("Error updating user:", error);
       }
     },
     handleDeleteUser: async (id: number) => {
@@ -63,7 +66,7 @@ export const useUsers = () => {
         await dispatch(deleteUser(id)).unwrap();
         await dispatch(fetchUsersDetails()).unwrap();
       } catch (error) {
-        console.error("Error deleting project:", error);
+        console.error("Error deleting user:", error);
       }
     },
     handleChangeUserPassword: async (id: number) => {
@@ -71,7 +74,7 @@ export const useUsers = () => {
         await dispatch(changeUserPassword(id)).unwrap();
         await dispatch(fetchUsersDetails()).unwrap();
       } catch (error) {
-        console.error("Error deleting project:", error);
+        console.error("Error changing user password:", error);
       }
     },
     current_page,
