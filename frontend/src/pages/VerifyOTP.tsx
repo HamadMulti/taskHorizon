@@ -6,7 +6,7 @@ const VerifyOTP = () => {
   const [otp, setOtp] = useState("");
   const [timer, setTimer] = useState(60);
   const [isTimerActive, setIsTimerActive] = useState(true);
-  const { handleSendOTP, handleVerifyOTP, handleLogout, loading } = useAuth();
+  const { handleSendOTP, handleVerifyOTP, handleLogout, loading, role } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -27,6 +27,9 @@ const VerifyOTP = () => {
     e.preventDefault();
     handleVerifyOTP(otp)
       .then(() => {
+        if (role === "user"){
+          navigate("/dashboard/my-projects");
+        }
         navigate("/dashboard/projects");
       })
       .catch((error) => {
