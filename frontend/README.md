@@ -2,16 +2,20 @@
 
 ## Introduction
 
-TaskHorizon frontend is a web-based task management interface built using **React/Vite** with **Redux** for state management. It provides an intuitive and dynamic user interface for managing tasks, projects, and users. The frontend seamlessly interacts with the backend API to ensure smooth task tracking and project collaboration.
+TaskHorizon frontend is a web-based task management interface built using **React/Vite** with **Redux** for state management. It provides an intuitive and dynamic user interface for managing tasks, projects, and users. The frontend seamlessly interacts with the backend API to ensure smooth task tracking and project collaboration. All calls to the backend API are handled through **Axios** as an intermediate service.
+
+Designed for teams and individuals, TaskHorizon streamlines project management by offering real-time updates, a responsive UI, and seamless authentication. It supports role-based access control, ensuring that different users have appropriate permissions for managing tasks and projects. The frontend integrates closely with the backend to provide a secure and efficient task-tracking experience. Whether you are an admin creating projects or a team member viewing assigned tasks, TaskHorizon provides a structured and user-friendly interface to enhance productivity.
 
 ## Features
 
 - **User Authentication & Role-Based Access**
   - JWT-based authentication
   - Role management for **Admins, Team Leads, and Users**
+  - Admins and Team Leads can add new users
 - **Task & Project Management**
-  - Create, update, delete, and assign tasks
-  - Organize tasks within projects
+  - Admins and Team Leads can create, update, delete, and assign tasks
+  - Admins and Team Leads can create and manage projects
+  - Users can only view assigned tasks and projects
   - Real-time status updates
 - **UI & Performance Enhancements**
   - Responsive design with Tailwind CSS
@@ -19,7 +23,7 @@ TaskHorizon frontend is a web-based task management interface built using **Reac
   - Redux state management for seamless user interactions
 - **Security & Deployment**
   - **CORS handling** for backend communication
-  - **Dockerized deployment** on Vercel
+  - **Dockerized deployment** on Render
 
 ## Project Structure
 
@@ -28,13 +32,14 @@ taskHorizon/frontend/
 │── src/
 │   ├── components/        # Reusable UI components
 │   ├── pages/             # Application pages
-│   ├── store/             # Redux store and slices
-│   ├── utils/          # API service calls
+│   ├── store/             # Redux store
+│   ├── utils/             # API service calls using Axios
 │   ├── hooks/             # Custom React hooks
-│   ├── styles/            # Tailwind & global styles
+│   ├── features/          # Redux calls actions for slice
 │── public/
 │── package.json
 │── vite.config.js
+│── tailwind.config.ts
 │── .env
 ```
 
@@ -42,7 +47,7 @@ taskHorizon/frontend/
 
 ### Prerequisites
 
-- **Node.js 16+**
+- **Node.js 18+**
 - **Git**
 
 ### Setup Instructions
@@ -70,53 +75,49 @@ taskHorizon/frontend/
    npm run build
    ```
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
-
-- Configure the top-level `parserOptions` property like this:
-
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ["./tsconfig.node.json", "./tsconfig.app.json"],
-      tsconfigRootDir: import.meta.dirname
-    }
-  }
-});
-```
-
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
-
-```js
-// eslint.config.js
-import react from "eslint-plugin-react";
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: "18.3" } },
-  plugins: {
-    // Add the react plugin
-    react
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs["jsx-runtime"].rules
-  }
-});
-```
-
 ## Deployment
 
-- **Vercel Hosting**: The frontend is deployed using Vercel for scalability and ease of maintenance.
-- **CORS Configuration**: Ensures proper communication with the backend API hosted on Render.
+- **Dockerized Deployment on Render**: The frontend is now deployed using Docker on Render for better stability.
+- **CORS Configuration**: Ensures seamless communication with the backend API hosted on Render.
 - **Optimization**: Vite’s fast build time enhances performance for production deployment.
+
+### **Deploying with Docker on Render**
+1. **Create a `Dockerfile` in the frontend directory** (if not already present):
+   ```dockerfile
+   # Use an official Node runtime as a parent image
+   FROM node:18-alpine AS builder
+
+   WORKDIR /app
+   COPY package.json package-lock.json ./
+   RUN npm install
+
+   COPY . .
+   RUN npm run build
+
+   # Use an Nginx image to serve the built files
+   FROM nginx:alpine
+   COPY --from=builder /app/dist /usr/share/nginx/html
+
+   EXPOSE 80
+   CMD ["nginx", "-g", "daemon off;"]
+   ```
+
+2. **Ensure your `.env` file includes the correct API URL for the backend**:
+   ```sh
+   VITE_API_URL=https://your-backend-api.onrender.com
+   ```
+
+3. **Push your code to GitHub** and link it to Render.
+
+4. **Create a new Web Service on Render**, selecting the repository.
+
+5. **Set up the build and start commands**:
+   - Build Command: _(Handled via Dockerfile)_
+   - Start Command: _(Handled via Dockerfile)_
+
+6. **Deploy and access your application on Render**
+
+This setup eliminates the "pages not found" issue that occurred with Vercel.
 
 ## Future Enhancements
 
@@ -137,3 +138,4 @@ The TaskHorizon frontend provides a user-friendly and efficient interface for ta
 ## License
 
 This project is licensed under the MIT License. Feel free to use and modify it!
+
