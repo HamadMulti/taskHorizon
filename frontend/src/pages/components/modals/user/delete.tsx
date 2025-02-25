@@ -6,7 +6,7 @@ interface DeleteModalProps {
   username: string;
 }
 
-const DeleteProjectModal: React.FC<DeleteModalProps> = ({ id, username }) => {
+const DeleteUserModal: React.FC<DeleteModalProps> = ({ id, username }) => {
   const [isOpen, setIsOpen] = useState(false);
   const { handleDeleteUser } = useUsers();
 
@@ -87,4 +87,4 @@ const DeleteProjectModal: React.FC<DeleteModalProps> = ({ id, username }) => {
   );
 };
 
-export default DeleteProjectModal;
+export default DeleteUserModal;

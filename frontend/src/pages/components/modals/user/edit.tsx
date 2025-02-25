@@ -12,7 +12,7 @@ interface EditUsersModalProps {
   onClose: () => void;
 }
 
-const EditProjectModal: React.FC<EditUsersModalProps> = ({
+const EditUserModal: React.FC<EditUsersModalProps> = ({
   users,
   onClose
 }) => {
@@ -39,7 +39,7 @@ const EditProjectModal: React.FC<EditUsersModalProps> = ({
           <div className="w-full max-w-lg bg-white shadow-lg rounded-lg p-8 relative overflow-y-auto max-h-[80vh]">
             {/* Close Button */}
             <button
-              className="absolute top-3 right-3 text-gray-400 hover:text-red-500"
+              className="absolute top-3 right-3 text-gray-400 hover:text-yellow-500"
               onClick={() => {
                 setIsOpen(false);
                 onClose();
@@ -113,4 +113,4 @@ const EditProjectModal: React.FC<EditUsersModalProps> = ({
   );
 };
 
-export default EditProjectModal;
+export default EditUserModal;

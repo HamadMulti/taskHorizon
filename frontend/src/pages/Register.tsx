@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 
@@ -36,6 +36,20 @@ const Register = () => {
         setError(error);
       });
   };
+  useEffect(() => {
+      if (error) {
+        const timer = setTimeout(() => {
+          setError({
+            username: "",
+            email: "",
+            password: "",
+            confirmPassword: ""
+          });
+        }, 3000);
+  
+        return () => clearTimeout(timer);
+      }
+    }, [error])
 
   return (
     <div className="font-sans bg-white md:h-screen">

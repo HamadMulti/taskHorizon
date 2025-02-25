@@ -7,30 +7,30 @@ const Login = () => {
   const { handleLogin, loading } = useAuth();
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState({
-    error: ""
-  });
+  const [error, setError] = useState("");
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    handleLogin(credentials)
-      .then(() => navigate("/verify-otp"))
-      .catch((e) => setError(e));
-  };
 
-  useEffect(() => {
-    if (error.error) {
-      const timer = setTimeout(() => {
-        setError({ error: "" });
-      }, 3000);
+const handleSubmit = (e: React.FormEvent) => {
+  e.preventDefault();
+  handleLogin(credentials)
+    .then(() => navigate("/verify-otp"))
+    .catch((e) => {
+      const message = e.error || e.message || "Login failed";
+      setError(message);
+    });
+};
 
-      return () => clearTimeout(timer);
-    }
-  }, [error]);
+useEffect(() => {
+  if (error) {
+    const timer = setTimeout(() => setError(""), 3000);
+    return () => clearTimeout(timer);
+  }
+}, [error]);
+
 
   return (
     <div className="font-sans bg-white md:h-screen">
@@ -40,7 +40,7 @@ const Login = () => {
             <div className="mb-12">
               <h3 className="text-2xl font-bold text-yellow-400">Sign in</h3>
             </div>
-            {error && <p className="text-red-500">{error.error}</p>}
+            {error && <p className="text-red-500">{error}</p>}
             <div className="mt-8">
               <label className="text-white text-xs block mb-2">Email</label>
               <div className="relative flex items-center">

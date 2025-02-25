@@ -134,7 +134,7 @@ export const changeUserPassword = createAsyncThunk(
       const token = state.auth.token ?? null;
       API.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
-      await API.delete(`/user/change-password/${id}`);
+      await API.put(`/user/change-password/${id}`);
       return id;
     } catch (error: any) {
       return thunkAPI.rejectWithValue(

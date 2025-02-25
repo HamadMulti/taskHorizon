@@ -92,16 +92,18 @@ def create_teammate(email, username, generated_password):
 def change_teammate_password(email, username, generated_password):
     try:
         msg = Message(
-            "Welcome to the Team!",
+            "Reset Password requested",
             sender=my_email,
             recipients=[email]
         )
         msg.body = (
             f"Hello {username},\n\n"
-            f"Your rested password has been created.\n\n"
+            f"Your rested password has been changed as below.\n\n"
             f"Username: {username}\n"
             f"Password: {generated_password}\n\n"
-            "Please log in and change your password as soon as possible."
+            "Please log in and change your password as soon as possible.\n\n"
+            "Regards.\n"
+            "The Team.\n"
         )
         mail.send(msg)
         return True

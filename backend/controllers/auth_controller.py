@@ -153,7 +153,8 @@ def login_user():
     user = User.query.filter_by(email=data["email"]).first()
     if user and verify_password(user.password, data["password"]):
         return _login_user_otp(user)
-    return jsonify({"error": "Invalid credentials"}), 401
+    else:
+        return jsonify({"error": "Invalid credentials"}), 400
 
 
 def _login_user_otp(user):
@@ -180,13 +181,6 @@ def _login_user_otp(user):
 
 
 def logout_user():
-    """Logs out the current user.
-
-    This function clears the access token cookie, effectively logging the user out.
-
-    Returns:
-        Response: A JSON response indicating successful logout.
-    """
     response = make_response(jsonify({"message": "Successfully logged out"}), 200)
     response.set_cookie('access_token', '', expires=0, httponly=True,
                         secure=get_cookie_secure_flag(), samesite='Lax')
@@ -194,14 +188,6 @@ def logout_user():
 
 
 def send_otp():
-    """Sends an OTP to the user's email address.
-
-    This function retrieves the user's email from the request data, generates an OTP,
-    updates the user's OTP field in the database, and sends the OTP via email.
-
-    Returns:
-        Response: A JSON response indicating success or an error message if sending fails.
-    """
     data = request.json
     email = data.get("email")
     if not email:
@@ -223,18 +209,10 @@ def verify_otp():
     user = User.query.filter_by(email=data["email"]).first()
     if user and user.otp == data["otp"]:
         return _token_handler(user.id, "Verification success", role=user.role)
-    return jsonify({"error": "Invalid OTP"}), 401
+    return jsonify({"error": "Invalid OTP"}), 400
 
 
 def forgot_password():
-    """Initiates the password reset process.
-
-    This function retrieves the user's email from the request data, generates a reset token,
-    and sends a password reset email containing the token to the user.
-
-    Returns:
-        Response: A JSON response indicating success or an error message if the user is not found.
-    """
     data = request.json
     user = User.query.filter_by(email=data["email"]).first()
     if user:
@@ -245,14 +223,6 @@ def forgot_password():
 
 
 def reset_password():
-    """Resets the user's password.
-
-    This function retrieves the reset token and new password from the request data,
-    validates the token, and updates the user's password in the database.
-
-    Returns:
-        Response: A JSON response indicating success or an error message if reset fails.
-    """
     data = request.json
     token = data.get("token")
     new_password = data.get("password")
@@ -267,18 +237,6 @@ def reset_password():
 
 
 def _reset_password_(token, new_password):
-    """Resets the user's password.
-
-    This function decodes the provided token to get the user ID, retrieves the user from the database,
-    hashes the new password, updates the user's password, and commits the changes.
-
-    Args:
-        token (str): The reset token.
-        new_password (str): The new password.
-
-    Returns:
-        Response: A JSON response indicating successful password update or an error if the user is not found.
-    """
     user_id = decoded_token(token)
 
     user = User.query.get(user_id)

@@ -71,7 +71,7 @@ export const loginUser = createAsyncThunk(
   async (credentials: { email: string; password: string }, thunkAPI) => {
     try {
       const response = await API.post("/auth/login", credentials);
-      const { access_token, refresh_token, user } = response.data;
+      const { access_token, refresh_token, user, error, message } = response.data;
 
       Cookies.set("access_token", access_token, {
         expires: expireDate(access_token) || 1,
@@ -87,7 +87,7 @@ export const loginUser = createAsyncThunk(
       });
 
       localStorage.setItem("user", JSON.stringify(user));
-      return { user, token: access_token };
+      return { user, token: access_token, error, message };
     } catch (error: any) {
       return thunkAPI.rejectWithValue(error.response?.data || "Login failed");
     }
@@ -313,6 +313,8 @@ const authSlice = createSlice({
       })
       .addCase(loginUser.fulfilled, (state, action) => {
         state.loading = false;
+        state.message = action.payload.message;
+        state.error = action.payload.error;
         state.token = action.payload.token;
         state.user = action.payload.user;
       })
