@@ -9,6 +9,7 @@ import { useLocation } from "react-router-dom";
 import CreateTaskModal from "../../../components/modals/task/create";
 import EditTaskModal from "../../../components/modals/task/edit";
 import DeleteTaskModal from "../../../components/modals/task/delete";
+import { useUsers } from "../../../../hooks/useUsers";
 
 const Tasks = () => {
   const { tasks, loading, currentPage, totalPages, totalTasks } = useTasks();
@@ -18,6 +19,7 @@ const Tasks = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedTask, setSelectedTask] = useState<Task>();
   const { pathname } = useLocation();
+  const { role } = useUsers();
   const handleClose = () => {
     setIsCreating(false);
     setIsEditing(false);
@@ -26,6 +28,8 @@ const Tasks = () => {
   return (
     <>
       <div className="overflow-x-auto">
+      {role === "admin" || role === "team_leader" ? (
+              <>
         <div
           className={`${
             pathname === "/dashboard/tasks"
@@ -61,6 +65,8 @@ const Tasks = () => {
           </button>
           {isCreating && <CreateTaskModal onClose={handleClose} />}
         </div>
+        </>
+        ): null}
         <table className="min-w-full bg-white">
           <thead className="bg-gray-800 whitespace-nowrap">
             <tr>
