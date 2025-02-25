@@ -9,7 +9,7 @@ import { useLocation } from "react-router-dom";
 import CreateTaskModal from "../../../components/modals/task/create";
 import EditTaskModal from "../../../components/modals/task/edit";
 import DeleteTaskModal from "../../../components/modals/task/delete";
-import { useUsers } from "../../../../hooks/useUsers";
+import { useAuth } from "../../../../hooks/useAuth";
 
 const Tasks = () => {
   const { tasks, loading, currentPage, totalPages, totalTasks } = useTasks();
@@ -19,7 +19,7 @@ const Tasks = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedTask, setSelectedTask] = useState<Task>();
   const { pathname } = useLocation();
-  const { role } = useUsers();
+  const { role } = useAuth();
   const handleClose = () => {
     setIsCreating(false);
     setIsEditing(false);
