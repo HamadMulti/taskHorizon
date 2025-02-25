@@ -2,7 +2,9 @@
 
 ## Introduction
 
-TaskHorizon is a web-based task management system designed to streamline project and task organization. Built using Flask, PostgreSQL, and JWT-based authentication for the backend, and React/Vite with Redux for the frontend, the system ensures efficient task tracking and role-based access control. The system follows a structured software engineering workflow ensuring scalability, maintainability, and security.
+TaskHorizon is a web-based task management system designed to streamline project and task organization. Built using **Flask**, **PostgreSQL**, and **JWT-based authentication** for the backend, and **React/Vite** with **Redux** for the frontend, the system ensures efficient task tracking. The frontend interacts with the backend through **Axios** as an intermediary service, providing seamless API integration. 
+
+This system is built with scalability, maintainability, and security in mind, following structured software engineering workflows to enhance project management efficiency. TaskHorizon is designed for teams of all sizes, allowing administrators and team leads to manage users, create and assign tasks, and oversee project progress, while standard users can efficiently track their assigned work.
 
 ## Software Engineering Workflow
 
@@ -13,7 +15,7 @@ The development of TaskHorizon adhered to best practices in software engineering
 - **Implementation**: Developed RESTful APIs with Flask and ensured security with JWT authentication.
 - **Frontend Implementation**: Built with **React/Vite** and **Redux** for state management.
 - **Testing**: Conducted unit and integration tests to validate API endpoints and UI functionality.
-- **Deployment**: Hosted backend on Render and frontend on Vercel, with PostgreSQL as the database and Nginx as a reverse proxy.
+- **Deployment**: Hosted backend and frontend on Render using a Dockerized environment, with PostgreSQL as the database and Nginx as a reverse proxy.
 
 ## System Architecture
 
@@ -23,7 +25,7 @@ TaskHorizon follows a layered approach:
 - **Frontend**: React/Vite with Redux
 - **Database**: PostgreSQL
 - **Authentication**: JWT-based authentication with secure token handling
-- **Deployment**: Dockerized application hosted on Render (backend) and Vercel (frontend) with CI/CD integration
+- **Deployment**: Dockerized application hosted on **Render** (both backend and frontend) with CI/CD integration
 
 ### Use Case Diagram
 
@@ -63,7 +65,7 @@ TaskHorizon follows a layered approach:
 ### Backend Deployment Issues
 
 - **Database Connection Limits**: Render’s free-tier PostgreSQL has limitations, requiring connection pooling.
-- **CORS Policy Conflicts**: Backend adjustments were made to allow seamless frontend integration on Vercel.
+- **CORS Policy Conflicts**: Backend adjustments were made to allow seamless frontend integration.
 - **JWT Expiry Management**: Implemented token refresh strategies to enhance user sessions.
 
 ### Frontend Deployment Issues
@@ -80,7 +82,6 @@ TaskHorizon follows a layered approach:
 
 ## Future Enhancements
 
-- **Role-Based Access Control**: Implementing **Admin, Team Lead, and Standard User** roles.
 - **Advanced Notifications**: Real-time updates on task modifications.
 - **Analytics Dashboard**: Implementation of **data-driven insights** for task and user activity.
 - **Task Prioritization**: Automated priority assignment to enhance workflow.
@@ -95,3 +96,4 @@ TaskHorizon follows a layered approach:
 ## Conclusion
 
 TaskHorizon provides a structured and scalable backend and frontend for task management. By following software engineering best practices, it ensures a reliable, secure, and efficient system for users. Future enhancements aim to extend functionality, improve user experience, and provide a robust management solution for teams and administrators.
+

@@ -35,7 +35,8 @@ const Project = () => {
       <div className="overflow-x-auto">
         <div
           className={`${
-            pathname === "/dashboard/projects" && role === "admin" || role ==="team_leader"
+            (pathname === "/dashboard/projects" && role === "admin") ||
+            role === "team_leader"
               ? "w-fit absolute z-1000 top-0 max-md:top-9 max-md:right-0 max-sm:top-0 max-sm:right-18 right-20 bg-transparent flex items-center justify-end py-4 px-8"
               : "hidden w-0 content-none clear-none"
           }`}
@@ -66,7 +67,12 @@ const Project = () => {
             </svg>
             Add Project
           </button>
-          {isCreating && <CreateProjectModal onOpen={isCreating} onClose={() => setIsCreating(false)} />}
+          {isCreating && (
+            <CreateProjectModal
+              onOpen={isCreating}
+              onClose={() => setIsCreating(false)}
+            />
+          )}
         </div>
         <table className="min-w-full bg-white">
           <thead className="bg-gray-800 whitespace-nowrap">
@@ -112,16 +118,25 @@ const Project = () => {
                     <tr className="even:bg-yellow-50" key={project.id}>
                       <td className="p-4 text-sm text-black">{project.name}</td>
                       <td className="p-4 text-sm text-black">
-                        {truncateText(project.description, 30)}
-                        <span
-                          className="text-yellow-500 font-lighter cursor-pointer"
-                          onClick={() => {
-                            setIsModalOpen(true);
-                            setSelectedProject(project);
-                          }}
-                        >
-                          ...view for more details
-                        </span>
+                        {project.description &&
+                        project.description.length > 0 ? (
+                          <>
+                            {truncateText(project.description, 30)}
+                            <span
+                              className="text-yellow-500 font-lighter cursor-pointer"
+                              onClick={() => {
+                                setIsModalOpen(true);
+                                setSelectedProject(project);
+                              }}
+                            >
+                              ...view more
+                            </span>
+                          </>
+                        ) : (
+                          <>
+                            <span className="text-yellow-500 font-lighter cursor-pointer"></span>
+                          </>
+                        )}
                       </td>
                       <td className="p-4">
                         <button

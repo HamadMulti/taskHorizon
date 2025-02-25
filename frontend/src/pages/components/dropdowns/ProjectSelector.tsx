@@ -3,11 +3,12 @@ import { useProjects } from "../../../hooks/useProjects";
 
 interface Props {
   onSelect: (selectedProject: string) => void;
+  selectedValue?: number; 
 }
 
-const ProjectDropdown: React.FC<Props> = ({ onSelect }) => {
+const ProjectDropdown: React.FC<Props> = ({ onSelect, selectedValue }) => {
   const { my_projects, loading, error, fetchMyProjectSelector } = useProjects();
-  const [selectedProject, setSelectedProject] = useState("");
+  const [selectedProject, setSelectedProject] = useState(selectedValue ?? "");
 
   const handleSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedProject(e.target.value);

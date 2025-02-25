@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useTasks } from "../../../../hooks/useTasks";
 import UserDropdown from "../../dropdowns/UserSelector";
 import ProjectDropdown from "../../dropdowns/ProjectSelector";
+import { useAuth } from "../../../../hooks/useAuth";
 
 interface CreateTaskModalProps {
   onClose: () => void;
@@ -16,6 +17,7 @@ const CreateTaskModal: React.FC<CreateTaskModalProps> = ({ onClose }) => {
   const { addTask, loading } = useTasks();
   const [selectedUser, setSelectedUser] = useState("");
   const [selectedProject, setSelectedProject] = useState("");
+  const { role } = useAuth();
 
   const handleUserSelect = (user: string) => {
     setSelectedUser(user);
@@ -96,24 +98,28 @@ const CreateTaskModal: React.FC<CreateTaskModalProps> = ({ onClose }) => {
               </div>
 
               {/* Assigned To Input */}
-              <div>
-                <label className="text-gray-800 text-sm mb-2 block">
-                  Assigned To
-                </label>
-                <div>
-                  <UserDropdown onSelect={handleUserSelect} />
-                </div>
-              </div>
+              {role === "admin" || role === "team_leader" ? (
+                <>
+                  <div>
+                    <label className="text-gray-800 text-sm mb-2 block">
+                      Assigned To
+                    </label>
+                    <div>
+                      <UserDropdown onSelect={handleUserSelect} />
+                    </div>
+                  </div>
 
-              {/* Project Id To Input */}
-              <div>
-                <label className="text-gray-800 text-sm mb-2 block">
-                  Project
-                </label>
-                <div>
-                  <ProjectDropdown onSelect={setSelectedProject} />
-                </div>
-              </div>
+                  {/* Project Id To Input */}
+                  <div>
+                    <label className="text-gray-800 text-sm mb-2 block">
+                      Project
+                    </label>
+                    <div>
+                      <ProjectDropdown onSelect={setSelectedProject} />
+                    </div>
+                  </div>
+                </>
+              ) : null}
 
               {/* Description Input */}
               <div>

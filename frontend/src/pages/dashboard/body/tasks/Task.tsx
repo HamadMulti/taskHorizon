@@ -11,8 +11,7 @@ import EditTaskModal from "../../../components/modals/task/edit";
 import DeleteTaskModal from "../../../components/modals/task/delete";
 
 const Tasks = () => {
-  const { tasks, loading, currentPage, totalPages, totalTasks } =
-    useTasks();
+  const { tasks, loading, currentPage, totalPages, totalTasks } = useTasks();
   const [isCreating, setIsCreating] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [page, setCurrentPage] = useState(currentPage);
@@ -82,7 +81,7 @@ const Tasks = () => {
               </th>
             </tr>
           </thead>
-          {loading ? (
+          {loading && !tasks ? (
             <SkeletonTable count={5} />
           ) : tasks.length === 0 ? (
             <tbody className="whitespace-nowrap flex">
@@ -112,16 +111,24 @@ const Tasks = () => {
                   <td className="p-4 text-sm text-black">{task.title}</td>
                   <td className="p-4 text-sm text-black">{task.status}</td>
                   <td className="p-4 text-sm text-black">
-                    {truncateText(task.description, 30)}
-                    <span
-                      className="text-yellow-500 font-lighter cursor-pointer"
-                      onClick={() => {
-                        setIsModalOpen(true);
-                        setSelectedTask(task);
-                      }}
-                    >
-                      ...view more
-                    </span>
+                    {task.description && task.description.length > 0 ? (
+                      <>
+                        {truncateText(task.description, 30)}
+                        <span
+                          className="text-yellow-500 font-lighter cursor-pointer"
+                          onClick={() => {
+                            setIsModalOpen(true);
+                            setSelectedTask(task);
+                          }}
+                        >
+                          ...view more
+                        </span>
+                      </>
+                    ) : (
+                      <>
+                        <span className="text-yellow-500 font-lighter cursor-pointer"></span>
+                      </>
+                    )}
                   </td>
                   <td className="p-4 text-sm text-black">{task.assigned_to}</td>
                   <td className="p-4">

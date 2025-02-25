@@ -12,6 +12,8 @@ const refreshAccessToken = async () => {
     const response = await API.post("/auth/refresh", { refresh_token: refreshToken });
     const newAccessToken = response.data.access_token;
 
+    console.log(newAccessToken)
+
     Cookies.set("access_token", newAccessToken, {
       expires: expireDate(newAccessToken) || 1,
       path: "/",

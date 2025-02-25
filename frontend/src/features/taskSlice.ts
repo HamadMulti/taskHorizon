@@ -47,7 +47,7 @@ const initialState: TaskState = {
   totalTasks: 0,
   my_totalTasks: 0,
   team_totalTasks: 0,
-  loadedPages: new Set(),
+  loadedPages: new Set()
 };
 
 // Fetch All Tasks with Pagination
@@ -57,12 +57,6 @@ export const fetchTasksDetails = createAsyncThunk(
     try {
       const state = thunkAPI.getState() as RootState;
       const token = state.auth.token ?? null;
-      if (state.tasks.currentPage === page && state.tasks.tasks.length > 0) {
-        return thunkAPI.rejectWithValue("Tasks already fetched.");
-      }
-      if (state.tasks.loadedPages.has(page)) {
-        return thunkAPI.rejectWithValue("Page already loaded.");
-      }
       API.defaults.headers.common["Authorization"] = `Bearer ${token}`;
       const response = await API.get(`/tasks?page=${page}`);
       return response.data;
@@ -81,18 +75,12 @@ export const fetchMyTasksDetails = createAsyncThunk(
     try {
       const state = thunkAPI.getState() as RootState;
       const token = state.auth.token ?? null;
-      if (state.tasks.my_currentPage === page && state.tasks.my_tasks.length > 0) {
-        return thunkAPI.rejectWithValue("Tasks already fetched.");
-      }
-      if (state.tasks.loadedPages.has(page)) {
-        return thunkAPI.rejectWithValue("Page already loaded.");
-      }
       API.defaults.headers.common["Authorization"] = `Bearer ${token}`;
       const response = await API.get(`/tasks/user-tasks?page=${page}`);
       return response.data;
     } catch (error: any) {
       return thunkAPI.rejectWithValue(
-        error.response?.data || "Failed to fetch my task details"
+        error.response?.data || "Failed to fetch tasks details"
       );
     }
   }
@@ -105,18 +93,12 @@ export const fetchTeamTasksDetails = createAsyncThunk(
     try {
       const state = thunkAPI.getState() as RootState;
       const token = state.auth.token ?? null;
-      if (state.tasks.team_currentPage === page && state.tasks.team_tasks.length > 0) {
-        return thunkAPI.rejectWithValue("Tasks already fetched.");
-      }
-      if (state.tasks.loadedPages.has(page)) {
-        return thunkAPI.rejectWithValue("Page already loaded.");
-      }
       API.defaults.headers.common["Authorization"] = `Bearer ${token}`;
       const response = await API.get(`/tasks/team-tasks?page=${page}`);
       return response.data;
     } catch (error: any) {
       return thunkAPI.rejectWithValue(
-        error.response?.data || "Failed to fetch team task details"
+        error.response?.data || "Failed to fetch tasks details"
       );
     }
   }
@@ -223,47 +205,17 @@ export const archiveTask = createAsyncThunk(
 const taskSlice = createSlice({
   name: "tasks",
   initialState,
-  reducers: {
-    resetTasksState: (state) => {
-      state.tasks = [];
-      state.totalTasks = 0;
-      state.totalPages = 0;
-      state.currentPage = 1;
-      state.loading = false;
-      state.error = null;
-    },
-    resetMyTasksState: (state) => {
-      state.my_tasks = [];
-      state.my_totalTasks = 0;
-      state.my_totalPages = 0;
-      state.my_currentPage = 1;
-      state.loading = false;
-      state.error = null;
-    },
-    resetTeamTasksState: (state) => {
-      state.team_tasks = [];
-      state.team_totalTasks = 0;
-      state.team_totalPages = 0;
-      state.team_currentPage = 1;
-      state.loading = false;
-      state.error = null;
-    }
-  },
+  reducers: {},
   extraReducers: (builder) => {
     builder
       .addCase(fetchTasksDetails.pending, (state) => {
         state.loading = true;
       })
       .addCase(fetchTasksDetails.fulfilled, (state, action) => {
-        if (action.payload && action.payload.tasks) {
-          state.tasks = action.payload.tasks;
-          state.currentPage = action.payload.current_page;
-          state.totalPages = action.payload.pages;
-          state.totalTasks = action.payload.total;
-          state.loadedPages.add(action.payload.current_page);
-        } else {
-          state.error = "Tasks data is missing";
-        }
+        state.tasks = [...action.payload.tasks];
+        state.currentPage = action.payload.current_page;
+        state.totalPages = action.payload.pages;
+        state.totalTasks = action.payload.total;
         state.loading = false;
       })
       .addCase(fetchTasksDetails.rejected, (state, action) => {
@@ -274,15 +226,11 @@ const taskSlice = createSlice({
         state.loading = true;
       })
       .addCase(fetchMyTasksDetails.fulfilled, (state, action) => {
-        if (action.payload && action.payload.my_tasks) {
-          state.my_tasks = action.payload.my_tasks;
-          state.my_totalTasks = action.payload.total;
-          state.my_totalPages = action.payload.pages;
-          state.my_currentPage = action.payload.current_page;
-          state.loadedPages.add(action.payload.current_page);
-        } else {
-          state.error = "Tasks data is missing";
-        }
+        state.my_tasks = [...action.payload.my_tasks];
+        state.my_totalTasks = action.payload.total;
+        state.my_totalPages = action.payload.pages;
+        state.my_currentPage = action.payload.current_page;
+        state.loadedPages.add(action.payload.current_page);
         state.loading = false;
       })
       .addCase(fetchMyTasksDetails.rejected, (state, action) => {
@@ -293,15 +241,11 @@ const taskSlice = createSlice({
         state.loading = true;
       })
       .addCase(fetchTeamTasksDetails.fulfilled, (state, action) => {
-        if (action.payload && action.payload.team_tasks) {
-          state.team_tasks = action.payload.team_tasks;
-          state.team_totalTasks = action.payload.total;
-          state.team_totalPages = action.payload.pages;
-          state.team_currentPage = action.payload.current_page;
-          state.loadedPages.add(action.payload.current_page);
-        } else {
-          state.error = "Tasks data is missing";
-        }
+        state.team_tasks = [...action.payload.team_tasks];
+        state.team_totalTasks = action.payload.total;
+        state.team_totalPages = action.payload.pages;
+        state.team_currentPage = action.payload.current_page;
+        state.loadedPages.add(action.payload.current_page);
         state.loading = false;
       })
       .addCase(fetchTeamTasksDetails.rejected, (state, action) => {
@@ -359,5 +303,4 @@ const taskSlice = createSlice({
   }
 });
 
-export const { resetTasksState, resetMyTasksState, resetTeamTasksState } = taskSlice.actions;
 export default taskSlice.reducer;

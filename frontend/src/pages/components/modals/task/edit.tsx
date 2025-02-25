@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useTasks } from "../../../../hooks/useTasks";
-
+import { useAuth } from "../../../../hooks/useAuth";
+import UserDropdown from "../../dropdowns/UserSelector";
+import ProjectDropdown from "../../dropdowns/ProjectSelector";
 
 interface EditTaskModalProps {
   task: {
@@ -14,18 +16,20 @@ interface EditTaskModalProps {
   onClose: () => void;
 }
 
-const EditTaskModal: React.FC<EditTaskModalProps> = ({
-  task,
-  onClose
-}) => {
-  const [isOpen, setIsOpen] = useState(true); // Modal starts open
-
+const EditTaskModal: React.FC<EditTaskModalProps> = ({ task, onClose }) => {
+  const [isOpen, setIsOpen] = useState(true);
+  const { role } = useAuth();
   const [title, setTitle] = useState(task?.title);
   const [status, setStatus] = useState(task?.status);
-  const [assigned_to, setAssignedTo] = useState(task?.assigned_to);
   const [description, setDescription] = useState(task?.description || "");
-  const {project_id, id } = task
+  const { project_id, id } = task;
   const { editTask } = useTasks();
+  const [selectedUser, setSelectedUser] = useState("");
+  const [selectedProject, setSelectedProject] = useState("");
+
+  const handleUserSelect = (user: string) => {
+    setSelectedUser(user);
+  };
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleUpdate = (e: any) => {
@@ -34,9 +38,9 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({
       id,
       title: title || "",
       status: status || "",
-      assigned_to: assigned_to || "",
+      assigned_to: selectedUser || "",
       description,
-      project_id,
+      project_id: Number(selectedProject)
     };
     editTask(data);
     setIsOpen(false);
@@ -64,13 +68,12 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({
             </button>
 
             {/* Modal Title */}
-            <h3 className="text-yellow-600 text-xl font-bold mb-4">Edit Task</h3>
+            <h3 className="text-yellow-600 text-xl font-bold mb-4">
+              Edit Task
+            </h3>
 
             {/* Form */}
-            <form
-              className="space-y-4"
-              onSubmit={handleUpdate}
-            >
+            <form className="space-y-4" onSubmit={handleUpdate}>
               {/* Title Input */}
               <div>
                 <label className="text-gray-800 text-sm mb-2 block">
@@ -102,18 +105,28 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({
               </div>
 
               {/* Assigned To Input */}
-              <div>
-                <label className="text-gray-800 text-sm mb-2 block">
-                  Assigned To
-                </label>
-                <input
-                  type="text"
-                  placeholder="Enter assigned person"
-                  value={assigned_to}
-                  onChange={(e) => setAssignedTo(e.target.value)}
-                  className="px-4 py-3 bg-gray-100 w-full text-gray-800 text-sm border-none focus:outline-yellow-600 focus:bg-transparent rounded-lg"
-                />
-              </div>
+              {role === "admin" || role === "team_leader" ? (
+                <>
+                  <div>
+                    <label className="text-gray-800 text-sm mb-2 block">
+                      Assigned To
+                    </label>
+                    <div>
+                      <UserDropdown onSelect={handleUserSelect} />
+                    </div>
+                  </div>
+
+                  {/* Project Id To Input */}
+                  <div>
+                    <label className="text-gray-800 text-sm mb-2 block">
+                      Project
+                    </label>
+                    <div>
+                      <ProjectDropdown selectedValue={project_id ?? ""} onSelect={setSelectedProject} />
+                    </div>
+                  </div>
+                </>
+              ) : null}
 
               {/* Description Input */}
               <div>
@@ -135,8 +148,8 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({
                   type="button"
                   className="px-6 py-3 rounded-lg text-gray-800 text-sm bg-gray-200 hover:bg-gray-300"
                   onClick={() => {
-                    setIsOpen(false)
-                    onClose()
+                    setIsOpen(false);
+                    onClose();
                   }}
                 >
                   Cancel

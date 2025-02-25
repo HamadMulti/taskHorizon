@@ -39,13 +39,14 @@ export const useTasks = () => {
     my_totalTasks,
     team_totalTasks,
     loading,
-    error
+    error,
   } = useSelector((state: RootState) => state.tasks);
 
   const tasks = useSelector(selectFilteredTasks);
   const my_tasks = useSelector(selectFilteredMyTasks);
   const team_tasks = useSelector(selectFilteredTeamTasks);
   const isFetching = useRef(false);
+  console.log("Tasks data:", tasks, my_tasks);
   const debouncedFetchTasks = debounce(
     (
       dispatch: (

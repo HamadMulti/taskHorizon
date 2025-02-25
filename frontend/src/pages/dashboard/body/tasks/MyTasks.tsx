@@ -112,16 +112,24 @@ const MyTasks = () => {
                   <td className="p-4 text-sm text-black">{task.title}</td>
                   <td className="p-4 text-sm text-black">{task.status}</td>
                   <td className="p-4 text-sm text-black">
-                    {truncateText(task.description, 30)}
-                    <span
-                      className="text-yellow-500 font-lighter cursor-pointer"
-                      onClick={() => {
-                        setIsModalOpen(true);
-                        setSelectedTask(task);
-                      }}
-                    >
-                      ...view more
-                    </span>
+                    {task.description && task.description.length > 0 ? (
+                      <>
+                        {truncateText(task.description, 30)}
+                        <span
+                          className="text-yellow-500 font-lighter cursor-pointer"
+                          onClick={() => {
+                            setIsModalOpen(true);
+                            setSelectedTask(task);
+                          }}
+                        >
+                          ...view more
+                        </span>
+                      </>
+                    ) : (
+                      <>
+                        <span className="text-yellow-500 font-lighter cursor-pointer"></span>
+                      </>
+                    )}
                   </td>
                   <td className="p-4 text-sm text-black">{task.assigned_to}</td>
                   <td className="p-4">
@@ -194,7 +202,9 @@ const MyTasks = () => {
             totalPages={my_totalPages}
             onPageChange={setCurrentPage}
           />
-          <span className="text-gray-500">{my_totalTasks} | Number Of Items</span>
+          <span className="text-gray-500">
+            {my_totalTasks} | Number Of Items
+          </span>
         </div>
       </div>
     </>

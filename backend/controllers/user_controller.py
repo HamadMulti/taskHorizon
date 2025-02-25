@@ -2,12 +2,12 @@ import random
 import re
 from flask import request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
+from utils.security import hash_password
 from models.subscribe import Subscriber
 from utils.mailer import change_teammate_password, create_teammate, new_subscriber_mail
 from models.user import db, User
 import random
 import string
-from werkzeug.security import generate_password_hash
 
 
 @jwt_required()
@@ -84,6 +84,9 @@ def get_profiles():
 
     if not user:
         return jsonify({"error": "User not found or unauthorized"}), 403
+    
+    if user.role not in ["admin", "team_leader"]:
+        return jsonify({"error": "Unauthorized"}), 403
 
     users = User.query.paginate(page=page, per_page=per_page, error_out=False)
 
@@ -141,7 +144,7 @@ def subscribe_user():
 
 def generate_random_password(length=10):
     """Generates a secure random password."""
-    characters = string.ascii_letters + string.digits + string.punctuation
+    characters = string.ascii_letters + string.digits + "!@#$%^&*"
     return ''.join(random.choice(characters) for _ in range(length))
 
 @jwt_required()
@@ -166,7 +169,7 @@ def create_team_member():
         return jsonify({"error": "User already exists"}), 400
 
     generated_password = generate_random_password()
-    hashed_password = generate_password_hash(generated_password)
+    hashed_password = hash_password(generated_password)
 
     new_user = User(username=username, email=email, password=hashed_password, role="user")
     db.session.add(new_user)
@@ -188,7 +191,7 @@ def change_team_member_password(users_id):
         return jsonify({"error": "User already exists"}), 400
 
     generated_password = generate_random_password()
-    hashed_password = generate_password_hash(generated_password)
+    hashed_password = hash_password(generated_password)
 
     user.password = hashed_password
     db.session.commit()

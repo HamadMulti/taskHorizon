@@ -22,10 +22,13 @@ def create_task():
     if not user:
         return jsonify({"error": "Unauthorized"}), 403
 
-    if user.role not in ["admin", "team_leader"]:
-        return jsonify({"error": "Unauthorized"}), 403
-
     data = request.json
+    
+    if user.role not in ["admin", "team_leader"] or user.project_id == data["project_id"]:
+        return jsonify({"error": "Unauthorized"}), 403
+    check_tasks = Task.query.filter(Task.title == data["title"]) and Task.query.filter(Task.project_id == data["project_id"])
+    if check_tasks:
+        return jsonify({"message": "tasks already available in the database"}), 400
     task = Task(title=data["title"], description=data["description"], assigned_to=None, project_id=data["project_id"])
     db.session.add(task)
     db.session.commit()
@@ -34,42 +37,36 @@ def create_task():
 
 @jwt_required()
 def get_tasks():
-    """Retrieves all tasks.
-
-    This endpoint retrieves all tasks from the database.
-
-    Returns:
-        Response: A JSON response containing a list of all tasks.
-        - 200: Tasks retrieved successfully.
-        - 403: Unauthorized access.
-    """
     page = request.args.get("page", 1, type=int)
     per_page = request.args.get("per_page", 10, type=int)
     user_id = get_jwt_identity()
     user = User.query.get(user_id)
 
-    tasks = None
-
-    if not tasks:
-        return jsonify({"error": "Tasks not found"}), 404
-
-    if user.role == "admin":
-        tasks = Task.query.all()
-    elif user.role == "team_leader":
-        tasks = Task.query.filter((Task.project_id == user.project_id)).paginate(
-            page=page, per_page=per_page, error_out=False)
-    else:
-        tasks = Task.query.filter(
-            (Task.assigned_to == user_id)).paginate(page=page, per_page=per_page, error_out=False)
     if not user:
         return jsonify({"error": "Unauthorized"}), 403
+
+    if user.role == "admin":
+        tasks = Task.query.paginate(page=page, per_page=per_page, error_out=False)
+    elif user.role == "team_leader":
+        tasks = Task.query.filter(Task.project_id == user.project_id).paginate(
+            page=page, per_page=per_page, error_out=False
+        )
+    else:
+        tasks = Task.query.filter(Task.assigned_to == user_id).paginate(
+            page=page, per_page=per_page, error_out=False
+        )
+
     return jsonify(
         {
-            "tasks": [{"id": t.id, "title": t.title, "status": t.status, "assigned_to": t.assigned_to} for t in tasks],
+            "tasks": [
+                {"id": t.id, "title": t.title, "status": t.status, "assigned_to": t.assigned_to}
+                for t in tasks.items
+            ],
             "total": tasks.total,
             "pages": tasks.pages,
-            "current_page": tasks.page
-        }), 200
+            "current_page": tasks.page,
+        }
+    ), 200
 
 
 @jwt_required()
@@ -99,7 +96,7 @@ def assign_task(task_id):
         new_assignee = data.get("assigned_to")
 
         history = TaskHistory(task_id=task.id, updated_by=user.id,
-                                old_assignee=task.assigned_to, new_assignee=new_assignee)
+                              old_assignee=task.assigned_to, new_assignee=new_assignee)
         db.session.add(history)
 
         task.assigned_to = new_assignee
@@ -131,7 +128,7 @@ def update_task(task_id):
     if user and user.role == "admin" or (user.role == "team_leader" and task.project_id == data["project_id"]) or task.assigned_to == user_id:
         data = request.json
         history = TaskHistory(task_id=task.id, updated_by=user.id, old_status=task.status,
-                                new_status=data.get("status", task.status))
+                              new_status=data.get("status", task.status))
         db.session.add(history)
 
         task.title = data.get("title", task.title)
@@ -167,7 +164,7 @@ def archive_task(task_id):
 
     if user:
         archived_task = ArchivedTask(task_id=task.id, title=task.title, description=task.description,
-                                        status=task.status, assigned_to=task.assigned_to, project_id=task.project_id, deleted_by=user.id)
+                                     status=task.status, assigned_to=task.assigned_to, project_id=task.project_id, deleted_by=user.id)
         db.session.add(archived_task)
 
         db.session.delete(task)

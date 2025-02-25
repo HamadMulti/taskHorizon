@@ -70,16 +70,25 @@ const MyProject = () => {
                     <tr className="even:bg-yellow-50" key={project.id}>
                       <td className="p-4 text-sm text-black">{project.name}</td>
                       <td className="p-4 text-sm text-black">
-                        {truncateText(project.description, 30)}
-                        <span
-                          className="text-yellow-500 font-lighter cursor-pointer"
-                          onClick={() => {
-                            setIsModalOpen(true);
-                            setSelectedProject(project);
-                          }}
-                        >
-                          ...view for more details
-                        </span>
+                        {project.description &&
+                        project.description.length > 0 ? (
+                          <>
+                            {truncateText(project.description, 30)}
+                            <span
+                              className="text-yellow-500 font-lighter cursor-pointer"
+                              onClick={() => {
+                                setIsModalOpen(true);
+                                setSelectedProject(project);
+                              }}
+                            >
+                              ...view more
+                            </span>
+                          </>
+                        ) : (
+                          <>
+                            <span className="text-yellow-500 font-lighter cursor-pointer"></span>
+                          </>
+                        )}
                       </td>
                       <td className="p-4">
                         <button

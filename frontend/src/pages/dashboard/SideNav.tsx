@@ -203,7 +203,7 @@ const Sidebar = () => {
                         to="users"
                         onClick={handleLinkClick}
                         className={`text-gray-800 text-sm flex items-center  rounded-md px-4 py-2 transition-all ${
-                          pathname === "/dashboard/tasks"
+                          pathname === "/dashboard/users"
                             ? "bg-[#0c172b] text-white bold"
                             : "hover:bg-gray-100"
                         }`}
