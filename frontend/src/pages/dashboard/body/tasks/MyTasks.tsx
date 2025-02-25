@@ -9,6 +9,7 @@ import DeleteTaskModal from "../../../components/modals/task/delete";
 import EditTaskModal from "../../../components/modals/task/edit";
 import { Task } from "../../../../features/taskSlice";
 import CreateTaskModal from "../../../components/modals/task/create";
+import { useAuth } from "../../../../hooks/useAuth";
 
 const MyTasks = () => {
   const { my_tasks, loading, my_currentPage, my_totalPages, my_totalTasks } =
@@ -19,6 +20,7 @@ const MyTasks = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedTask, setSelectedTask] = useState<Task>();
   const { pathname } = useLocation();
+  const { role } = useAuth();
   const handleClose = () => {
     setIsCreating(false);
     setIsEditing(false);
@@ -27,6 +29,8 @@ const MyTasks = () => {
   return (
     <>
       <div className="overflow-x-auto">
+      {role === "admin" || role === "team_leader" ? (
+              <>
         <div
           className={`${
             pathname === "/dashboard/my-tasks"
@@ -62,6 +66,8 @@ const MyTasks = () => {
           </button>
           {isCreating && <CreateTaskModal onClose={handleClose} />}
         </div>
+        </>
+      ):null}
         <table className="min-w-full bg-white">
           <thead className="bg-gray-800 whitespace-nowrap">
             <tr>
