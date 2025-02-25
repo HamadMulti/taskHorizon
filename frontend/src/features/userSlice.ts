@@ -22,6 +22,38 @@ export interface UsersState {
   loading: boolean;
   error: string | null;
 }
+const initialState: UsersState = {
+  users: [],
+  total: 0,
+  pages: 0,
+  current_page: 1,
+  loading: false,
+  error: null,
+};
+
+export const createUser = createAsyncThunk(
+  "auth/register",
+  async (userData: {
+    username: string;
+    email: string;
+  }, thunkAPI) => {
+    try {
+      const state: any = thunkAPI.getState();
+      const { token } = state.auth;
+      if (!token) {
+        return thunkAPI.rejectWithValue("Token is missing");
+      }
+
+      API.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+      const response = await API.post("/users/create-user", userData);
+      return response.data
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data || "Registration failed"
+      );
+    }
+  }
+);
 
 
 // **🔹 Async Thunk for Fetching Users**
@@ -48,14 +80,6 @@ export const fetchUsersDetails = createAsyncThunk(
   }
 );
 
-const initialState: UsersState = {
-  users: [],
-  total: 0,
-  pages: 0,
-  current_page: 1,
-  loading: false,
-  error: null,
-};
 
 const userSlice = createSlice({
   name: "users",

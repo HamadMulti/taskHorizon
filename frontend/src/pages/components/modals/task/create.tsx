@@ -29,7 +29,6 @@ const CreateTaskModal: React.FC<CreateTaskModalProps> = ({ onClose }) => {
       description,
       project_id: Number(selectedProject)
     };
-    console.log(data, selectedProject)
     if (!!title && !!selectedProject) {
       await addTask(data);
       setIsOpen(false);

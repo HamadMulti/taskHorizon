@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../app/store";
 import {
@@ -9,13 +10,19 @@ import {
   assignTask,
   archiveTask
 } from "../features/taskSlice";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import {
   selectFilteredMyTasks,
   selectFilteredTasks,
   selectFilteredTeamTasks
 } from "../utils/taskSelector";
 import { useLocation } from "react-router-dom";
+import { debounce } from "lodash";
+import {
+  AsyncThunkAction,
+  ThunkDispatch,
+  UnknownAction
+} from "@reduxjs/toolkit";
 
 export const useTasks = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -38,16 +45,113 @@ export const useTasks = () => {
   const tasks = useSelector(selectFilteredTasks);
   const my_tasks = useSelector(selectFilteredMyTasks);
   const team_tasks = useSelector(selectFilteredTeamTasks);
+  const isFetching = useRef(false);
+  const debouncedFetchTasks = debounce(
+    (
+      dispatch: (
+        arg0: AsyncThunkAction<
+          any,
+          { page: number },
+          {
+            state?: unknown;
+            dispatch?: ThunkDispatch<unknown, unknown, UnknownAction>;
+            extra?: unknown;
+            rejectValue?: unknown;
+            serializedErrorType?: unknown;
+            pendingMeta?: unknown;
+            fulfilledMeta?: unknown;
+            rejectedMeta?: unknown;
+          }
+        >
+      ) => void,
+      page: any
+    ) => {
+      dispatch(fetchTasksDetails({ page }));
+    },
+    300
+  );
+  const debouncedFetchMyTasks = debounce(
+    (
+      dispatch: (
+        arg0: AsyncThunkAction<
+          any,
+          { page: number },
+          {
+            state?: unknown;
+            dispatch?: ThunkDispatch<unknown, unknown, UnknownAction>;
+            extra?: unknown;
+            rejectValue?: unknown;
+            serializedErrorType?: unknown;
+            pendingMeta?: unknown;
+            fulfilledMeta?: unknown;
+            rejectedMeta?: unknown;
+          }
+        >
+      ) => void,
+      page: any
+    ) => {
+      dispatch(fetchMyTasksDetails({ page }));
+    },
+    300
+  );
+  const debouncedFetchTeamTasks = debounce(
+    (
+      dispatch: (
+        arg0: AsyncThunkAction<
+          any,
+          { page: number },
+          {
+            state?: unknown;
+            dispatch?: ThunkDispatch<unknown, unknown, UnknownAction>;
+            extra?: unknown;
+            rejectValue?: unknown;
+            serializedErrorType?: unknown;
+            pendingMeta?: unknown;
+            fulfilledMeta?: unknown;
+            rejectedMeta?: unknown;
+          }
+        >
+      ) => void,
+      page: any
+    ) => {
+      dispatch(fetchTeamTasksDetails({ page }));
+    },
+    300
+  );
 
   useEffect(() => {
-    if (pathname === "/dashboard/tasks") {
-      dispatch(fetchTasksDetails({ page: currentPage }));
-    } else if (pathname === "/dashboard/my-tasks") {
-      dispatch(fetchMyTasksDetails({ page: my_currentPage }));
-    } else if (pathname === "/dashboard/team-tasks") {
-      dispatch(fetchTeamTasksDetails({ page: team_currentPage }));
+    if (isFetching.current) {
+      return;
     }
-  }, [dispatch, pathname, currentPage, my_currentPage, team_currentPage]);
+
+    isFetching.current = true;
+
+    if (pathname === "/dashboard/tasks" && tasks.length === 0) {
+      dispatch(fetchTasksDetails({ page: currentPage })).finally(
+        () => (isFetching.current = false)
+      );
+    } else if (pathname === "/dashboard/my-tasks" && my_tasks.length === 0) {
+      dispatch(fetchMyTasksDetails({ page: my_currentPage })).finally(
+        () => (isFetching.current = false)
+      );
+    } else if (
+      pathname === "/dashboard/team-tasks" &&
+      team_tasks.length === 0
+    ) {
+      dispatch(fetchTeamTasksDetails({ page: team_currentPage })).finally(
+        () => (isFetching.current = false)
+      );
+    }
+  }, [
+    dispatch,
+    pathname,
+    tasks.length,
+    my_tasks.length,
+    team_tasks.length,
+    currentPage,
+    my_currentPage,
+    team_currentPage
+  ]);
 
   const nextPage = () => {
     if (pathname === "/dashboard/tasks" && currentPage < totalPages) {
@@ -56,7 +160,10 @@ export const useTasks = () => {
     if (pathname === "/dashboard/my-tasks" && my_currentPage < my_totalPages) {
       dispatch(fetchMyTasksDetails({ page: my_currentPage + 1 }));
     }
-    if (pathname === "/dashboard/team-tasks" && team_currentPage < team_totalPages) {
+    if (
+      pathname === "/dashboard/team-tasks" &&
+      team_currentPage < team_totalPages
+    ) {
       dispatch(fetchTeamTasksDetails({ page: team_currentPage + 1 }));
     }
   };
@@ -75,13 +182,21 @@ export const useTasks = () => {
 
   const setPage = (page: number) => {
     if (pathname === "/dashboard/tasks" && page >= 1 && page <= totalPages) {
-      dispatch(fetchTasksDetails({ page }));
+      debouncedFetchTasks(dispatch, page);
     }
-    if (pathname === "/dashboard/my-tasks" && page >= 1 && page <= my_totalPages) {
-      dispatch(fetchMyTasksDetails({ page }));
+    if (
+      pathname === "/dashboard/my-tasks" &&
+      page >= 1 &&
+      page <= my_totalPages
+    ) {
+      debouncedFetchMyTasks(dispatch, page);
     }
-    if (pathname === "/dashboard/team-tasks" && page >= 1 && page <= team_totalPages) {
-      dispatch(fetchTeamTasksDetails({ page }));
+    if (
+      pathname === "/dashboard/team-tasks" &&
+      page >= 1 &&
+      page <= team_totalPages
+    ) {
+      debouncedFetchTeamTasks(dispatch, page);
     }
   };
 
@@ -100,7 +215,12 @@ export const useTasks = () => {
     totalPages,
     my_totalPages,
     team_totalPages,
-    addTask: async (taskData: { title: string; status: string; description: string; project_id: number }) => {
+    addTask: async (taskData: {
+      title: string;
+      status: string;
+      description: string;
+      project_id: number;
+    }) => {
       try {
         await dispatch(createTask(taskData));
         dispatch(fetchTasksDetails({ page: currentPage }));
@@ -108,7 +228,13 @@ export const useTasks = () => {
         console.error("Error creating task:", error);
       }
     },
-    editTask: async (taskData: { id: number; title: string; status: string; description: string; project_id: number }) => {
+    editTask: async (taskData: {
+      id: number;
+      title: string;
+      status: string;
+      description: string;
+      project_id: number;
+    }) => {
       try {
         await dispatch(updateTask(taskData));
         dispatch(fetchTasksDetails({ page: currentPage }));
@@ -116,7 +242,13 @@ export const useTasks = () => {
         console.error("Error updating task:", error);
       }
     },
-    assignTaskToUser: async (taskData: { id: number; title: string; status: string; description: string; project_id: number }) => {
+    assignTaskToUser: async (taskData: {
+      id: number;
+      title: string;
+      status: string;
+      description: string;
+      project_id: number;
+    }) => {
       try {
         await dispatch(assignTask(taskData));
         dispatch(fetchTasksDetails({ page: currentPage }));

@@ -1,9 +1,11 @@
 import os
+from flask import jsonify
 from flask_mail import Message
 from app import mail
 
 my_email = os.getenv("MAIL_USERNAME")
 front_end_url = os.getenv("FRONTEND_URL")
+
 
 def send_otp_email(email, otp):
     """
@@ -19,6 +21,7 @@ def send_otp_email(email, otp):
     msg = Message("Your OTP Code", sender=my_email, recipients=[email])
     msg.body = f"Your OTP Code is {otp}"
     mail.send(msg)
+
 
 def send_reset_email(email, token):
     """
@@ -49,8 +52,8 @@ def new_registration_email(email):
     msg = Message("Welcome to our platform", sender=my_email, recipients=[email])
     msg.body = "Welcome to our platform. We are glad to have you here."
     mail.send(msg)
-    
-    
+
+
 def new_subscriber_mail(email):
     """
     Sends a Subscription email to a user.
@@ -64,3 +67,24 @@ def new_subscriber_mail(email):
     msg = Message("Thank You for Subscribing!", sender=my_email, recipients=[email])
     msg.body = "Hello,\n\nThank you for subscribing to our newsletter! Stay tuned for updates.\n\nBest Regards,\nThe Team"
     mail.send(msg)
+
+
+def create_teammate(email, username, generated_password):
+    """Sends an email to the newly created team member with login details."""
+    try:
+        msg = Message(
+            "Welcome to the Team!",
+            sender=my_email,
+            recipients=[email]
+        )
+        msg.body = (
+            f"Hello {username},\n\n"
+            f"Your account has been created.\n\n"
+            f"Username: {username}\n"
+            f"Password: {generated_password}\n\n"
+            "Please log in and change your password as soon as possible."
+        )
+        mail.send(msg)
+        return True
+    except Exception as e:
+        return jsonify({"error": "Failed to send email", "details": str(e)}), 500

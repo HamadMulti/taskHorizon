@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
+import { useAuth } from "../../hooks/useAuth";
 
 const Sidebar = () => {
   const { pathname } = useLocation();
@@ -7,6 +8,7 @@ const Sidebar = () => {
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
+  const { role } = useAuth();
   const handleLinkClick = () => {
     setIsSidebarOpen(false);
   };
@@ -52,30 +54,33 @@ const Sidebar = () => {
                 Projects
               </h6>
               <ul className="mt-3 space-y-2">
-                <li>
-                  <Link
-                    to="projects"
-                    onClick={handleLinkClick}
-                    className={`text-gray-800 text-sm flex items-center  rounded-md px-4 py-2 transition-all ${
-                      pathname === "/dashboard/projects"
-                        ? "bg-[#0c172b] text-white bold"
-                        : "hover:bg-gray-100"
-                    }`}
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="currentColor"
-                      className="w-[18px] h-[18px] mr-3"
-                      viewBox="0 0 511.877 511.877"
-                    >
-                      <path
-                        d="M442.706 340.677c-11-68.6-93.8-175.7-120.1-208.2 4.2-3.5 6.9-8.7 6.9-14.6 0-4.2-1.4-8-3.7-11.1 2.3-3.1 3.7-7 3.7-11.1 0-6.6-3.4-12.4-8.5-15.7 8.1-33.1 31.3-59.5 32.4-60.7.8-.9 1.3-1.9 1.6-3 .7-2.4.1-5.1-1.5-7.1-1-1.2-2.3-2.1-3.8-2.5-63.1-17.5-114.9 4.1-129.7 11.4-12.3-7.5-24.5-14-39.9-16.2-5-.7-10.1-1-15.7-1a7.719 7.719 0 0 0-6.9 11.2s.6 1.1 1 1.6c.3.3 26.7 31.7 35.2 66.2-5.1 3.4-8.5 9.2-8.5 15.7 0 4.2 1.4 8 3.7 11.1-2.3 3.1-3.7 7-3.7 11.1 0 5.1 2 9.7 5.3 13.1-25.1 31-110.2 140-121.3 209.8-1.2 5.8-17.4 86.9 23.1 135.8 19.4 23.5 48.5 35.4 86.4 35.4 1.5 0 2.9 0 4.4-.1h145.7c1.5 0 3 .1 4.4.1 37.9 0 66.9-11.9 86.4-35.4 40.4-48.9 24.3-130 23.1-135.8zm-239.2-219.5h-.1c-1.6-.3-2.7-1.7-2.7-3.3 0-1.9 1.5-3.4 3.4-3.4h106.6c1.9 0 3.4 1.5 3.4 3.4s-1.5 3.4-3.4 3.4h-106.7c-.2-.1-.3-.1-.5-.1zm-2.9-25.6c0-1.8 1.5-3.3 3.3-3.4h106.7c1.8 0 3.3 1.5 3.3 3.4s-1.5 3.4-3.4 3.4h-106.5c-1.9 0-3.4-1.5-3.4-3.4zm124.3-78.4c-1.1.7-2.2 1.4-3.2 2.1 0 0-.1.1-.2.1-2.3 1.5-4.5 2.9-6.8 4.3-9.5 5.8-19.2 9.3-29.5 10.9-11.2 1.7-22.9 1.1-33.9-1.5-4.8-1.2-9.4-2.8-14.2-5.1-.2-.1-.3-.2-.5-.2 17.1-6.9 49.6-16.2 88.3-10.6zm-106.8 17.9 1.3.8c9.7 6 18.7 9.9 28.2 12.2 12.9 3.1 26.7 3.7 39.8 1.8 12-1.8 23.1-5.8 34.1-12.2-6.2 11-12.3 24.4-15.9 39.1h-96.9c-5.7-23.4-18.7-45.4-28.1-59 13.7 2.5 24.8 9.4 37.5 17.3zm189.5 431.5c-17 20.6-43.5 30.6-78.5 29.7h-146.3c-35.1.8-61.5-9.1-78.5-29.7-36.3-43.7-20.1-122.1-19.9-122.9 0-.1.1-.3.1-.4 10.9-69.1 104.5-186 121.3-206.6h100.3c16.5 20.1 110.4 137.4 121.3 206.6 0 .1 0 .3.1.4.1.8 16.4 79-19.9 122.9zm-151.7-233.7c-46.1 0-83.6 37.5-83.6 83.6s37.5 83.6 83.6 83.6 83.6-37.5 83.6-83.6c.1-46.1-37.5-83.6-83.6-83.6zm0 151.7c-37.6 0-68.1-30.6-68.1-68.1s30.6-68.1 68.1-68.1 68.1 30.5 68.1 68.1-30.5 68.1-68.1 68.1zm28.1-53.6c0 11.6-9 21.2-20.3 22.1v4c0 4.3-3.5 7.8-7.8 7.8s-7.8-3.5-7.8-7.8v-3.9h-5.5c-4.3 0-7.8-3.5-7.8-7.8s3.5-7.8 7.8-7.8h19.1a6.7 6.7 0 0 0 0-13.4h-11.7c-12.3 0-22.2-10-22.2-22.2 0-11.6 9-21.2 20.3-22.1v-4c0-4.3 3.5-7.8 7.8-7.8s7.8 3.5 7.8 7.8v3.9h5.5c4.3 0 7.8 3.5 7.8 7.8s-3.5 7.8-7.8 7.8h-19.1a6.7 6.7 0 0 0 0 13.4h11.7c12.2-.1 22.2 9.9 22.2 22.2z"
-                        data-original="#000000"
-                      />
-                    </svg>
-                    <span>Projects</span>
-                  </Link>
-                </li>
+                {role === "admin" ||
+                  role === "team_leader" ? (
+                    <li>
+                      <Link
+                        to="projects"
+                        onClick={handleLinkClick}
+                        className={`text-gray-800 text-sm flex items-center  rounded-md px-4 py-2 transition-all ${
+                          pathname === "/dashboard/projects"
+                            ? "bg-[#0c172b] text-white bold"
+                            : "hover:bg-gray-100"
+                        }`}
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="currentColor"
+                          className="w-[18px] h-[18px] mr-3"
+                          viewBox="0 0 511.877 511.877"
+                        >
+                          <path
+                            d="M442.706 340.677c-11-68.6-93.8-175.7-120.1-208.2 4.2-3.5 6.9-8.7 6.9-14.6 0-4.2-1.4-8-3.7-11.1 2.3-3.1 3.7-7 3.7-11.1 0-6.6-3.4-12.4-8.5-15.7 8.1-33.1 31.3-59.5 32.4-60.7.8-.9 1.3-1.9 1.6-3 .7-2.4.1-5.1-1.5-7.1-1-1.2-2.3-2.1-3.8-2.5-63.1-17.5-114.9 4.1-129.7 11.4-12.3-7.5-24.5-14-39.9-16.2-5-.7-10.1-1-15.7-1a7.719 7.719 0 0 0-6.9 11.2s.6 1.1 1 1.6c.3.3 26.7 31.7 35.2 66.2-5.1 3.4-8.5 9.2-8.5 15.7 0 4.2 1.4 8 3.7 11.1-2.3 3.1-3.7 7-3.7 11.1 0 5.1 2 9.7 5.3 13.1-25.1 31-110.2 140-121.3 209.8-1.2 5.8-17.4 86.9 23.1 135.8 19.4 23.5 48.5 35.4 86.4 35.4 1.5 0 2.9 0 4.4-.1h145.7c1.5 0 3 .1 4.4.1 37.9 0 66.9-11.9 86.4-35.4 40.4-48.9 24.3-130 23.1-135.8zm-239.2-219.5h-.1c-1.6-.3-2.7-1.7-2.7-3.3 0-1.9 1.5-3.4 3.4-3.4h106.6c1.9 0 3.4 1.5 3.4 3.4s-1.5 3.4-3.4 3.4h-106.7c-.2-.1-.3-.1-.5-.1zm-2.9-25.6c0-1.8 1.5-3.3 3.3-3.4h106.7c1.8 0 3.3 1.5 3.3 3.4s-1.5 3.4-3.4 3.4h-106.5c-1.9 0-3.4-1.5-3.4-3.4zm124.3-78.4c-1.1.7-2.2 1.4-3.2 2.1 0 0-.1.1-.2.1-2.3 1.5-4.5 2.9-6.8 4.3-9.5 5.8-19.2 9.3-29.5 10.9-11.2 1.7-22.9 1.1-33.9-1.5-4.8-1.2-9.4-2.8-14.2-5.1-.2-.1-.3-.2-.5-.2 17.1-6.9 49.6-16.2 88.3-10.6zm-106.8 17.9 1.3.8c9.7 6 18.7 9.9 28.2 12.2 12.9 3.1 26.7 3.7 39.8 1.8 12-1.8 23.1-5.8 34.1-12.2-6.2 11-12.3 24.4-15.9 39.1h-96.9c-5.7-23.4-18.7-45.4-28.1-59 13.7 2.5 24.8 9.4 37.5 17.3zm189.5 431.5c-17 20.6-43.5 30.6-78.5 29.7h-146.3c-35.1.8-61.5-9.1-78.5-29.7-36.3-43.7-20.1-122.1-19.9-122.9 0-.1.1-.3.1-.4 10.9-69.1 104.5-186 121.3-206.6h100.3c16.5 20.1 110.4 137.4 121.3 206.6 0 .1 0 .3.1.4.1.8 16.4 79-19.9 122.9zm-151.7-233.7c-46.1 0-83.6 37.5-83.6 83.6s37.5 83.6 83.6 83.6 83.6-37.5 83.6-83.6c.1-46.1-37.5-83.6-83.6-83.6zm0 151.7c-37.6 0-68.1-30.6-68.1-68.1s30.6-68.1 68.1-68.1 68.1 30.5 68.1 68.1-30.5 68.1-68.1 68.1zm28.1-53.6c0 11.6-9 21.2-20.3 22.1v4c0 4.3-3.5 7.8-7.8 7.8s-7.8-3.5-7.8-7.8v-3.9h-5.5c-4.3 0-7.8-3.5-7.8-7.8s3.5-7.8 7.8-7.8h19.1a6.7 6.7 0 0 0 0-13.4h-11.7c-12.3 0-22.2-10-22.2-22.2 0-11.6 9-21.2 20.3-22.1v-4c0-4.3 3.5-7.8 7.8-7.8s7.8 3.5 7.8 7.8v3.9h5.5c4.3 0 7.8 3.5 7.8 7.8s-3.5 7.8-7.8 7.8h-19.1a6.7 6.7 0 0 0 0 13.4h11.7c12.2-.1 22.2 9.9 22.2 22.2z"
+                            data-original="#000000"
+                          />
+                        </svg>
+                        <span>Projects</span>
+                      </Link>
+                    </li>
+                  ): null}
                 <li>
                   <Link
                     to="my-projects"
@@ -109,48 +114,51 @@ const Sidebar = () => {
             <div className="mt-6">
               <h6 className="text-yellow-600 text-sm font-bold px-4">Tasks</h6>
               <ul className="mt-3 space-y-2">
-                <li>
-                  <Link
-                    to="tasks"
-                    onClick={handleLinkClick}
-                    className={`text-gray-800 text-sm flex items-center  rounded-md px-4 py-2 transition-all ${
-                      pathname === "/dashboard/tasks"
-                        ? "bg-[#0c172b] text-white bold"
-                        : "hover:bg-gray-100"
-                    }`}
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="currentColor"
-                      className="w-[18px] h-[18px] mr-4"
-                      viewBox="0 0 60.123 60.123"
-                    >
-                      <path
-                        d="M57.124 51.893H16.92a3 3 0 1 1 0-6h40.203a3 3 0 0 1 .001 6zm0-18.831H16.92a3 3 0 1 1 0-6h40.203a3 3 0 0 1 .001 6zm0-18.831H16.92a3 3 0 1 1 0-6h40.203a3 3 0 0 1 .001 6z"
-                        data-original="#000000"
-                      />
-                      <circle
-                        cx="4.029"
-                        cy="11.463"
-                        r="4.029"
-                        data-original="#000000"
-                      />
-                      <circle
-                        cx="4.029"
-                        cy="30.062"
-                        r="4.029"
-                        data-original="#000000"
-                      />
-                      <circle
-                        cx="4.029"
-                        cy="48.661"
-                        r="4.029"
-                        data-original="#000000"
-                      />
-                    </svg>
-                    <span>Tasks</span>
-                  </Link>
-                </li>
+                {role === "admin" ||
+                  role === "team_leader" ? (
+                    <li>
+                      <Link
+                        to="tasks"
+                        onClick={handleLinkClick}
+                        className={`text-gray-800 text-sm flex items-center  rounded-md px-4 py-2 transition-all ${
+                          pathname === "/dashboard/tasks"
+                            ? "bg-[#0c172b] text-white bold"
+                            : "hover:bg-gray-100"
+                        }`}
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="currentColor"
+                          className="w-[18px] h-[18px] mr-4"
+                          viewBox="0 0 60.123 60.123"
+                        >
+                          <path
+                            d="M57.124 51.893H16.92a3 3 0 1 1 0-6h40.203a3 3 0 0 1 .001 6zm0-18.831H16.92a3 3 0 1 1 0-6h40.203a3 3 0 0 1 .001 6zm0-18.831H16.92a3 3 0 1 1 0-6h40.203a3 3 0 0 1 .001 6z"
+                            data-original="#000000"
+                          />
+                          <circle
+                            cx="4.029"
+                            cy="11.463"
+                            r="4.029"
+                            data-original="#000000"
+                          />
+                          <circle
+                            cx="4.029"
+                            cy="30.062"
+                            r="4.029"
+                            data-original="#000000"
+                          />
+                          <circle
+                            cx="4.029"
+                            cy="48.661"
+                            r="4.029"
+                            data-original="#000000"
+                          />
+                        </svg>
+                        <span>Tasks</span>
+                      </Link>
+                    </li>
+                  ): null}
                 <li>
                   <Link
                     to="my-tasks"
@@ -185,6 +193,92 @@ const Sidebar = () => {
                 </li>
               </ul>
             </div>
+            {role === "admin" ||
+              (role === "team_leader" && (
+                <>
+                  <div className="mt-6">
+                    <h6 className="text-yellow-600 text-sm font-bold px-4">
+                      Users
+                    </h6>
+                    <ul className="mt-3 space-y-2">
+                      <li>
+                        <Link
+                          to="tasks"
+                          onClick={handleLinkClick}
+                          className={`text-gray-800 text-sm flex items-center  rounded-md px-4 py-2 transition-all ${
+                            pathname === "/dashboard/tasks"
+                              ? "bg-[#0c172b] text-white bold"
+                              : "hover:bg-gray-100"
+                          }`}
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="currentColor"
+                            className="w-[18px] h-[18px] mr-4"
+                            viewBox="0 0 60.123 60.123"
+                          >
+                            <path
+                              d="M57.124 51.893H16.92a3 3 0 1 1 0-6h40.203a3 3 0 0 1 .001 6zm0-18.831H16.92a3 3 0 1 1 0-6h40.203a3 3 0 0 1 .001 6zm0-18.831H16.92a3 3 0 1 1 0-6h40.203a3 3 0 0 1 .001 6z"
+                              data-original="#000000"
+                            />
+                            <circle
+                              cx="4.029"
+                              cy="11.463"
+                              r="4.029"
+                              data-original="#000000"
+                            />
+                            <circle
+                              cx="4.029"
+                              cy="30.062"
+                              r="4.029"
+                              data-original="#000000"
+                            />
+                            <circle
+                              cx="4.029"
+                              cy="48.661"
+                              r="4.029"
+                              data-original="#000000"
+                            />
+                          </svg>
+                          <span>Users</span>
+                        </Link>
+                      </li>
+                      <li>
+                        <Link
+                          to="my-tasks"
+                          onClick={handleLinkClick}
+                          className={`text-gray-800 text-sm flex items-center  rounded-md px-4 py-2 transition-all ${
+                            pathname === "/dashboard/my-tasks"
+                              ? "bg-[#0c172b] text-white bold"
+                              : "hover:bg-gray-100"
+                          }`}
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="currentColor"
+                            className="w-[18px] h-[18px] mr-3"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              d="M18 2c2.206 0 4 1.794 4 4v12c0 2.206-1.794 4-4 4H6c-2.206 0-4-1.794-4-4V6c0-2.206 1.794-4 4-4zm0-2H6a6 6 0 0 0-6 6v12a6 6 0 0 0 6 6h12a6 6 0 0 0 6-6V6a6 6 0 0 0-6-6z"
+                              data-original="#000000"
+                            />
+                            <path
+                              d="M12 18a1 1 0 0 1-1-1V7a1 1 0 0 1 2 0v10a1 1 0 0 1-1 1z"
+                              data-original="#000000"
+                            />
+                            <path
+                              d="M6 12a1 1 0 0 1 1-1h10a1 1 0 0 1 0 2H7a1 1 0 0 1-1-1z"
+                              data-original="#000000"
+                            />
+                          </svg>
+                          <span>Create User</span>
+                        </Link>
+                      </li>
+                    </ul>
+                  </div>
+                </>
+              ))}
             <div className="mt-6 lg:hidden">
               <h6 className="text-yellow-600 text-sm font-bold px-4">
                 Accounts

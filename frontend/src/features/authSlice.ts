@@ -13,6 +13,7 @@ interface AuthState {
   message: string | null;
   loading: boolean;
   otpVerified: boolean;
+  role: string | null;
 }
 
 const getTokenFromCookies = () => Cookies.get("access_token") || null;
@@ -22,36 +23,40 @@ const initialState: AuthState = {
   error: null,
   message: null,
   loading: false,
-  otpVerified: false
+  otpVerified: false,
+  role: null
 };
 
-const expires = (t: string) => expireDate(t) || 1
 
 // **🔹 Register a New User**
 export const registerUser = createAsyncThunk(
   "auth/register",
-  async (
-    userData: {
-      username: string;
-      email: string;
-      password: string;
-      confirmPassword: string;
-    },
-    thunkAPI
-  ) => {
+  async (userData: {
+    username: string;
+    email: string;
+    password: string;
+    confirmPassword: string;
+  }, thunkAPI) => {
     try {
       const response = await API.post("/auth/register", userData);
-      const { error, message, user } = response.data;
-      const token = response.data.access_token;
-      Cookies.set("access_token", token, {
-        expires: expires(token),
+      const { access_token, refresh_token, user, error, message } =
+        response.data;
+
+      Cookies.set("access_token", access_token, {
+        expires: expireDate(access_token) || 1,
         path: "/",
         sameSite: "Lax",
         secure: process.env.NODE_ENV === "production"
       });
-      localStorage.setItem("user", user.user);
-      localStorage.setItem("token", token);
-      return { error, message, user, token };
+      Cookies.set("refresh_token", refresh_token, {
+        expires: expireDate(refresh_token) || 7,
+        path: "/",
+        sameSite: "Lax",
+        secure: process.env.NODE_ENV === "production"
+      });
+
+      localStorage.setItem("user", JSON.stringify(user));
+      return { user, token: access_token, error, message };
     } catch (error: any) {
       return thunkAPI.rejectWithValue(
         error.response?.data || "Registration failed"
@@ -66,17 +71,23 @@ export const loginUser = createAsyncThunk(
   async (credentials: { email: string; password: string }, thunkAPI) => {
     try {
       const response = await API.post("/auth/login", credentials);
-      const token = response.data.access_token;
-      const {user} = response.data;
-      Cookies.set("access_token", token, {
-        expires: expires(token),
+      const { access_token, refresh_token, user } = response.data;
+
+      Cookies.set("access_token", access_token, {
+        expires: expireDate(access_token) || 1,
         path: "/",
         sameSite: "Lax",
         secure: process.env.NODE_ENV === "production"
       });
-      localStorage.setItem("user", user.user);
-      localStorage.setItem("token", token);
-      return { token, user };
+      Cookies.set("refresh_token", refresh_token, {
+        expires: expireDate(refresh_token) || 7,
+        path: "/",
+        sameSite: "Lax",
+        secure: process.env.NODE_ENV === "production"
+      });
+
+      localStorage.setItem("user", JSON.stringify(user));
+      return { user, token: access_token };
     } catch (error: any) {
       return thunkAPI.rejectWithValue(error.response?.data || "Login failed");
     }
@@ -91,9 +102,9 @@ export const fetchUserDetails = createAsyncThunk(
       const state: any = thunkAPI.getState();
       let { token, user } = state.auth;
 
-      if (!user && !token ){
+      if (!user && !token) {
         token = localStorage.getItem("token");
-        user = localStorage.getItem("user")
+        user = localStorage.getItem("user");
         return thunkAPI.rejectWithValue("User not found");
       }
       if (!!user && !!token) {
@@ -112,16 +123,19 @@ export const fetchUserDetails = createAsyncThunk(
 );
 
 // **🔹 Logout User**
-export const logoutUser = createAsyncThunk("auth/logout", async (_, thunkAPI) => {
-  try {
-    await API.get("/auth/logout");
-  } catch (error: any) {
-    return thunkAPI.rejectWithValue(error.response.data);
-  }
+export const logoutUser = createAsyncThunk(
+  "auth/logout",
+  async (_, thunkAPI) => {
+    try {
+      await API.get("/auth/logout");
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
 
-  Cookies.remove("access_token");
-  return null;
-});
+    Cookies.remove("access_token");
+    return null;
+  }
+);
 
 export const updateProfile = createAsyncThunk(
   "auth/updateProfile",
@@ -149,53 +163,65 @@ export const updateProfile = createAsyncThunk(
   }
 );
 
-export const sendOTP = createAsyncThunk(
-  "auth/sendOTP",
-  async (_, thunkAPI) => {
-    try {
-      const state: any = thunkAPI.getState();
-      const { user } = state.auth;
-      const email = user?.email
-      const token = state.auth.token ?? null;
-      if (!email) {
-        return thunkAPI.rejectWithValue("Email is missing.");
-      }
-      API.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-      const response = await API.post("/auth/send-otp", { email });
-      return response.data;
-    } catch (error: any) {
-      return thunkAPI.rejectWithValue(error.response?.data || "Error sending OTP");
+export const sendOTP = createAsyncThunk("auth/sendOTP", async (_, thunkAPI) => {
+  try {
+    const state: any = thunkAPI.getState();
+    const { user } = state.auth;
+    const email = user?.email;
+    const token = state.auth.token ?? null;
+    if (!email) {
+      return thunkAPI.rejectWithValue("Email is missing.");
     }
+    API.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+    const response = await API.post("/auth/send-otp", { email });
+    return response.data;
+  } catch (error: any) {
+    return thunkAPI.rejectWithValue(
+      error.response?.data || "Error sending OTP"
+    );
   }
-);
+});
 
 export const verifyOTP = createAsyncThunk(
   "auth/verifyOTP",
   async (otp: string, thunkAPI) => {
     try {
       const state: any = thunkAPI.getState();
-      const { user } = state.auth;
-      const email = user?.email
-      const token = state.auth.token ?? null;
+      const email = state.auth.user?.email;
       if (!email) {
         return thunkAPI.rejectWithValue("Email is missing.");
       }
-      API.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+
       const response = await API.post("/auth/verify-otp", { email, otp });
-      return response.data;
+      const { access_token, refresh_token, role } = response.data;
+
+      Cookies.set("access_token", access_token, {
+        expires: expireDate(access_token) || 1,
+        path: "/",
+        sameSite: "Lax",
+        secure: process.env.NODE_ENV === "production"
+      });
+      Cookies.set("refresh_token", refresh_token, {
+        expires: expireDate(refresh_token) || 7,
+        path: "/",
+        sameSite: "Lax",
+        secure: process.env.NODE_ENV === "production"
+      });
+
+      localStorage.setItem("role", role);
+      return { token: access_token, role };
     } catch (error: any) {
       return thunkAPI.rejectWithValue(error.response?.data || "Invalid OTP");
     }
   }
 );
 
-
 export const forgotPassword = createAsyncThunk(
   "auth/forgotPassword",
   async (email: string, thunkAPI) => {
     try {
       const response = await API.post("/auth/forgot-password", { email });
-      const { error, message } = response.data
+      const { error, message } = response.data;
       return { error, message };
     } catch (error: any) {
       return thunkAPI.rejectWithValue(error.response.data);
@@ -246,11 +272,9 @@ export const subscribeUsers = createAsyncThunk(
     try {
       const response = await API.post("/user/subscribe", userData);
       const { message, error } = response.data;
-      return { message, error }
+      return { message, error };
     } catch (error: any) {
-      return thunkAPI.rejectWithValue(
-        error.response?.data.error
-      );
+      return thunkAPI.rejectWithValue(error.response?.data.error);
     }
   }
 );
@@ -286,7 +310,7 @@ const authSlice = createSlice({
       .addCase(loginUser.fulfilled, (state, action) => {
         state.loading = false;
         state.token = action.payload.token;
-        state.user = action.payload.user
+        state.user = action.payload.user;
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;
@@ -326,7 +350,7 @@ const authSlice = createSlice({
       .addCase(logoutUser.fulfilled, (state) => {
         state.user = null;
         state.token = null;
-        state.otpVerified = false
+        state.otpVerified = false;
       })
       .addCase(logoutUser.rejected, (state, action) => {
         state.loading = false;
@@ -348,7 +372,7 @@ const authSlice = createSlice({
       })
       .addCase(sendOTP.fulfilled, (state) => {
         state.loading = false;
-        state.otpVerified = false
+        state.otpVerified = false;
       })
       .addCase(sendOTP.rejected, (state, action) => {
         state.loading = false;
@@ -357,9 +381,11 @@ const authSlice = createSlice({
       .addCase(verifyOTP.pending, (state) => {
         state.loading = true;
       })
-      .addCase(verifyOTP.fulfilled, (state) => {
+      .addCase(verifyOTP.fulfilled, (state, action) => {
         state.loading = false;
-        state.otpVerified = true
+        state.otpVerified = true;
+        state.token = action.payload.token;
+        state.role = action.payload.role;
       })
       .addCase(verifyOTP.rejected, (state, action) => {
         state.loading = false;
@@ -371,7 +397,7 @@ const authSlice = createSlice({
       .addCase(forgotPassword.fulfilled, (state, action) => {
         state.loading = false;
         state.message = action.payload.message;
-        state.error = action.payload.error
+        state.error = action.payload.error;
       })
       .addCase(forgotPassword.rejected, (state, action) => {
         state.loading = false;
@@ -406,7 +432,7 @@ const authSlice = createSlice({
 const persistConfig = {
   key: "auth",
   storage,
-  whitelist: ["token", "user", "otpVerified"]
+  whitelist: ["token", "user", "otpVerified", "refresh_token", "role"]
 };
 
 export const { setCurrentUser } = authSlice.actions;

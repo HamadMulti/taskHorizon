@@ -8,7 +8,7 @@ const Header = () => {
   const { pathname } = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navigate = useNavigate();
-  const { handleLogout, loading, user: _user } = useAuth();
+  const { handleLogout, loading, user: _user, role } = useAuth();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -114,60 +114,65 @@ const Header = () => {
                       </svg>
                       Dashboard
                     </Link> */}
-                    <Link
-                      to="tasks"
-                      className={`text-sm text-gray-800 cursor-pointer flex items-center p-2 rounded-md ${
-                        pathname === "/dashboard/tasks"
-                          ? "bg-[#0c172b] text-white bold"
-                          : "hover:bg-gray-100"
-                      } dropdown-item transition duration-300 ease-in-out`}
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="w-4 h-4 mr-3 fill-current"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          d="M18 2c2.206 0 4 1.794 4 4v12c0 2.206-1.794 4-4 4H6c-2.206 0-4-1.794-4-4V6c0-2.206 1.794-4 4-4zm0-2H6a6 6 0 0 0-6 6v12a6 6 0 0 0 6 6h12a6 6 0 0 0 6-6V6a6 6 0 0 0-6-6z"
-                          data-original="#000000"
-                        />
-                        <path
-                          d="M12 18a1 1 0 0 1-1-1V7a1 1 0 0 1 2 0v10a1 1 0 0 1-1 1z"
-                          data-original="#000000"
-                        />
-                        <path
-                          d="M6 12a1 1 0 0 1 1-1h10a1 1 0 0 1 0 2H7a1 1 0 0 1-1-1z"
-                          data-original="#000000"
-                        />
-                      </svg>
-                      Tasks
-                    </Link>
-                    <Link
-                      to="projects"
-                      className={`text-sm text-gray-800 cursor-pointer flex items-center p-2 rounded-md ${
-                        pathname === "/dashboard/projects"
-                          ? "bg-[#0c172b] text-white bold"
-                          : "hover:bg-gray-100"
-                      } dropdown-item transition duration-300 ease-in-out`}
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="w-4 h-4 mr-3 fill-current"
-                        viewBox="0 0 510 510"
-                      >
-                        <g fillOpacity=".9">
-                          <path
-                            d="M255 0C114.75 0 0 114.75 0 255s114.75 255 255 255 255-114.75 255-255S395.25 0 255 0zm0 459c-112.2 0-204-91.8-204-204S142.8 51 255 51s204 91.8 204 204-91.8 204-204 204z"
-                            data-original="#000000"
-                          />
-                          <path
-                            d="M267.75 127.5H229.5v153l132.6 81.6 20.4-33.15-114.75-68.85z"
-                            data-original="#000000"
-                          />
-                        </g>
-                      </svg>
-                      Projects
-                    </Link>
+                    {role === "admin" ||
+                      role === "team_leader" ? (
+                        <>
+                          <Link
+                            to="tasks"
+                            className={`text-sm text-gray-800 cursor-pointer flex items-center p-2 rounded-md ${
+                              pathname === "/dashboard/tasks"
+                                ? "bg-[#0c172b] text-white bold"
+                                : "hover:bg-gray-100"
+                            } dropdown-item transition duration-300 ease-in-out`}
+                          >
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              className="w-4 h-4 mr-3 fill-current"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                d="M18 2c2.206 0 4 1.794 4 4v12c0 2.206-1.794 4-4 4H6c-2.206 0-4-1.794-4-4V6c0-2.206 1.794-4 4-4zm0-2H6a6 6 0 0 0-6 6v12a6 6 0 0 0 6 6h12a6 6 0 0 0 6-6V6a6 6 0 0 0-6-6z"
+                                data-original="#000000"
+                              />
+                              <path
+                                d="M12 18a1 1 0 0 1-1-1V7a1 1 0 0 1 2 0v10a1 1 0 0 1-1 1z"
+                                data-original="#000000"
+                              />
+                              <path
+                                d="M6 12a1 1 0 0 1 1-1h10a1 1 0 0 1 0 2H7a1 1 0 0 1-1-1z"
+                                data-original="#000000"
+                              />
+                            </svg>
+                            Tasks
+                          </Link>
+                          <Link
+                            to="projects"
+                            className={`text-sm text-gray-800 cursor-pointer flex items-center p-2 rounded-md ${
+                              pathname === "/dashboard/projects"
+                                ? "bg-[#0c172b] text-white bold"
+                                : "hover:bg-gray-100"
+                            } dropdown-item transition duration-300 ease-in-out`}
+                          >
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              className="w-4 h-4 mr-3 fill-current"
+                              viewBox="0 0 510 510"
+                            >
+                              <g fillOpacity=".9">
+                                <path
+                                  d="M255 0C114.75 0 0 114.75 0 255s114.75 255 255 255 255-114.75 255-255S395.25 0 255 0zm0 459c-112.2 0-204-91.8-204-204S142.8 51 255 51s204 91.8 204 204-91.8 204-204 204z"
+                                  data-original="#000000"
+                                />
+                                <path
+                                  d="M267.75 127.5H229.5v153l132.6 81.6 20.4-33.15-114.75-68.85z"
+                                  data-original="#000000"
+                                />
+                              </g>
+                            </svg>
+                            Projects
+                          </Link>
+                        </>
+                      ) :null}
                     <hr className="my-2 -mx-2" />
                     <Link
                       to="settings"

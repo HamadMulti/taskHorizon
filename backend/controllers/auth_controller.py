@@ -1,128 +1,154 @@
 from datetime import datetime, timedelta
 import os
 from flask import request, jsonify
+from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
 from models.user import db, User
 from utils.mailer import new_registration_email, send_otp_email, send_reset_email
 from utils.security import decoded_token, hash_password, verify_password, generate_token
 import random
 import string
 from flask import make_response
+from sqlalchemy.exc import IntegrityError
+import re
 
 
 def generate_otp():
-    """Generates a random 6-digit OTP.
-
-    This function generates a random 6-digit One-Time Password (OTP) using the `random` and `string` modules.
-    It returns the generated OTP as a string.
-
-    Returns:
-        str: The generated 6-digit OTP.
-    """
     return ''.join(random.choices(string.digits, k=6))
 
 
 def get_cookie_secure_flag():
-    """Determines the secure flag for cookies based on the environment.
-
-    This function checks if the application is running in production mode and returns True if it is, indicating that cookies should be marked as secure. Otherwise, it returns False.
-
-    Returns:
-        bool: True if in production mode, False otherwise.
-    """
     return os.environ.get("FLASK_ENV") == "production"
 
+from datetime import datetime, timedelta, timezone
+
 def _token_handler(user_id, message, **kwargs):
-    """
-    Generates an access token for the given user ID, creates a JSON response with the token,
-    and sets the token as an HTTP-only cookie.
+    access_token = generate_token(user_id)
+    refresh_token = generate_token(user_id)
 
-    Args:
-        user_id (int): The ID of the user for whom the token is generated.
-        message (str): A message to include in the JSON response.
-        **kwargs: Additional keyword arguments to include in the JSON response.
-
-    Returns:
-        Response: A Flask response object containing the JSON response with the access token
-                    and the token set as an HTTP-only cookie.
-
-    Raises:
-        500 Internal Server Error: If token generation fails.
-    """
-    # sourcery skip: aware-datetime-for-utc
-    token = generate_token(user_id)
-    if not token:
+    if not access_token or not refresh_token:
         return jsonify({"error": "Token generation failed"}), 500
-    response = make_response(jsonify({"message": message, "access_token": token, **kwargs}), 200)
+
+    response = make_response(jsonify({
+        "message": message,
+        "access_token": access_token,
+        "refresh_token": refresh_token,
+        **kwargs
+    }), 200)
+
     response.set_cookie(
         'access_token',
-        token,
+        access_token,
         path="/",
         httponly=True,
         secure=get_cookie_secure_flag(),
         samesite='Lax',
-        max_age=14400,
-        expires=datetime.utcnow() + timedelta(hours=4) 
+        max_age=3600,
+        expires=datetime.now(timezone.utc) + timedelta(hours=1),
     )
+
+    response.set_cookie(
+        'refresh_token',
+        refresh_token,
+        path="/",
+        httponly=True,
+        secure=get_cookie_secure_flag(),
+        samesite='Lax',
+        max_age=86400,
+        expires=datetime.now(timezone.utc) + timedelta(days=7),
+    )
+
     return response
 
+
+@jwt_required(refresh=True)
+def refresh_access_token():
+    try:
+        identity = get_jwt_identity()
+        user = User.query.get(identity)
+
+        if not user:
+            return jsonify({"error": "User not found"}), 404
+
+        new_access_token = create_access_token(identity=user.id, expires_delta=timedelta(hours=1))
+
+        return jsonify({"access_token": new_access_token}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+
 def register_user():
-    """
-    Registers a new user.
-
-    This function handles the registration of a new user by performing the following steps:
-    1. Retrieves the JSON data from the request.
-    2. Checks if the username already exists in the database.
-    3. Checks if the email already exists in the database.
-    4. Validates the password length (must be between 8 and 20 characters).
-    5. Confirms that the password and confirmPassword fields match.
-    6. Hashes the password and creates a new user record in the database.
-    7. Sends a registration email to the new user.
-    8. Returns a success message with a token if the registration is successful.
-    9. Returns an error message if the registration fails.
-
-    Returns:
-        Response: A JSON response indicating the result of the registration process.
-    """
     data = request.json
-    existing_username = User.query.filter_by(username=data["username"]).first()
-    if existing_username:
+    
+    required_fields = ["username", "email", "password", "confirmPassword"]
+    for field in required_fields:
+        if not data.get(field):
+            return jsonify({field: f"{field} is required"}), 400
+
+    username, email, password, confirm_password = data["username"], data["email"], data["password"], data["confirmPassword"]
+
+    if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
+        return jsonify({"email": "Invalid email format"}), 400
+
+    if User.query.filter_by(username=username).first():
         return jsonify({"username": "Username already exists"}), 400
-    existing_user_by_email = User.query.filter_by(email=data["email"]).first()
-    if existing_user_by_email:
+    if User.query.filter_by(email=email).first():
         return jsonify({"email": "Email already exists"}), 400
-    if len(data["password"]) < 8 or len(data["password"]) > 20:
+
+    if len(password) < 8 or len(password) > 20:
         return jsonify({"password": "Password must be between 8 and 20 characters"}), 400
-    if data["password"] != data["confirmPassword"]:
+    if password != confirm_password:
         return jsonify({"confirmPassword": "Passwords do not match"}), 400
-    hashed_password = hash_password(data["password"])
-    user = User(username=data["username"], email=data["email"], password=hashed_password)
-    db.session.add(user)
-    db.session.commit()
-    if user:
-        new_registration_email(user.email)
-        profile = {
-                "username": user.username,
-                "email": user.email,
-                "role": user.role,
-                "phone": user.phone,
-                "location": user.location,
-                "gender": user.gender,
-                "primary_email": user.primary_email,
-                "verified": user.verified,
-            }
-        return _token_handler(user.id, "User registered successfully", user=profile)
-    return jsonify({"error": "User registration failed"}), 500
+
+    hashed_password = hash_password(password)
+    user = User(username=username, email=email, password=hashed_password)
+
+    try:
+        db.session.add(user)
+        db.session.commit()
+        return _register_user(user)
+    except IntegrityError:
+        db.session.rollback()
+        return jsonify({"error": "User registration failed due to database error"}), 500
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
+
+
+def _register_user(user):
+    try:
+        return _register_user_mail_and_otp(user)
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
+
+
+def _register_user_mail_and_otp(user):
+    otp = generate_otp()
+    try:
+        user.otp = otp
+        db.session.commit()
+        send_otp_email(user.email, otp)
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": "Failed to save OTP"}), 500
+
+    new_registration_email(user.email)
+    profile = {
+        "username": user.username,
+        "email": user.email,
+        "role": user.role,
+        "phone": user.phone,
+        "location": user.location,
+        "gender": user.gender,
+        "primary_email": user.primary_email,
+        "verified": user.verified,
+    }
+    return _token_handler(user.id, "User registered successfully", user=profile)
+
 
 
 def login_user():
-    """Logs in an existing user.
-
-    This function handles user login by verifying the provided email and password
-    against the database. If the credentials are valid, it proceeds with OTP generation and sending.
-
-    Returns:
-        Response: A JSON response indicating success with OTP sent or an error message if login fails.
-    """
     data = request.json
     user = User.query.filter_by(email=data["email"]).first()
     if user and verify_password(user.password, data["password"]):
@@ -131,20 +157,13 @@ def login_user():
 
 
 def _login_user_otp(user):
-    """Generates and sends an OTP to the user for login verification.
-
-    This function generates a new OTP, updates the user's OTP field in the database,
-    sends the OTP via email, and returns a token handler response.
-
-    Args:
-        user (User): The user object.
-
-    Returns:
-        Response: A Flask response object.
-    """
     otp = generate_otp()
-    user.otp = otp
-    db.session.commit()
+    try:
+        user.otp = otp
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": "Failed to save OTP"}), 500
     send_otp_email(user.email, otp)
     profile = {
                 "username": user.username,
@@ -200,19 +219,10 @@ def send_otp():
 
 
 def verify_otp():
-    """Verifies the user's OTP.
-
-    This function retrieves the user's email and OTP from the request data,
-    compares it with the OTP stored in the database, and if matched, generates and returns an access token.
-
-    Returns:
-        Response: A JSON response containing the access token and user role if OTP is valid, or an error message if invalid.
-    """
     data = request.json
     user = User.query.filter_by(email=data["email"]).first()
     if user and user.otp == data["otp"]:
-        access_token = generate_token(user.id)
-        return jsonify({"access_token": access_token, "role": user.role}), 200
+        return _token_handler(user.id, "Verification success", role=user.role)
     return jsonify({"error": "Invalid OTP"}), 401
 
 

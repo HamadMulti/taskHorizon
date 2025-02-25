@@ -1,8 +1,9 @@
+import random
 import re
 from flask import request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from models.subscribe import Subscriber
-from utils.mailer import new_subscriber_mail
+from utils.mailer import create_teammate, new_subscriber_mail
 from models.user import db, User
 
 
@@ -136,3 +137,53 @@ def subscribe_user():
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": "Subscription failed. Please try again."}), 500
+    
+import random
+import string
+from werkzeug.security import generate_password_hash
+
+def generate_random_password(length=10):
+    """Generates a secure random password."""
+    characters = string.ascii_letters + string.digits + string.punctuation
+    return ''.join(random.choice(characters) for _ in range(length))
+
+@jwt_required()
+def create_team_member():
+    """Allows an admin or team leader to create a team member.
+
+    The function generates a random password, saves the user in the database, and sends an email with the login credentials.
+
+    Returns:
+        Response: A JSON response indicating success or failure.
+        - 201: Team member created successfully.
+        - 400: Bad request (e.g., missing fields, duplicate user).
+        - 403: Unauthorized access.
+    """
+    user_id = get_jwt_identity()
+    user = User.query.get(user_id)
+
+    if user.role not in ["admin", "team_leader"]:
+        return jsonify({"error": "Unauthorized"}), 403
+
+    data = request.json
+    username = data.get("username")
+    email = data.get("email")
+
+    if not username or not email:
+        return jsonify({"error": "Username and email are required"}), 400
+    
+    if User.query.filter_by(username=username).first():
+        return jsonify({"username": "Username already taken"}), 400
+
+    if User.query.filter_by(email=email).first():
+        return jsonify({"error": "User already exists"}), 400
+
+    generated_password = generate_random_password()
+    hashed_password = generate_password_hash(generated_password)
+
+    new_user = User(username=username, email=email, password=hashed_password, role="user")
+    db.session.add(new_user)
+    db.session.commit()
+    create_teammate(new_user.email, new_user.username, generated_password)
+
+    return jsonify({"message": "Team member created successfully. An email has been sent."}), 201

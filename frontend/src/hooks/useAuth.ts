@@ -16,7 +16,7 @@ import { RootState, AppDispatch } from "../app/store";
 
 export const useAuth = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { user, token, loading, error, otpVerified } = useSelector(
+  const { user, token, loading, error, otpVerified, role } = useSelector(
     (state: RootState) => state.auth
   );
 
@@ -104,6 +104,7 @@ export const useAuth = () => {
     loading,
     error,
     otpVerified,
+    role,
     handleRegister,
     handleLogin,
     handleFetchUser,

@@ -29,6 +29,7 @@ interface TaskState {
   totalTasks: number;
   my_totalTasks: number;
   team_totalTasks: number;
+  loadedPages: Set<number>;
 }
 
 const initialState: TaskState = {
@@ -45,7 +46,8 @@ const initialState: TaskState = {
   team_totalPages: 1,
   totalTasks: 0,
   my_totalTasks: 0,
-  team_totalTasks: 0
+  team_totalTasks: 0,
+  loadedPages: new Set(),
 };
 
 // Fetch All Tasks with Pagination
@@ -55,6 +57,12 @@ export const fetchTasksDetails = createAsyncThunk(
     try {
       const state = thunkAPI.getState() as RootState;
       const token = state.auth.token ?? null;
+      if (state.tasks.currentPage === page && state.tasks.tasks.length > 0) {
+        return thunkAPI.rejectWithValue("Tasks already fetched.");
+      }
+      if (state.tasks.loadedPages.has(page)) {
+        return thunkAPI.rejectWithValue("Page already loaded.");
+      }
       API.defaults.headers.common["Authorization"] = `Bearer ${token}`;
       const response = await API.get(`/tasks?page=${page}`);
       return response.data;
@@ -73,6 +81,12 @@ export const fetchMyTasksDetails = createAsyncThunk(
     try {
       const state = thunkAPI.getState() as RootState;
       const token = state.auth.token ?? null;
+      if (state.tasks.my_currentPage === page && state.tasks.my_tasks.length > 0) {
+        return thunkAPI.rejectWithValue("Tasks already fetched.");
+      }
+      if (state.tasks.loadedPages.has(page)) {
+        return thunkAPI.rejectWithValue("Page already loaded.");
+      }
       API.defaults.headers.common["Authorization"] = `Bearer ${token}`;
       const response = await API.get(`/tasks/user-tasks?page=${page}`);
       return response.data;
@@ -91,6 +105,12 @@ export const fetchTeamTasksDetails = createAsyncThunk(
     try {
       const state = thunkAPI.getState() as RootState;
       const token = state.auth.token ?? null;
+      if (state.tasks.team_currentPage === page && state.tasks.team_tasks.length > 0) {
+        return thunkAPI.rejectWithValue("Tasks already fetched.");
+      }
+      if (state.tasks.loadedPages.has(page)) {
+        return thunkAPI.rejectWithValue("Page already loaded.");
+      }
       API.defaults.headers.common["Authorization"] = `Bearer ${token}`;
       const response = await API.get(`/tasks/team-tasks?page=${page}`);
       return response.data;
@@ -119,7 +139,6 @@ export const createTask = createAsyncThunk(
       const token = state.auth.token ?? null;
       API.defaults.headers.common["Authorization"] = `Bearer ${token}`;
       const response = await API.post("/tasks/", taskData);
-      console.log(response);
       return response.data;
     } catch (error: any) {
       return thunkAPI.rejectWithValue(
@@ -216,6 +235,7 @@ const taskSlice = createSlice({
           state.currentPage = action.payload.current_page;
           state.totalPages = action.payload.pages;
           state.totalTasks = action.payload.total;
+          state.loadedPages.add(action.payload.current_page);
         } else {
           state.error = "Tasks data is missing";
         }
@@ -234,6 +254,7 @@ const taskSlice = createSlice({
           state.my_totalTasks = action.payload.total;
           state.my_totalPages = action.payload.pages;
           state.my_currentPage = action.payload.current_page;
+          state.loadedPages.add(action.payload.current_page);
         } else {
           state.error = "Tasks data is missing";
         }
@@ -252,6 +273,7 @@ const taskSlice = createSlice({
           state.team_totalTasks = action.payload.total;
           state.team_totalPages = action.payload.pages;
           state.team_currentPage = action.payload.current_page;
+          state.loadedPages.add(action.payload.current_page);
         } else {
           state.error = "Tasks data is missing";
         }

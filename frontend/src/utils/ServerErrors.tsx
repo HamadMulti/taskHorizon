@@ -38,7 +38,7 @@ const ServerError = () => {
             {`Oops something went wrong. Try to refresh this page or \n feel free to contact us if the problem persists.`}
           </p>
           <button
-            className="flex w-fit px-4 items-center justify-center p-2 gap-2 rounded text-gray-100 shadow-2xs cursor-pointer bg-[#0c172b] hover:bg-[#0c172bee] "
+            className="flex !w-fit px-4 items-center justify-center p-2 gap-2 rounded text-gray-100 shadow-2xs cursor-pointer bg-[#0c172b] hover:bg-[#0c172bee] "
             title="Add"
             onClick={reload}
           >

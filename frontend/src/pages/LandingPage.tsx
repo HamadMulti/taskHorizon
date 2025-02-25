@@ -68,7 +68,6 @@ const LandingPage = () => {
     handleSubscriber(userData)
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       .then((res: any) => {
-        console.log(res);
         return alert(res.data.message);
       })
       .catch((e) => setError(e));

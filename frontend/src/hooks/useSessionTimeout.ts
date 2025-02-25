@@ -2,29 +2,39 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "./useAuth";
 import { decodeToken } from "../utils/decodeToken";
+import refreshAccessToken from "../utils/refresh_token";
 
 export function useSessionTimeout() {
   const { token, handleLogout } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (token) {
-      const decoded = decodeToken(token);
-      if (decoded) {
-        const expiryTime = decoded.exp * 1000;
-        const timeLeft = expiryTime - Date.now();
-
-        if (timeLeft > 0) {
-          const timer = setTimeout(() => {
-            handleLogout();
-            alert("Your session has expired. Please log in again.");
-            navigate("/login");
-            navigate(0);
-          }, timeLeft);
-
-          return () => clearTimeout(timer);
-        }
-      }
+    if (!token) {
+      return;
     }
-  }, [handleLogout, token, navigate]);
+
+    const decoded = decodeToken(token);
+    if (!decoded) {
+      return;
+    }
+
+    const expiryTime = decoded.exp * 1000;
+    const timeLeft = expiryTime - Date.now();
+    const refreshBuffer = 2 * 60 * 1000;
+
+    if (timeLeft > 0) {
+      const timer = setTimeout(async () => {
+        const newToken = await refreshAccessToken();
+
+        if (!newToken) {
+          handleLogout();
+          alert("Your session has expired. Please log in again.");
+          navigate("/login");
+          navigate(0);
+        }
+      }, timeLeft - refreshBuffer);
+
+      return () => clearTimeout(timer);
+    }
+  }, [token, handleLogout, navigate]);
 }

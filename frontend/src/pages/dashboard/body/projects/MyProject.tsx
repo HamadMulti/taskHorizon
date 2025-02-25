@@ -1,13 +1,9 @@
-import CreateProjectModal from "../../../components/modals/project/create";
 import { useProjects } from "../../../../hooks/useProjects";
 import SkeletonTable from "../../../components/loaders/SkeletonTable";
-import DeleteProjectModal from "../../../components/modals/project/delete";
 import PreviewProjectModal from "../../../components/modals/project/preview";
-import EditProjectModal from "../../../components/modals/project/edit";
 import Pagination from "../../../components/pagination/pagination";
 import { useState } from "react";
 import { truncateText } from "../../../../utils/truncate";
-import { useLocation } from "react-router-dom";
 
 interface MyProject {
   id: number;
@@ -24,48 +20,12 @@ const MyProject = () => {
     my_totalProjects
   } = useProjects();
   const [page, setCurrentPage] = useState(my_currentPage);
-  const [isCreating, setIsCreating] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isEditing, setIsEditing] = useState(false);
   const [selectedProject, setSelectedProject] = useState<MyProject>();
-  const { pathname } = useLocation();
-  const handleClose = () => {
-    setIsCreating(false);
-    setIsEditing(false);
-  };
 
   return (
     <>
       <div className="overflow-x-auto">
-        <div className={`${pathname === "/dashboard/my-projects" ? "w-fit absolute z-1000 top-0 max-md:top-9 max-md:right-0 max-sm:top-0 max-sm:right-18 right-20 bg-transparent flex items-center justify-end py-4 px-8" : "hidden w-0 content-none clear-none"}`}>
-          <button
-            className="flex items-center justify-center p-2 gap-1 rounded text-gray-100 shadow-2xs cursor-pointer bg-[#0c172b] hover:bg-[#0c172bee] "
-            title="Add"
-            onClick={() => setIsCreating(true)}
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="currentColor"
-              className="w-5 fill-gray-100 hover:fill-gray-200"
-              viewBox="0 0 24 24"
-            >
-              <path
-                d="M18 2c2.206 0 4 1.794 4 4v12c0 2.206-1.794 4-4 4H6c-2.206 0-4-1.794-4-4V6c0-2.206 1.794-4 4-4zm0-2H6a6 6 0 0 0-6 6v12a6 6 0 0 0 6 6h12a6 6 0 0 0 6-6V6a6 6 0 0 0-6-6z"
-                data-original="#000000"
-              />
-              <path
-                d="M12 18a1 1 0 0 1-1-1V7a1 1 0 0 1 2 0v10a1 1 0 0 1-1 1z"
-                data-original="#000000"
-              />
-              <path
-                d="M6 12a1 1 0 0 1 1-1h10a1 1 0 0 1 0 2H7a1 1 0 0 1-1-1z"
-                data-original="#000000"
-              />
-            </svg>
-            Add Project
-          </button>
-          {isCreating && <CreateProjectModal onClose={handleClose} />}
-        </div>
         <table className="min-w-full bg-white">
           <thead className="bg-gray-800 whitespace-nowrap">
             <tr>
@@ -110,7 +70,7 @@ const MyProject = () => {
                     <tr className="even:bg-yellow-50" key={project.id}>
                       <td className="p-4 text-sm text-black">{project.name}</td>
                       <td className="p-4 text-sm text-black">
-                      {truncateText(project.description, 30)}
+                        {truncateText(project.description, 30)}
                         <span
                           className="text-yellow-500 font-lighter cursor-pointer"
                           onClick={() => {
@@ -126,8 +86,8 @@ const MyProject = () => {
                           className="mr-4"
                           title="View"
                           onClick={() => {
-                            setIsModalOpen(true)
-                            setSelectedProject(project)
+                            setIsModalOpen(true);
+                            setSelectedProject(project);
                           }}
                         >
                           <svg
@@ -155,43 +115,10 @@ const MyProject = () => {
                           <PreviewProjectModal
                             project={selectedProject}
                             onClose={() => {
-                              setIsModalOpen(false);;
+                              setIsModalOpen(false);
                             }}
                           />
                         )}
-                        <button
-                          className="mr-4"
-                          title="Edit"
-                          onClick={() => {
-                            setIsEditing(true);
-                            setSelectedProject(project);
-                          }}
-                        >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            className="w-5 fill-yellow-500 hover:fill-yellow-700"
-                            viewBox="0 0 348.882 348.882"
-                          >
-                            <path
-                              d="m333.988 11.758-.42-.383A43.363 43.363 0 0 0 304.258 0a43.579 43.579 0 0 0-32.104 14.153L116.803 184.231a14.993 14.993 0 0 0-3.154 5.37l-18.267 54.762c-2.112 6.331-1.052 13.333 2.835 18.729 3.918 5.438 10.23 8.685 16.886 8.685h.001c2.879 0 5.693-.592 8.362-1.76l52.89-23.138a14.985 14.985 0 0 0 5.063-3.626L336.771 73.176c16.166-17.697 14.919-45.247-2.783-61.418zM130.381 234.247l10.719-32.134.904-.99 20.316 18.556-.904.99-31.035 13.578zm184.24-181.304L182.553 197.53l-20.316-18.556L294.305 34.386c2.583-2.828 6.118-4.386 9.954-4.386 3.365 0 6.588 1.252 9.082 3.53l.419.383c5.484 5.009 5.87 13.546.861 19.03z"
-                              data-original="#000000"
-                            />
-                            <path
-                              d="M303.85 138.388c-8.284 0-15 6.716-15 15v127.347c0 21.034-17.113 38.147-38.147 38.147H68.904c-21.035 0-38.147-17.113-38.147-38.147V100.413c0-21.034 17.113-38.147 38.147-38.147h131.587c8.284 0 15-6.716 15-15s-6.716-15-15-15H68.904C31.327 32.266.757 62.837.757 100.413v180.321c0 37.576 30.571 68.147 68.147 68.147h181.798c37.576 0 68.147-30.571 68.147-68.147V153.388c.001-8.284-6.715-15-14.999-15z"
-                              data-original="#000000"
-                            />
-                          </svg>
-                        </button>
-                        {isEditing && selectedProject && (
-                          <EditProjectModal
-                            project={selectedProject}
-                            onClose={handleClose}
-                          />
-                        )}
-                        <DeleteProjectModal
-                          id={project.id}
-                          name={project.name}
-                        />
                       </td>
                     </tr>
                   ))}

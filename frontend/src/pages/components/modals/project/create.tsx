@@ -3,11 +3,12 @@ import { useProjects } from "../../../../hooks/useProjects";
 
 interface CreateProjectModalProps {
   onClose: () => void;
+  onOpen: boolean;
 }
 
 const CreateProjectModal: React.FC<CreateProjectModalProps> = ({ onClose }) => {
   const { handleCreateProject } = useProjects();
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(onOpen);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   
