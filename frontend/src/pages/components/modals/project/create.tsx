@@ -6,7 +6,7 @@ interface CreateProjectModalProps {
   onOpen: boolean;
 }
 
-const CreateProjectModal: React.FC<CreateProjectModalProps> = ({ onClose }) => {
+const CreateProjectModal: React.FC<CreateProjectModalProps> = ({ onClose, onOpen }) => {
   const { handleCreateProject } = useProjects();
   const [isOpen, setIsOpen] = useState(onOpen);
   const [name, setName] = useState("");

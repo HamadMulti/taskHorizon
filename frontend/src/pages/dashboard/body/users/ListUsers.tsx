@@ -1,14 +1,14 @@
 import { useState } from "react";
-import { useUsers } from "../../../hooks/useUsers";
-import Pagination from "../../components/pagination/pagination";
-import SkeletonTable from "../../components/loaders/SkeletonTable";
-import PreviewUserModal from "../../components/modals/user/preview";
-import capitalizeUsername from "../../../utils/capitalize";
-import CreateUserModal from "../../components/modals/user/create";
+import { useUsers } from "../../../../hooks/useUsers";
+import Pagination from "../../../components/pagination/pagination";
+import SkeletonTable from "../../../components/loaders/SkeletonTable";
+import PreviewUserModal from "../../../components/modals/user/preview";
+import capitalizeUsername from "../../../../utils/capitalize";
+import CreateUserModal from "../../../components/modals/user/create";
 import { useLocation } from "react-router-dom";
-import DeleteUserModal from "../../components/modals/user/delete";
-import ChangePasswordModal from "../../components/modals/user/generatepassword";
-import EditUserModal from "../../components/modals/user/edit";
+import DeleteUserModal from "../../../components/modals/user/delete";
+import ChangePasswordModal from "../../../components/modals/user/generatepassword";
+import EditUserModal from "../../../components/modals/user/edit";
 
 interface Users {
   id: number;
