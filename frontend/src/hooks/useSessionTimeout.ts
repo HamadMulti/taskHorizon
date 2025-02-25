@@ -22,19 +22,19 @@ export function useSessionTimeout() {
     const timeLeft = expiryTime - Date.now();
     const refreshBuffer = 2 * 60 * 1000;
 
-    if (timeLeft > 0) {
+    if (timeLeft > refreshBuffer) {
       const timer = setTimeout(async () => {
         const newToken = await refreshAccessToken();
-
         if (!newToken) {
           handleLogout();
           alert("Your session has expired. Please log in again.");
           navigate("/login");
-          navigate(0);
         }
       }, timeLeft - refreshBuffer);
-
       return () => clearTimeout(timer);
+    } else {
+      refreshAccessToken();
     }
+    
   }, [token, handleLogout, navigate]);
 }

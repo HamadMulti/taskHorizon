@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import API from "../utils/api";
+import { RootState } from "../app/store";
 
 export interface User {
   id: number;
@@ -21,6 +22,7 @@ export interface UsersState {
   current_page: number;
   loading: boolean;
   error: string | null;
+  message: string | null;
 }
 const initialState: UsersState = {
   users: [],
@@ -29,14 +31,18 @@ const initialState: UsersState = {
   current_page: 1,
   loading: false,
   error: null,
+  message: null
 };
 
 export const createUser = createAsyncThunk(
-  "auth/register",
-  async (userData: {
-    username: string;
-    email: string;
-  }, thunkAPI) => {
+  "users/create",
+  async (
+    userData: {
+      username: string;
+      email: string;
+    },
+    thunkAPI
+  ) => {
     try {
       const state: any = thunkAPI.getState();
       const { token } = state.auth;
@@ -45,8 +51,8 @@ export const createUser = createAsyncThunk(
       }
 
       API.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-      const response = await API.post("/users/create-user", userData);
-      return response.data
+      const response = await API.post("/user/create-user", userData);
+      return response.data;
     } catch (error: any) {
       return thunkAPI.rejectWithValue(
         error.response?.data || "Registration failed"
@@ -55,8 +61,6 @@ export const createUser = createAsyncThunk(
   }
 );
 
-
-// **🔹 Async Thunk for Fetching Users**
 export const fetchUsersDetails = createAsyncThunk(
   "users/fetchUsersDetails",
   async (_, thunkAPI) => {
@@ -80,6 +84,65 @@ export const fetchUsersDetails = createAsyncThunk(
   }
 );
 
+export const updatesProfile = createAsyncThunk(
+  "users/updatesProfile",
+  async (
+    { id, username, email }: { id: number; username: string; email: string },
+    thunkAPI
+  ) => {
+    try {
+      const state = thunkAPI.getState() as RootState;
+      const token = state.auth.token ?? null;
+      API.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+
+      const response = await API.put(`/user/updates-profile/${id}`, {
+        username,
+        email
+      });
+      return response.data;
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data || "Error updating user"
+      );
+    }
+  }
+);
+
+export const deleteUser = createAsyncThunk(
+  "users/delete",
+  async (id: number, thunkAPI) => {
+    try {
+      const state = thunkAPI.getState() as RootState;
+      const token = state.auth.token ?? null;
+      API.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+
+      await API.delete(`/user/${id}`);
+      return id;
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data || "Error deleting project"
+      );
+    }
+  }
+);
+
+export const changeUserPassword = createAsyncThunk(
+  "users/changesPassword",
+  async (id: number, thunkAPI) => {
+    try {
+      const state = thunkAPI.getState() as RootState;
+      const token = state.auth.token ?? null;
+      API.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+
+      await API.delete(`/user/change-password/${id}`);
+      return id;
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data || "Error deleting project"
+      );
+    }
+  }
+);
 
 const userSlice = createSlice({
   name: "users",
@@ -92,7 +155,7 @@ const userSlice = createSlice({
       state.current_page = 1;
       state.loading = false;
       state.error = null;
-    },
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -110,8 +173,32 @@ const userSlice = createSlice({
       .addCase(fetchUsersDetails.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
+      })
+      .addCase(createUser.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(createUser.fulfilled, (state, action) => {
+        state.loading = false;
+        state.message = action.payload.message;
+        state.error = action.payload.error;
+      })
+      .addCase(createUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
+      .addCase(updatesProfile.fulfilled, (state, action) => {
+        const index = state.users.findIndex((p) => p.id === action.payload.id);
+        if (index !== -1) {
+          state.users[index] = action.payload;
+        }
+      })
+      .addCase(changeUserPassword.fulfilled, (state, action) => {
+        state.users = state.users.filter((p) => p.id !== action.payload);
+      })
+      .addCase(deleteUser.fulfilled, (state, action) => {
+        state.users = state.users.filter((p) => p.id !== action.payload);
       });
-  },
+  }
 });
 
 export const { resetUsersState } = userSlice.actions;

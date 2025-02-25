@@ -20,6 +20,7 @@ import Verified from "./utils/VerifiedUser";
 import MyProject from "./pages/dashboard/body/projects/MyProject";
 import SessionManager from "./components/SessionManager";
 import ErrorBoundary from "./utils/ErrorBoundry";
+import Users from "./pages/dashboard/users/ListUsers";
 
 function App() {
   const dispatch = useDispatch<AppDispatch>();
@@ -73,6 +74,14 @@ function App() {
                 element={
                   <ErrorBoundary>
                     <MyProject />
+                  </ErrorBoundary>
+                }
+              />
+              <Route
+                path="users"
+                element={
+                  <ErrorBoundary>
+                    <Users />
                   </ErrorBoundary>
                 }
               />

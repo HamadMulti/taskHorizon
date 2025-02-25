@@ -133,6 +133,10 @@ export const logoutUser = createAsyncThunk(
     }
 
     Cookies.remove("access_token");
+    Cookies.remove("refresh_token");
+    localStorage.removeItem("role")
+    localStorage.removeItem("user")
+    localStorage.removeItem("persist:auth")
     return null;
   }
 );

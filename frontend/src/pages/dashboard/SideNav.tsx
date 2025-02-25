@@ -194,7 +194,7 @@ const Sidebar = () => {
               </ul>
             </div>
             {role === "admin" ||
-              (role === "team_leader" && (
+              role === "team_leader" ? (
                 <>
                   <div className="mt-6">
                     <h6 className="text-yellow-600 text-sm font-bold px-4">
@@ -203,7 +203,7 @@ const Sidebar = () => {
                     <ul className="mt-3 space-y-2">
                       <li>
                         <Link
-                          to="tasks"
+                          to="users"
                           onClick={handleLinkClick}
                           className={`text-gray-800 text-sm flex items-center  rounded-md px-4 py-2 transition-all ${
                             pathname === "/dashboard/tasks"
@@ -243,42 +243,10 @@ const Sidebar = () => {
                           <span>Users</span>
                         </Link>
                       </li>
-                      <li>
-                        <Link
-                          to="my-tasks"
-                          onClick={handleLinkClick}
-                          className={`text-gray-800 text-sm flex items-center  rounded-md px-4 py-2 transition-all ${
-                            pathname === "/dashboard/my-tasks"
-                              ? "bg-[#0c172b] text-white bold"
-                              : "hover:bg-gray-100"
-                          }`}
-                        >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="currentColor"
-                            className="w-[18px] h-[18px] mr-3"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              d="M18 2c2.206 0 4 1.794 4 4v12c0 2.206-1.794 4-4 4H6c-2.206 0-4-1.794-4-4V6c0-2.206 1.794-4 4-4zm0-2H6a6 6 0 0 0-6 6v12a6 6 0 0 0 6 6h12a6 6 0 0 0 6-6V6a6 6 0 0 0-6-6z"
-                              data-original="#000000"
-                            />
-                            <path
-                              d="M12 18a1 1 0 0 1-1-1V7a1 1 0 0 1 2 0v10a1 1 0 0 1-1 1z"
-                              data-original="#000000"
-                            />
-                            <path
-                              d="M6 12a1 1 0 0 1 1-1h10a1 1 0 0 1 0 2H7a1 1 0 0 1-1-1z"
-                              data-original="#000000"
-                            />
-                          </svg>
-                          <span>Create User</span>
-                        </Link>
-                      </li>
                     </ul>
                   </div>
                 </>
-              ))}
+              ): null}
             <div className="mt-6 lg:hidden">
               <h6 className="text-yellow-600 text-sm font-bold px-4">
                 Accounts

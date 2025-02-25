@@ -3,8 +3,11 @@ import re
 from flask import request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from models.subscribe import Subscriber
-from utils.mailer import create_teammate, new_subscriber_mail
+from utils.mailer import change_teammate_password, create_teammate, new_subscriber_mail
 from models.user import db, User
+import random
+import string
+from werkzeug.security import generate_password_hash
 
 
 @jwt_required()
@@ -31,19 +34,27 @@ def update_profile():
         return jsonify({"message": "Profile updated successfully"}), 200
     return jsonify({"error": "Unauthorized"}), 403
 
+@jwt_required()
+def updates_profile(users_id):
+    user_id = get_jwt_identity()
+    user = User.query.get(users_id)
+    admin = User.query.get(user_id)
+    
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+
+    if user.id != users_id or admin.role == "admin":
+        return jsonify({"error": "Unauthorized"}), 403
+    
+    data = request.json
+    user.username = data.get("username", user.username)
+    user.email = data.get("email", user.email)
+    db.session.commit()
+    return jsonify({"message": "Profile updated successfully"}), 200
+
 
 @jwt_required()
 def get_profile():
-    """Retrieves the user's profile.
-
-    This endpoint retrieves the profile information of the currently logged-in user.
-    It retrieves the user's ID from the JWT token and returns the corresponding user details.
-
-    Returns:
-        tuple: A tuple containing the JSON response and HTTP status code.
-        - 200: Profile retrieved successfully.
-        - 403: Unauthorized access.
-    """
     user_id = get_jwt_identity()
     user = User.query.get(user_id)
     if user:
@@ -65,16 +76,6 @@ def get_profile():
 
 @jwt_required()
 def get_profiles():
-    """Retrieves all user profiles.
-
-    This endpoint retrieves all user profiles from the database.
-    It retrieves the user's ID from the JWT token and returns the corresponding user details.
-
-    Returns:
-        tuple: A tuple containing the JSON response and HTTP status code.
-        - 200: Profiles retrieved successfully.
-        - 403: Unauthorized access.
-    """
     user_id = get_jwt_identity()
     user = User.query.get(user_id)
 
@@ -137,10 +138,6 @@ def subscribe_user():
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": "Subscription failed. Please try again."}), 500
-    
-import random
-import string
-from werkzeug.security import generate_password_hash
 
 def generate_random_password(length=10):
     """Generates a secure random password."""
@@ -149,16 +146,6 @@ def generate_random_password(length=10):
 
 @jwt_required()
 def create_team_member():
-    """Allows an admin or team leader to create a team member.
-
-    The function generates a random password, saves the user in the database, and sends an email with the login credentials.
-
-    Returns:
-        Response: A JSON response indicating success or failure.
-        - 201: Team member created successfully.
-        - 400: Bad request (e.g., missing fields, duplicate user).
-        - 403: Unauthorized access.
-    """
     user_id = get_jwt_identity()
     user = User.query.get(user_id)
 
@@ -187,3 +174,40 @@ def create_team_member():
     create_teammate(new_user.email, new_user.username, generated_password)
 
     return jsonify({"message": "Team member created successfully. An email has been sent."}), 201
+
+@jwt_required()
+def change_team_member_password(users_id):
+    user_id = get_jwt_identity()
+    user = User.query.get(users_id)
+    role_user = User.query.get(user_id)
+
+    if role_user.role not in ["admin", "team_leader"]:
+        return jsonify({"error": "Unauthorized"}), 403
+
+    if not User.query.filter_by(email=user.email).first():
+        return jsonify({"error": "User already exists"}), 400
+
+    generated_password = generate_random_password()
+    hashed_password = generate_password_hash(generated_password)
+
+    user.password = hashed_password
+    db.session.commit()
+    change_teammate_password(user.email, user.username, generated_password)
+
+    return jsonify({"message": "Team member created successfully. An email has been sent."}), 201
+
+
+@jwt_required()
+def delete_user(user_id):
+    user_id = get_jwt_identity()
+    user = User.query.get(user_id)
+
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+
+    if user.id != user_id or user.role == "admin":
+        return jsonify({"error": "Unauthorized"}), 403
+
+    db.session.delete(user)
+    db.session.commit()
+    return jsonify({"message": "User deleted successfully"}), 200

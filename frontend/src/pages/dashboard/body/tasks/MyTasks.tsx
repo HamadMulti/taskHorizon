@@ -82,7 +82,7 @@ const MyTasks = () => {
               </th>
             </tr>
           </thead>
-          {loading ? (
+          {loading && !my_tasks ? (
             <SkeletonTable count={5} />
           ) : my_tasks.length === 0 ? (
             <tbody className="whitespace-nowrap flex">

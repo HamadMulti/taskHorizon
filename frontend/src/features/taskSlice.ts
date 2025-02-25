@@ -223,7 +223,32 @@ export const archiveTask = createAsyncThunk(
 const taskSlice = createSlice({
   name: "tasks",
   initialState,
-  reducers: {},
+  reducers: {
+    resetTasksState: (state) => {
+      state.tasks = [];
+      state.totalTasks = 0;
+      state.totalPages = 0;
+      state.currentPage = 1;
+      state.loading = false;
+      state.error = null;
+    },
+    resetMyTasksState: (state) => {
+      state.my_tasks = [];
+      state.my_totalTasks = 0;
+      state.my_totalPages = 0;
+      state.my_currentPage = 1;
+      state.loading = false;
+      state.error = null;
+    },
+    resetTeamTasksState: (state) => {
+      state.team_tasks = [];
+      state.team_totalTasks = 0;
+      state.team_totalPages = 0;
+      state.team_currentPage = 1;
+      state.loading = false;
+      state.error = null;
+    }
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchTasksDetails.pending, (state) => {
@@ -334,4 +359,5 @@ const taskSlice = createSlice({
   }
 });
 
+export const { resetTasksState, resetMyTasksState, resetTeamTasksState } = taskSlice.actions;
 export default taskSlice.reducer;

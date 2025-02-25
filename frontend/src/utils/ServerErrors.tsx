@@ -37,13 +37,15 @@ const ServerError = () => {
           <p className="text-slate-600 mt-5 lg:text-lg">
             {`Oops something went wrong. Try to refresh this page or \n feel free to contact us if the problem persists.`}
           </p>
-          <button
-            className="flex !w-fit px-4 items-center justify-center p-2 gap-2 rounded text-gray-100 shadow-2xs cursor-pointer bg-[#0c172b] hover:bg-[#0c172bee] "
-            title="Add"
-            onClick={reload}
-          >
-            Refresh page
-          </button>
+          <div className="min-w-full flex justify-center items-center py-3.5">
+            <button
+              className="flex !w-fit px-4 items-center justify-center p-2 gap-2 rounded text-gray-100 shadow-2xs cursor-pointer bg-[#0c172b] hover:bg-[#0c172bee] "
+              title="Add"
+              onClick={reload}
+            >
+              Refresh page
+            </button>
+          </div>
         </div>
       </div>
     </section>

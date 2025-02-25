@@ -88,3 +88,22 @@ def create_teammate(email, username, generated_password):
         return True
     except Exception as e:
         return jsonify({"error": "Failed to send email", "details": str(e)}), 500
+
+def change_teammate_password(email, username, generated_password):
+    try:
+        msg = Message(
+            "Welcome to the Team!",
+            sender=my_email,
+            recipients=[email]
+        )
+        msg.body = (
+            f"Hello {username},\n\n"
+            f"Your rested password has been created.\n\n"
+            f"Username: {username}\n"
+            f"Password: {generated_password}\n\n"
+            "Please log in and change your password as soon as possible."
+        )
+        mail.send(msg)
+        return True
+    except Exception as e:
+        return jsonify({"error": "Failed to send email", "details": str(e)}), 500

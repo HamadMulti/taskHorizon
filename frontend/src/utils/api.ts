@@ -61,20 +61,20 @@ API.interceptors.response.use(
       try {
         const newToken = await refreshAccessToken();
         isRefreshing = false;
-        onRefreshed(newToken);
-
-        if (newToken) {
-          originalRequest.headers["Authorization"] = `Bearer ${newToken}`;
-          return axios(originalRequest);
+        if (!newToken) {
+          throw new Error("No new token");
         }
+        onRefreshed(newToken);
+        originalRequest.headers["Authorization"] = `Bearer ${newToken}`;
+        return axios(originalRequest);
       } catch (err) {
         isRefreshing = false;
-        console.error("Session expired, redirecting to login");
         Cookies.remove("access_token");
         Cookies.remove("refresh_token");
-        window.location.href = "/login";
+        window.location.replace("/login");
         return Promise.reject(err);
       }
+      
     }
     return Promise.reject(error);
   }
