@@ -107,10 +107,6 @@ export const fetchUserDetails = createAsyncThunk(
         user = localStorage.getItem("user");
         return thunkAPI.rejectWithValue("User not found");
       }
-      if (!!user && !!token) {
-        return thunkAPI.rejectWithValue("User already exists");
-      }
-
       API.defaults.headers.common["Authorization"] = `Bearer ${token}`;
       const response = await API.get("/user/profile");
       return response.data.user;
@@ -157,8 +153,7 @@ export const updateProfile = createAsyncThunk(
 
       API.defaults.headers.common["Authorization"] = `Bearer ${token}`;
       const response = await API.put("/user/update-profile", profileData);
-      state.auth.user = response.data.user;
-      return response.data;
+      return response.data.user;
     } catch (error: any) {
       return thunkAPI.rejectWithValue(
         error.response?.data || "Profile update failed"
@@ -367,7 +362,7 @@ const authSlice = createSlice({
       })
       .addCase(updateProfile.fulfilled, (state, action) => {
         state.loading = false;
-        state.user = action.payload.user;
+        state.user = action.payload;
       })
       .addCase(updateProfile.rejected, (state, action) => {
         state.loading = false;

@@ -202,15 +202,17 @@ def change_team_member_password(users_id):
 
 @jwt_required()
 def delete_user(user_id):
-    user_id = get_jwt_identity()
-    user = User.query.get(user_id)
+    current_user_id = get_jwt_identity()
+    current_user = User.query.get(current_user_id)
+    user_to_delete = User.query.get(user_id)
 
-    if not user:
+    if not current_user or not user_to_delete:
         return jsonify({"error": "User not found"}), 404
 
-    if user.id != user_id or user.role == "admin":
-        return jsonify({"error": "Unauthorized"}), 403
+    if current_user.id == user_to_delete.id or current_user.role in ["admin", "team_leader"]:
+        db.session.delete(user_to_delete)
+        db.session.commit()
+        return jsonify({"message": "User deleted successfully"}), 200
 
-    db.session.delete(user)
-    db.session.commit()
-    return jsonify({"message": "User deleted successfully"}), 200
+    return jsonify({"error": "Unauthorized"}), 403
+

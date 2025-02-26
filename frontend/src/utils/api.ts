@@ -5,15 +5,15 @@ import Cookies from "js-cookie";
 
 // const url = import.meta.env.VITE_API_BASE_URL
 
-const url = "https://taskhorizon.onrender.com"
+const url = "https://taskhorizon.onrender.com";
 
 const API = axios.create({
   baseURL: url,
   headers: {
     "Content-Type": "application/json",
-    "Accept": "application/json",
+    Accept: "application/json"
   },
-  withCredentials: true,
+  withCredentials: true
 });
 
 let isRefreshing = false;
@@ -46,6 +46,11 @@ API.interceptors.response.use(
     const originalRequest = error.config;
 
     if (error.response?.status === 401 && !originalRequest._retry) {
+      if (!Cookies.get("refresh_token")) {
+        console.warn("No refresh token, redirecting to login.");
+        return Promise.reject(error);
+      }
+
       if (isRefreshing) {
         return new Promise((resolve) => {
           refreshSubscribers.push((newToken) => {
@@ -61,24 +66,30 @@ API.interceptors.response.use(
       try {
         const newToken = await refreshAccessToken();
         isRefreshing = false;
+
         if (!newToken) {
-          throw new Error("No new token");
+          console.warn("Failed to refresh token, logging out.");
+          Cookies.remove("access_token");
+          Cookies.remove("refresh_token");
+          window.location.replace("/login");
+          return Promise.reject(error);
         }
+
         onRefreshed(newToken);
         originalRequest.headers["Authorization"] = `Bearer ${newToken}`;
         return axios(originalRequest);
       } catch (err) {
         isRefreshing = false;
+        console.warn("Token refresh failed, forcing logout.");
         Cookies.remove("access_token");
         Cookies.remove("refresh_token");
         window.location.replace("/login");
         return Promise.reject(err);
       }
-      
     }
+
     return Promise.reject(error);
   }
 );
-
 
 export default API;

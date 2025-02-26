@@ -20,84 +20,6 @@ export const useAuth = () => {
     (state: RootState) => state.auth
   );
 
-  const handleRegister = async (
-    data: {
-    username: string,
-    email: string,
-    password: string,
-    confirmPassword: string
-    }
-  ) => {
-    return dispatch(
-      registerUser(data)
-    ).unwrap();
-  };
-
-  const handleLogin = async (data: {email: string, password: string}) => {
-    return dispatch(loginUser(data)).unwrap();
-  };
-
-  const handleFetchUser = async () => {
-    return dispatch(fetchUserDetails());
-  };
-
-  const handleLogout = async () => {
-    return dispatch(logoutUser()).unwrap();
-  };
-
-  const handleUpdateProfile = async (profileData: {
-    username: string | null,
-    email: string | null,
-    role: string | null,
-    phone: string | null,
-    location: string | null,
-    gender: string | null,
-    primary_email: string | null,
-    verified: string | null,
-  }) => {
-    const sanitizedProfileData = {
-      username: profileData.username ?? '',
-      email: profileData.email ?? '',
-      role: profileData.role ?? '',
-      phone: profileData.phone ?? '',
-      location: profileData.location ?? '',
-      gender: profileData.gender ?? '',
-      primary_email: profileData.primary_email ?? '',
-      verified: profileData.verified ?? '',
-    };
-    return dispatch(updateProfile(sanitizedProfileData)).unwrap();
-  };
-
-  const handleSendOTP = async () => {
-    return dispatch(sendOTP()).unwrap();
-  };
-
-  const handleVerifyOTP = async (otp: string) => {
-    return dispatch(verifyOTP(otp)).unwrap();
-  };
-
-  const handleForgotPassword = async (email: string) => {
-    return dispatch(forgotPassword(email)).unwrap();
-  };
-
-  const handleResetPassword = async (token: string, password: string) => {
-    return dispatch(resetPassword({ token, password })).unwrap();
-  };
-
-  const handleHydrateAuth = async () => {
-    return dispatch(hydrateAuthState());
-  };
-
-  const handleSubscriber = async (
-    data: {
-    email: string,
-    }
-  ) => {
-    return dispatch(
-      subscribeUsers(data)
-    ).unwrap();
-  };
-
   return {
     user,
     token,
@@ -105,16 +27,73 @@ export const useAuth = () => {
     error,
     otpVerified,
     role,
-    handleRegister,
-    handleLogin,
-    handleFetchUser,
-    handleLogout,
-    handleUpdateProfile,
-    handleSendOTP,
-    handleVerifyOTP,
-    handleForgotPassword,
-    handleResetPassword,
-    handleHydrateAuth,
-    handleSubscriber
+    handleRegister: async (
+      data: {
+      username: string,
+      email: string,
+      password: string,
+      confirmPassword: string
+      }
+    ) => {
+      return dispatch(
+        registerUser(data)
+      ).unwrap();
+    },
+    handleLogin: async (data: {email: string, password: string}) => {
+      await dispatch(loginUser(data)).unwrap();
+    },
+    handleFetchUser: async () => {
+      await dispatch(fetchUserDetails()).unwrap()
+    },
+    handleLogout: async () => {
+      await dispatch(logoutUser()).unwrap();
+    },
+    handleUpdateProfile: async (profileData: {
+      username: string | null,
+      email: string | null,
+      role: string | null,
+      phone: string | null,
+      location: string | null,
+      gender: string | null,
+      primary_email: string | null,
+      verified: string | null,
+    }) => {
+      const sanitizedProfileData = {
+        username: profileData.username ?? '',
+        email: profileData.email ?? '',
+        role: profileData.role ?? '',
+        phone: profileData.phone ?? '',
+        location: profileData.location ?? '',
+        gender: profileData.gender ?? '',
+        primary_email: profileData.primary_email ?? '',
+        verified: profileData.verified ?? '',
+      };
+      await dispatch(updateProfile(sanitizedProfileData)).unwrap();
+      await dispatch(fetchUserDetails()).unwrap();
+    },
+    handleSendOTP: async () => {
+      await dispatch(sendOTP()).unwrap();
+    },
+    handleVerifyOTP: async (otp: string) => {
+      await dispatch(verifyOTP(otp)).unwrap();
+    },
+    handleForgotPassword: async (email: string) => {
+      await dispatch(forgotPassword(email)).unwrap();
+    },
+    handleResetPassword: async (token: string, password: string) => {
+      await dispatch(resetPassword({ token, password })).unwrap();
+    },
+    handleHydrateAuth: async () => {
+      await dispatch(hydrateAuthState());
+    },
+    handleSubscriber: async (
+      data: {
+      email: string,
+      }
+    ) => {
+      await dispatch(
+        subscribeUsers(data)
+      ).unwrap();
+    },
   };
 };
