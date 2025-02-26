@@ -28,7 +28,7 @@ const MyTasks = () => {
       <div className="overflow-x-auto">
             <div
               className={`${
-                pathname === "/dashboard/tasks"
+                pathname === "/dashboard/my-tasks"
                   ? "w-fit absolute z-1000 top-0 max-md:top-9 max-md:right-0 max-sm:top-0 max-sm:right-18 right-20 bg-transparent flex items-center justify-end py-4 px-8"
                   : "hidden w-0 content-none clear-none"
               }`}
@@ -57,7 +57,7 @@ const MyTasks = () => {
                     data-original="#000000"
                   />
                 </svg>
-                Add
+                Add Tasks
               </button>
               {isCreating && <CreateTaskModal onClose={handleClose} />}
             </div>

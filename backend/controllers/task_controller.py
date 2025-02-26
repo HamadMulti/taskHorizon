@@ -33,6 +33,9 @@ def create_task():
     if not assigned:
         assigned = None
         
+    if user.role == "user":
+        assigned = user.username
+        
     if not project_ids:
         project_ids = None
 
