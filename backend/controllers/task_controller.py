@@ -12,11 +12,12 @@ def create_task():
     user = User.query.get(user_id)
 
     if not user:
-        return jsonify({"error": "Unauthorized"}), 403
+        return jsonify({"error": "Unauthorized"}), 401
 
     data = request.get_json()
+    required_fields = ["title", "description", "project_id"]
 
-    if not data or "title" not in data or "description" not in data or "project_id" not in data:
+    if not data or any(field not in data for field in required_fields):
         return jsonify({"error": "Missing required fields"}), 400
 
     project = Project.query.get(data["project_id"])
@@ -26,24 +27,27 @@ def create_task():
     existing_task = Task.query.filter_by(title=data["title"], project_id=data["project_id"]).first()
     if existing_task:
         return jsonify({"error": "A task with this title already exists in this project"}), 400
-    
-    assigned = data["assigned_to"]
-    project_ids = data["project_id"]
-    
-    if not assigned:
-        assigned = None
-        
-    if user.role == "user":
-        assigned = user.username
-        
-    if not project_ids:
-        project_ids = None
 
-    task = Task(title=data["title"], description=data["description"], assigned_to=assigned, project_id=project_ids)
+    assigned_to = data.get("assigned_to")
+    if user.role == "user":
+        assigned_to = user.username
+    elif assigned_to:
+        assigned_user = User.query.filter_by(username=assigned_to).first()
+        if not assigned_user:
+            return jsonify({"error": "Assigned user does not exist"}), 400
+
+    task = Task(
+        title=data["title"],
+        description=data["description"],
+        assigned_to=assigned_to,
+        project_id=data["project_id"],
+        status="pending",
+    )
+
     db.session.add(task)
     db.session.commit()
 
-    return jsonify({"message": "Task created successfully"}), 201
+    return jsonify({"message": "Task created successfully", "task_id": task.id}), 201
 
 
 @jwt_required()
@@ -54,28 +58,35 @@ def get_tasks():
     user = User.query.get(user_id)
 
     if not user:
-        return jsonify({"error": "Unauthorized"}), 403
+        return jsonify({"error": "Unauthorized"}), 401
 
     if user.role == "admin":
-        tasks = Task.query.paginate(page=page, per_page=per_page, error_out=False)
+        tasks_query = Task.query
     elif user.role == "team_leader":
-        tasks = Task.query.filter(Task.project_id == user.project_id).paginate(
-            page=page, per_page=per_page, error_out=False
-        )
+        tasks_query = Task.query.filter_by(project_id=user.project_id)
     else:
-        tasks = Task.query.filter(Task.assigned_to == user_id).paginate(
-            page=page, per_page=per_page, error_out=False
-        )
+        tasks_query = Task.query.filter_by(assigned_to=user.username)
+
+    tasks = tasks_query.paginate(page=page, per_page=per_page, error_out=False)
 
     return jsonify(
         {
             "tasks": [
-                {"id": t.id, "title": t.title, "status": t.status, "assigned_to": t.assigned_to, "description": t.description, "project_id": t.project_id}
+                {
+                    "id": t.id,
+                    "title": t.title,
+                    "status": t.status,
+                    "assigned_to": t.assigned_to,
+                    "description": t.description,
+                    "project_id": t.project_id,
+                }
                 for t in tasks.items
             ],
             "total": tasks.total,
             "pages": tasks.pages,
             "current_page": tasks.page,
+            "prev_page": tasks.prev_num if tasks.has_prev else None,
+            "next_page": tasks.next_num if tasks.has_next else None,
         }
     ), 200
 
@@ -189,33 +200,40 @@ def archive_task(task_id):
     return jsonify({"message": "Task archived successfully"}), 200
 
 
-
 @jwt_required()
 def get_user_tasks():
     page = request.args.get("page", 1, type=int)
     per_page = request.args.get("per_page", 10, type=int)
     user_id = get_jwt_identity()
-
-    if not user_id:
-        return jsonify({"error": "Unauthorized"}), 403
-    
     user = User.query.get(user_id)
 
-    tasks_query = Task.query.filter(Task.assigned_to == user.username).order_by(Task.id.desc())
+    if not user:
+        return jsonify({"error": "Unauthorized"}), 401
+    
+    tasks_query = Task.query.filter_by(assigned_to=user.username)
 
-    paginated_tasks = tasks_query.paginate(page=page, per_page=per_page, error_out=False)
+    tasks = tasks_query.paginate(page=page, per_page=per_page, error_out=False)
 
-    tasks_list = [
-        {"id": t.id, "title": t.title, "status": t.status, "assigned_to": t.assigned_to, "description": t.description, "project_id": t.project_id}
-        for t in paginated_tasks.items
-    ]
-
-    return jsonify({
-        "my_tasks": tasks_list,
-        "total": paginated_tasks.total,
-        "pages": paginated_tasks.pages,
-        "current_page": paginated_tasks.page
-    }), 200
+    return jsonify(
+        {
+            "my_tasks": [
+                {
+                    "id": t.id,
+                    "title": t.title,
+                    "status": t.status,
+                    "assigned_to": t.assigned_to,
+                    "description": t.description,
+                    "project_id": t.project_id,
+                }
+                for t in tasks.items
+            ],
+            "total": tasks.total,
+            "pages": tasks.pages,
+            "current_page": tasks.page,
+            "prev_page": tasks.prev_num if tasks.has_prev else None,
+            "next_page": tasks.next_num if tasks.has_next else None,
+        }
+    ), 200
 
 
 
@@ -232,12 +250,25 @@ def get_team_tasks():
     if user:
         tasks = Task.query.paginate(page=page, per_page=per_page, error_out=False)
         return jsonify(
-            {
-                "team_tasks": [{"id": t.id, "title": t.title, "status": t.status, "assigned_to": t.assigned_to, "description": t.description, "project_id": t.project_id} for t in tasks],
-                "total": tasks.total,
-                "pages": tasks.pages,
-                "current_page": tasks.page
-            }), 200
+        {
+            "team_tasks": [
+                {
+                    "id": t.id,
+                    "title": t.title,
+                    "status": t.status,
+                    "assigned_to": t.assigned_to,
+                    "description": t.description,
+                    "project_id": t.project_id,
+                }
+                for t in tasks.items
+            ],
+            "total": tasks.total,
+            "pages": tasks.pages,
+            "current_page": tasks.page,
+            "prev_page": tasks.prev_num if tasks.has_prev else None,
+            "next_page": tasks.next_num if tasks.has_next else None,
+        }
+    ), 200
     return jsonify({"error": "Unauthorized"}), 403
 
 @jwt_required()

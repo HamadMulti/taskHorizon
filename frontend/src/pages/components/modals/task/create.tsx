@@ -108,18 +108,17 @@ const CreateTaskModal: React.FC<CreateTaskModalProps> = ({ onClose }) => {
                       <UserDropdown onSelect={handleUserSelect} />
                     </div>
                   </div>
-
-                  {/* Project Id To Input */}
-                  <div>
-                    <label className="text-gray-800 text-sm mb-2 block">
-                      Project
-                    </label>
-                    <div>
-                      <ProjectDropdown onSelect={setSelectedProject} />
-                    </div>
-                  </div>
                 </>
               ) : null}
+              {/* Project Id To Input */}
+              <div>
+                <label className="text-gray-800 text-sm mb-2 block">
+                  Project
+                </label>
+                <div>
+                  <ProjectDropdown onSelect={setSelectedProject} />
+                </div>
+              </div>
 
               {/* Description Input */}
               <div>

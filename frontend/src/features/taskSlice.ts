@@ -138,7 +138,7 @@ export const restoreTask = createAsyncThunk(
       const state = thunkAPI.getState() as RootState;
       const token = state.auth.token ?? null;
       API.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-      const response = await API.patch(`/tasks/restore/${id}`);
+      const response = await API.post(`/tasks/restore/${id}`);
       return response.data;
     } catch (error: any) {
       return thunkAPI.rejectWithValue(
@@ -254,9 +254,10 @@ const taskSlice = createSlice({
     builder
       .addCase(fetchTasksDetails.pending, (state) => {
         state.loading = true;
+        state.tasks = [];
       })
       .addCase(fetchTasksDetails.fulfilled, (state, action) => {
-        state.tasks = [...action.payload.tasks];
+        state.tasks = [...state.tasks, ...action.payload.tasks];
         state.currentPage = action.payload.current_page;
         state.totalPages = action.payload.pages;
         state.totalTasks = action.payload.total;
@@ -268,13 +269,13 @@ const taskSlice = createSlice({
       })
       .addCase(fetchMyTasksDetails.pending, (state) => {
         state.loading = true;
+        state.my_tasks = [];
       })
       .addCase(fetchMyTasksDetails.fulfilled, (state, action) => {
-        state.my_tasks = [...action.payload.my_tasks];
-        state.my_totalTasks = action.payload.total;
-        state.my_totalPages = action.payload.pages;
+        state.my_tasks = [...state.my_tasks, ...action.payload.my_tasks];
         state.my_currentPage = action.payload.current_page;
-        state.loadedPages.add(action.payload.current_page);
+        state.my_totalPages = action.payload.pages;
+        state.my_totalTasks = action.payload.total;
         state.loading = false;
       })
       .addCase(fetchMyTasksDetails.rejected, (state, action) => {
@@ -283,13 +284,13 @@ const taskSlice = createSlice({
       })
       .addCase(fetchTeamTasksDetails.pending, (state) => {
         state.loading = true;
+        state.team_tasks = [];
       })
       .addCase(fetchTeamTasksDetails.fulfilled, (state, action) => {
-        state.team_tasks = [...action.payload.team_tasks];
-        state.team_totalTasks = action.payload.total;
-        state.team_totalPages = action.payload.pages;
+        state.team_tasks = [...state.team_tasks, ...action.payload.team_tasks];
         state.team_currentPage = action.payload.current_page;
-        state.loadedPages.add(action.payload.current_page);
+        state.team_totalPages = action.payload.pages;
+        state.team_totalTasks = action.payload.total;
         state.loading = false;
       })
       .addCase(fetchTeamTasksDetails.rejected, (state, action) => {
@@ -298,9 +299,10 @@ const taskSlice = createSlice({
       })
       .addCase(fetchArchivedDetails.pending, (state) => {
         state.loading = true;
+        state.archived_tasks = [];
       })
       .addCase(fetchArchivedDetails.fulfilled, (state, action) => {
-        state.archived_tasks = [...action.payload.archived_tasks];
+        state.archived_tasks = [...state.archived_tasks, ...action.payload.archived_tasks];
         state.archived_currentPage = action.payload.current_page;
         state.archived_totalPages = action.payload.pages;
         state.archived_totalTasks = action.payload.total;
@@ -327,6 +329,9 @@ const taskSlice = createSlice({
         const index = state.tasks.findIndex((p) => p.id === action.payload.id);
         if (index !== -1) {
           state.tasks[index] = action.payload;
+          state.my_tasks[index] = action.payload;
+          state.team_tasks[index] = action.payload;
+          state.archived_tasks[index] = action.payload;
         }
       })
       .addCase(updateTask.rejected, (state, action) => {
@@ -338,6 +343,9 @@ const taskSlice = createSlice({
       })
       .addCase(restoreTask.fulfilled, (state, action) => {
         state.tasks = state.tasks.filter((task) => task.id !== action.payload);
+        state.my_tasks = state.tasks.filter((task) => task.id !== action.payload);
+        state.team_tasks = state.tasks.filter((task) => task.id !== action.payload);
+        state.archived_tasks = state.tasks.filter((task) => task.id !== action.payload);
         state.loading = false;
       })
       .addCase(restoreTask.rejected, (state, action) => {

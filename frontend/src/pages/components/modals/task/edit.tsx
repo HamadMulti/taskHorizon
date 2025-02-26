@@ -38,7 +38,7 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({ task, onClose }) => {
       id,
       title: title || "",
       status: status || "",
-      assigned_to: selectedUser || "",
+      assigned_to: selectedUser,
       description,
       project_id: Number(selectedProject)
     };

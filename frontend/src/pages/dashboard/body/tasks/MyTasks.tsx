@@ -12,6 +12,7 @@ import DeleteTaskModal from "../../../components/modals/task/delete";
 
 const MyTasks = () => {
   const { my_tasks, loading, my_currentPage, my_totalPages, my_totalTasks } = useTasks();
+
   const [isCreating, setIsCreating] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [page, setCurrentPage] = useState(my_currentPage);

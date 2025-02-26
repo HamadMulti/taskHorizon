@@ -20,7 +20,7 @@ const RestoreTaskModal: React.FC<DeleteModalProps> = ({ id, title }) => {
       {/* Restore Button to Open Modal */}
       <button className="mr-4" title="Delete" onClick={() => setIsOpen(true)}>
         <svg
-          height="48"
+          width="20"
           viewBox="0 0 48 48"
           className="w-5 fill-green-500 hover:fill-green-700"
           xmlns="http://www.w3.org/2000/svg"

@@ -189,7 +189,7 @@ const Sidebar = () => {
                         <span>Tasks</span>
                       </Link>
                     </li>
-                    {/* <li>
+                    <li>
                       <Link
                         to="team-tasks"
                         onClick={handleLinkClick}
@@ -229,7 +229,7 @@ const Sidebar = () => {
                         </svg>
                         <span>Team Tasks</span>
                       </Link>
-                    </li> */}
+                    </li>
                   </>
                 ) : null}
                 <li>
