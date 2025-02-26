@@ -359,10 +359,18 @@ const taskSlice = createSlice({
         state.loading = true;
       })
       .addCase(restoreTask.fulfilled, (state, action) => {
-        state.tasks = state.tasks.filter((task) => task.id !== action.payload);
-        state.my_tasks = state.tasks.filter((task) => task.id !== action.payload);
-        state.team_tasks = state.tasks.filter((task) => task.id !== action.payload);
-        state.archived_tasks = state.tasks.filter((task) => task.id !== action.payload);
+        if (action.payload.tasks) {
+          state.tasks = state.tasks.filter((task) => task.id !== action.payload)
+        }
+        if (action.payload.my_tasks) {
+          state.my_tasks = state.tasks.filter((task) => task.id !== action.payload);
+        }
+        if (action.payload.team_tasks) {
+          state.team_tasks = state.tasks.filter((task) => task.id !== action.payload);
+        }
+        if (action.payload.archived_tasks) {
+          state.archived_tasks = state.tasks.filter((task) => task.id !== action.payload);
+        }
         state.loading = false;
       })
       .addCase(restoreTask.rejected, (state, action) => {

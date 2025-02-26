@@ -41,6 +41,7 @@ export const useTasks = () => {
     archived_totalTasks,
     my_totalTasks,
     totalTasks,
+    team_totalTasks,
   } = useSelector((state: RootState) => state.tasks);
 
   const tasks = useSelector(selectFilteredTasks);
@@ -131,6 +132,7 @@ export const useTasks = () => {
     archived_totalTasks,
     my_totalTasks,
     totalTasks,
+    team_totalTasks,
 
     nextPage: () => changePage("next"),
     prevPage: () => changePage("prev"),
