@@ -18,17 +18,21 @@ interface TaskState {
   tasks: Task[];
   my_tasks: Task[];
   team_tasks: Task[];
+  archived_tasks: Task[];
   loading: boolean;
   error: string | null;
   currentPage: number;
   my_currentPage: number;
   team_currentPage: number;
+  archived_currentPage: number;
   totalPages: number;
   my_totalPages: number;
   team_totalPages: number;
+  archived_totalPages: number;
   totalTasks: number;
   my_totalTasks: number;
   team_totalTasks: number;
+  archived_totalTasks: number;
   loadedPages: Set<number>;
 }
 
@@ -36,17 +40,21 @@ const initialState: TaskState = {
   tasks: [],
   my_tasks: [],
   team_tasks: [],
+  archived_tasks: [],
   loading: false,
   error: null,
   currentPage: 1,
   my_currentPage: 1,
   team_currentPage: 1,
+  archived_currentPage: 1,
   totalPages: 1,
   my_totalPages: 1,
   team_totalPages: 1,
+  archived_totalPages: 1,
   totalTasks: 0,
   my_totalTasks: 0,
   team_totalTasks: 0,
+  archived_totalTasks: 0,
   loadedPages: new Set()
 };
 
@@ -99,6 +107,42 @@ export const fetchTeamTasksDetails = createAsyncThunk(
     } catch (error: any) {
       return thunkAPI.rejectWithValue(
         error.response?.data || "Failed to fetch tasks details"
+      );
+    }
+  }
+);
+
+// Fetch All Archived Tasks with Pagination
+export const fetchArchivedDetails = createAsyncThunk(
+  "tasks/fetchArchivedDetails",
+  async ({ page = 1 }: { page: number }, thunkAPI) => {
+    try {
+      const state = thunkAPI.getState() as RootState;
+      const token = state.auth.token ?? null;
+      API.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+      const response = await API.get(`/tasks/archived?page=${page}`);
+      return response.data;
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data || "Failed to fetch tasks details"
+      );
+    }
+  }
+);
+
+// Restore Task
+export const restoreTask = createAsyncThunk(
+  "tasks/restoreTask",
+  async (id: number, thunkAPI) => {
+    try {
+      const state = thunkAPI.getState() as RootState;
+      const token = state.auth.token ?? null;
+      API.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+      const response = await API.patch(`/tasks/restore/${id}`);
+      return response.data;
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data || "Failed to restore task"
       );
     }
   }
@@ -252,6 +296,20 @@ const taskSlice = createSlice({
         state.loading = false;
         state.error = action.payload as string;
       })
+      .addCase(fetchArchivedDetails.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchArchivedDetails.fulfilled, (state, action) => {
+        state.archived_tasks = [...action.payload.archived_tasks];
+        state.archived_currentPage = action.payload.current_page;
+        state.archived_totalPages = action.payload.pages;
+        state.archived_totalTasks = action.payload.total;
+        state.loading = false;
+      })
+      .addCase(fetchArchivedDetails.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
       .addCase(createTask.pending, (state) => {
         state.loading = true;
       })
@@ -272,6 +330,17 @@ const taskSlice = createSlice({
         }
       })
       .addCase(updateTask.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
+      .addCase(restoreTask.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(restoreTask.fulfilled, (state, action) => {
+        state.tasks = state.tasks.filter((task) => task.id !== action.payload);
+        state.loading = false;
+      })
+      .addCase(restoreTask.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
       })

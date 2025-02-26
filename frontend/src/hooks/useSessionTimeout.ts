@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "./useAuth";
 import { decodeToken } from "../utils/decodeToken";
@@ -7,6 +7,7 @@ import refreshAccessToken from "../utils/refresh_token";
 export function useSessionTimeout() {
   const { token, handleLogout } = useAuth();
   const navigate = useNavigate();
+  const isRefreshing = useRef(false);
 
   useEffect(() => {
     if (!token) {
@@ -14,7 +15,7 @@ export function useSessionTimeout() {
     }
 
     const decoded = decodeToken(token);
-    if (!decoded) {
+    if (!decoded || !decoded.exp) {
       return;
     }
 
@@ -23,15 +24,28 @@ export function useSessionTimeout() {
     const refreshBuffer = 2 * 60 * 1000;
 
     const handleSessionCheck = async () => {
-      const newToken = await refreshAccessToken();
-      
-      if (!newToken) {
-        console.warn("Session expired. Logging out.");
+      if (isRefreshing.current) {
+        return;
+      }
+      isRefreshing.current = true;
+
+      try {
+        const newToken = await refreshAccessToken();
+        if (!newToken) {
+          console.warn("Session expired. Logging out.");
+          handleLogout();
+          alert("Your session has expired. Please log in again.");
+          navigate("/login");
+        } else {
+          console.warn("Session refreshed successfully.");
+        }
+      } catch (error) {
+        console.warn("Error refreshing session:", error);
         handleLogout();
-        alert("Your session has expired. Please log in again.");
+        alert("Session refresh failed. Please log in again.");
         navigate("/login");
-      } else {
-        console.log("Session refreshed successfully.");
+      } finally {
+        isRefreshing.current = false;
       }
     };
 
@@ -41,6 +55,5 @@ export function useSessionTimeout() {
     } else {
       handleSessionCheck();
     }
-
   }, [token, handleLogout, navigate]);
 }

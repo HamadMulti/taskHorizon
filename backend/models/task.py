@@ -2,20 +2,6 @@ from . import db
 from datetime import datetime
 
 class Task(db.Model):
-    """
-    Represents a task in the system.
-
-    Attributes:
-        id (int): The unique identifier for the task.
-        title (str): The title of the task. Maximum length is 100 characters.
-        description (str, optional): A detailed description of the task.
-        status (str): The current status of the task. Default is "Pending".
-        assigned_to (int, optional): The ID of the user to whom the task is assigned.
-        project_id (int): The ID of the project to which the task belongs.
-        created_at (datetime): The timestamp when the task was created. Defaults to the current UTC time.
-        updated_at (datetime): The timestamp when the task was last updated.
-        due_date (date, optional): The due date for the task.
-    """
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), nullable=False)
     description = db.Column(db.Text, nullable=True)

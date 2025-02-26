@@ -99,7 +99,7 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({ task, onClose }) => {
                   className="px-4 py-3 bg-gray-100 w-full text-gray-800 text-sm border-none focus:outline-yellow-600 focus:bg-transparent rounded-lg"
                 >
                   <option value="pending">Pending</option>
-                  <option value="in_progress">In Progress</option>
+                  <option value="In progress">In Progress</option>
                   <option value="completed">Completed</option>
                 </select>
               </div>
@@ -112,7 +112,7 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({ task, onClose }) => {
                       Assigned To
                     </label>
                     <div>
-                      <UserDropdown onSelect={handleUserSelect} />
+                      <UserDropdown selectedValue={task.assigned_to ?? ""} onSelect={handleUserSelect} />
                     </div>
                   </div>
 

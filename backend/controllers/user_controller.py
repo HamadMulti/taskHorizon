@@ -12,16 +12,6 @@ import string
 
 @jwt_required()
 def update_profile():
-    """Updates the user's profile.
-
-    This endpoint allows users to update their profile information, such as phone number, location, gender, and primary email.
-    It retrieves the user's ID from the JWT token and updates the corresponding user record in the database.
-
-    Returns:
-        tuple: A tuple containing the JSON response and HTTP status code.
-        - 200: Profile updated successfully.
-        - 403: Unauthorized access.
-    """
     user_id = get_jwt_identity()
     user = User.query.get(user_id)
     if user:
@@ -58,6 +48,25 @@ def updates_profile(users_id):
 @jwt_required()
 def get_profile():
     user_id = get_jwt_identity()
+    user = User.query.get(user_id)
+    if user:
+        profile = {
+            "username": user.username,
+            "email": user.email,
+            "role": user.role,
+            "phone": user.phone,
+            "location": user.location,
+            "gender": user.gender,
+            "primary_email": user.primary_email,
+            "verified": user.verified,
+        }
+
+        return jsonify({"user": profile}), 200
+
+    return jsonify({"error": "Unauthorized"}), 403
+
+@jwt_required()
+def get_assigned_to(user_id):
     user = User.query.get(user_id)
     if user:
         profile = {
@@ -165,10 +174,9 @@ def create_team_member():
         return jsonify({"error": "Username and email are required"}), 400
     
     if User.query.filter_by(username=username).first():
-        return jsonify({"username": "Username already taken"}), 400
-
+        return jsonify({"username": "Username already exists"}), 400
     if User.query.filter_by(email=email).first():
-        return jsonify({"error": "User already exists"}), 400
+        return jsonify({"email": "Email already exists"}), 400
 
     generated_password = generate_random_password()
     hashed_password = hash_password(generated_password)

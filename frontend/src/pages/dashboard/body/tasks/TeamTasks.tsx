@@ -1,72 +1,27 @@
-import { useState } from "react";
-import { useTasks } from "../../../../hooks/useTasks";
 import SkeletonTable from "../../../components/loaders/SkeletonTable";
-import PreviewTaskModal from "../../../components/modals/task/preview";
 import Pagination from "../../../components/pagination/pagination";
+import { useState } from "react";
 import { truncateText } from "../../../../utils/truncate";
-import { Task } from "../../../../features/taskSlice";
-import { useLocation } from "react-router-dom";
-import CreateTaskModal from "../../../components/modals/task/create";
-import EditTaskModal from "../../../components/modals/task/edit";
+import { useTasks } from "../../../../hooks/useTasks";
+import PreviewTaskModal from "../../../components/modals/task/preview";
 import DeleteTaskModal from "../../../components/modals/task/delete";
-import { useAuth } from "../../../../hooks/useAuth";
+import EditTaskModal from "../../../components/modals/task/edit";
+import { Task } from "../../../../features/taskSlice";
 
-const MyTasks = () => {
-  const { my_tasks, loading, my_currentPage, my_totalPages, my_totalTasks } = useTasks();
-  const [isCreating, setIsCreating] = useState(false);
+const TeamTasks = () => {
+  const { team_tasks, loading, team_currentPage, team_totalPages, team_totalTasks } =
+    useTasks();
   const [isEditing, setIsEditing] = useState(false);
-  const [page, setCurrentPage] = useState(my_currentPage);
+  const [page, setCurrentPage] = useState(team_currentPage);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedTask, setSelectedTask] = useState<Task>();
-  const { pathname } = useLocation();
-  const { role } = useAuth();
   const handleClose = () => {
-    setIsCreating(false);
     setIsEditing(false);
   };
 
   return (
     <>
       <div className="overflow-x-auto">
-        {role === "admin" || role === "team_leader" ? (
-          <>
-            <div
-              className={`${
-                pathname === "/dashboard/tasks"
-                  ? "w-fit absolute z-1000 top-0 max-md:top-9 max-md:right-0 max-sm:top-0 max-sm:right-18 right-20 bg-transparent flex items-center justify-end py-4 px-8"
-                  : "hidden w-0 content-none clear-none"
-              }`}
-            >
-              <button
-                className="flex items-center justify-center p-2 gap-2 rounded text-gray-100 shadow-2xs cursor-pointer bg-[#0c172b] hover:bg-[#0c172bee] "
-                title="Add"
-                onClick={() => setIsCreating(true)}
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="currentColor"
-                  className="w-5 fill-gray-100 hover:fill-gray-200"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    d="M18 2c2.206 0 4 1.794 4 4v12c0 2.206-1.794 4-4 4H6c-2.206 0-4-1.794-4-4V6c0-2.206 1.794-4 4-4zm0-2H6a6 6 0 0 0-6 6v12a6 6 0 0 0 6 6h12a6 6 0 0 0 6-6V6a6 6 0 0 0-6-6z"
-                    data-original="#000000"
-                  />
-                  <path
-                    d="M12 18a1 1 0 0 1-1-1V7a1 1 0 0 1 2 0v10a1 1 0 0 1-1 1z"
-                    data-original="#000000"
-                  />
-                  <path
-                    d="M6 12a1 1 0 0 1 1-1h10a1 1 0 0 1 0 2H7a1 1 0 0 1-1-1z"
-                    data-original="#000000"
-                  />
-                </svg>
-                Add
-              </button>
-              {isCreating && <CreateTaskModal onClose={handleClose} />}
-            </div>
-          </>
-        ) : null}
         <table className="min-w-full bg-white">
           <thead className="bg-gray-800 whitespace-nowrap">
             <tr>
@@ -87,9 +42,9 @@ const MyTasks = () => {
               </th>
             </tr>
           </thead>
-          {loading && !my_tasks ? (
+          {loading && !team_tasks ? (
             <SkeletonTable count={5} />
-          ) : my_tasks.length === 0 ? (
+          ) : team_tasks.length === 0 ? (
             <tbody className="whitespace-nowrap flex">
               <tr className="min-w-full flex justify-center py-6 items-center flex-col">
                 {" "}
@@ -112,7 +67,7 @@ const MyTasks = () => {
             </tbody>
           ) : (
             <tbody className="whitespace-nowrap">
-              {my_tasks.map((task) => (
+              {team_tasks.map((task) => (
                 <tr className="even:bg-yellow-50" key={task.id}>
                   <td className="p-4 text-sm text-black">{task.title}</td>
                   <td className="p-4 text-sm text-black">{task.status}</td>
@@ -201,17 +156,19 @@ const MyTasks = () => {
           )}
         </table>
         <div className="flex justify-between py-4 px-6">
-          <span className="text-gray-500">Total Pages | {my_totalPages}</span>
+          <span className="text-gray-500">Total Pages | {team_totalPages}</span>
           <Pagination
             currentPage={page}
-            totalPages={my_totalPages}
+            totalPages={team_totalPages}
             onPageChange={setCurrentPage}
           />
-          <span className="text-gray-500">{my_totalTasks} | Number Of Items</span>
+          <span className="text-gray-500">
+            {team_totalTasks} | Number Of Items
+          </span>
         </div>
       </div>
     </>
   );
 };
 
-export default MyTasks;
+export default TeamTasks;

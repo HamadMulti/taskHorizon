@@ -21,6 +21,8 @@ import MyProject from "./pages/dashboard/body/projects/MyProject";
 import SessionManager from "./components/SessionManager";
 import ErrorBoundary from "./utils/ErrorBoundry";
 import Users from "./pages/dashboard/body/users/ListUsers";
+import ArchivedTasks from "./pages/dashboard/body/tasks/ArchivedTasks";
+import TeamTasks from "./pages/dashboard/body/tasks/TeamTasks";
 
 function App() {
   const dispatch = useDispatch<AppDispatch>();
@@ -58,6 +60,22 @@ function App() {
                 element={
                   <ErrorBoundary>
                     <MyTask />
+                  </ErrorBoundary>
+                }
+              />
+              <Route
+                path="team-tasks"
+                element={
+                  <ErrorBoundary>
+                    <TeamTasks />
+                  </ErrorBoundary>
+                }
+              />
+              <Route
+                path="archived-tasks"
+                element={
+                  <ErrorBoundary>
+                    <ArchivedTasks />
                   </ErrorBoundary>
                 }
               />

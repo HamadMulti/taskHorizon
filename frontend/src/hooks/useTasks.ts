@@ -8,13 +8,15 @@ import {
   createTask,
   updateTask,
   assignTask,
-  archiveTask
+  archiveTask,
+  restoreTask
 } from "../features/taskSlice";
 import { useEffect, useRef } from "react";
 import {
   selectFilteredMyTasks,
   selectFilteredTasks,
-  selectFilteredTeamTasks
+  selectFilteredTeamTasks,
+  selectFilteredArchivedTasks,
 } from "../utils/taskSelector";
 import { useLocation } from "react-router-dom";
 import { debounce } from "lodash";
@@ -40,13 +42,16 @@ export const useTasks = () => {
     team_totalTasks,
     loading,
     error,
+    archived_currentPage,
+    archived_totalPages,
+    archived_totalTasks,
   } = useSelector((state: RootState) => state.tasks);
 
   const tasks = useSelector(selectFilteredTasks);
   const my_tasks = useSelector(selectFilteredMyTasks);
   const team_tasks = useSelector(selectFilteredTeamTasks);
+  const archived_tasks = useSelector(selectFilteredArchivedTasks);
   const isFetching = useRef(false);
-  console.log("Tasks data:", tasks, my_tasks);
   const debouncedFetchTasks = debounce(
     (
       dispatch: (
@@ -205,6 +210,7 @@ export const useTasks = () => {
     tasks,
     my_tasks,
     team_tasks,
+    archived_tasks,
     loading,
     error,
     totalTasks,
@@ -216,6 +222,9 @@ export const useTasks = () => {
     totalPages,
     my_totalPages,
     team_totalPages,
+    archived_currentPage,
+    archived_totalPages,
+    archived_totalTasks,
     addTask: async (taskData: {
       title: string;
       status: string;
@@ -226,7 +235,7 @@ export const useTasks = () => {
         await dispatch(createTask(taskData));
         dispatch(fetchTasksDetails({ page: currentPage }));
       } catch (error) {
-        console.error("Error creating task:", error);
+        console.warn("Error creating task:", error);
       }
     },
     editTask: async (taskData: {
@@ -240,7 +249,7 @@ export const useTasks = () => {
         await dispatch(updateTask(taskData));
         dispatch(fetchTasksDetails({ page: currentPage }));
       } catch (error) {
-        console.error("Error updating task:", error);
+        console.warn("Error updating task:", error);
       }
     },
     assignTaskToUser: async (taskData: {
@@ -254,7 +263,7 @@ export const useTasks = () => {
         await dispatch(assignTask(taskData));
         dispatch(fetchTasksDetails({ page: currentPage }));
       } catch (error) {
-        console.error("Error assigning task:", error);
+        console.warn("Error assigning task:", error);
       }
     },
     archiveTaskById: async (id: number) => {
@@ -262,7 +271,15 @@ export const useTasks = () => {
         await dispatch(archiveTask(id));
         dispatch(fetchTasksDetails({ page: currentPage }));
       } catch (error) {
-        console.error("Error archiving task:", error);
+        console.warn("Error archiving task:", error);
+      }
+    },
+    restoreTaskById: async (id: number) => {
+      try {
+        await dispatch(restoreTask(id));
+        dispatch(fetchTasksDetails({ page: currentPage }));
+      } catch (error) {
+        console.warn("Error archiving task:", error);
       }
     },
     nextPage,

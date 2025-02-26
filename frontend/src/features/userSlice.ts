@@ -84,6 +84,29 @@ export const fetchUsersDetails = createAsyncThunk(
   }
 );
 
+export const fetchAssignedDetails = createAsyncThunk(
+  "users/fetchAssignedDetails",
+  async (id: number, thunkAPI) => {
+    try {
+      const state: any = thunkAPI.getState();
+      const { token } = state.auth;
+
+      if (!token) {
+        return thunkAPI.rejectWithValue("Token is missing");
+      }
+
+      API.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+      const response = await API.get(`/user/assigned/${id}`);
+
+      return response.data.user;
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data || "Failed to fetch users details"
+      );
+    }
+  }
+);
+
 export const updatesProfile = createAsyncThunk(
   "users/updatesProfile",
   async (
@@ -171,6 +194,18 @@ const userSlice = createSlice({
         state.current_page = action.payload.current_page;
       })
       .addCase(fetchUsersDetails.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
+      .addCase(fetchAssignedDetails.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchAssignedDetails.fulfilled, (state, action) => {
+        state.loading = false;
+        state.users = action.payload.user;
+      })
+      .addCase(fetchAssignedDetails.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
       })

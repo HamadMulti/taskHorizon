@@ -39,7 +39,7 @@ export const useProjects = () => {
           setTotalPages(projectData.pages);
           setTotalProjects(projectData.total);
         } catch (error) {
-          console.error("Error fetching projects:", error);
+          console.warn("Error fetching projects:", error);
         }
       };
 
@@ -53,7 +53,7 @@ export const useProjects = () => {
           setMyTotalPages(myProjectData.pages);
           setMyTotalProjects(myProjectData.total);
         } catch (error) {
-          console.error("Error fetching users projects:", error);
+          console.warn("Error fetching users projects:", error);
         }
       };
 
@@ -111,7 +111,7 @@ export const useProjects = () => {
         await dispatch(fetchProjects({ page: currentPage })).unwrap();
         await dispatch(fetchMyProjects({ page: currentPage })).unwrap();
       } catch (error) {
-        console.error("Error creating project:", error);
+        console.warn("Error creating project:", error);
       }
     },
     handleUpdateProject: async (id: number, name: string, description: string) => {
@@ -120,7 +120,7 @@ export const useProjects = () => {
         await dispatch(fetchProjects({ page: currentPage })).unwrap();
         await dispatch(fetchMyProjects({ page: currentPage })).unwrap();
       } catch (error) {
-        console.error("Error updating project:", error);
+        console.warn("Error updating project:", error);
       }
     },
     handleDeleteProject: async (id: number) => {
@@ -129,7 +129,7 @@ export const useProjects = () => {
         await dispatch(fetchProjects({ page: currentPage })).unwrap();
         await dispatch(fetchMyProjects({ page: currentPage })).unwrap();
       } catch (error) {
-        console.error("Error deleting project:", error);
+        console.warn("Error deleting project:", error);
       }
     },
     nextPage,

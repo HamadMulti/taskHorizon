@@ -31,12 +31,14 @@ Routes:
     - Controller: get_team_tasks
 """
 from flask import Blueprint
-from controllers.task_controller import create_task, get_tasks, update_task, assign_task, archive_task, get_user_tasks, get_team_tasks
+from controllers.task_controller import create_task, get_archived_tasks, get_tasks, restore_task, update_task, assign_task, archive_task, get_user_tasks, get_team_tasks
 
 task_bp = Blueprint("task", __name__)
 
 task_bp.route("/", methods=["POST", "OPTIONS"])(create_task)
 task_bp.route("/", methods=["GET", "OPTIONS"])(get_tasks)
+task_bp.route("/archived", methods=["GET", "OPTIONS"])(get_archived_tasks)
+task_bp.route("/restore/<int:task_id>", methods=["PATCH", "OPTIONS"])(restore_task)
 task_bp.route("/user-tasks", methods=["GET", "OPTIONS"])(get_user_tasks)
 task_bp.route("/team-tasks", methods=["GET", "OPTIONS"])(get_team_tasks)
 task_bp.route("/<int:task_id>", methods=["PUT", "OPTIONS"])(update_task)

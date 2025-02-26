@@ -4,6 +4,7 @@ import {
   changeUserPassword,
   createUser,
   deleteUser,
+  fetchAssignedDetails,
   fetchUsersDetails,
   updatesProfile
 } from "../features/userSlice";
@@ -31,7 +32,7 @@ export const useUsers = () => {
         try {
           await dispatch(fetchUsersDetails()).unwrap();
         } catch (error) {
-          console.error("Error fetching users:", error);
+          console.warn("Error fetching users:", error);
         }
       };
 
@@ -50,7 +51,7 @@ export const useUsers = () => {
         await dispatch(createUser(data)).unwrap();
         await dispatch(fetchUsersDetails()).unwrap();
       } catch (error) {
-        console.error("Error creating user:", error);
+        console.warn("Error creating user:", error);
       }
     },  
     handleUpdateUsers: async (id: number, username: string, email: string) => {
@@ -58,7 +59,7 @@ export const useUsers = () => {
         await dispatch(updatesProfile({ id, username, email })).unwrap();
         await dispatch(fetchUsersDetails()).unwrap();
       } catch (error) {
-        console.error("Error updating user:", error);
+        console.warn("Error updating user:", error);
       }
     },
     handleDeleteUser: async (id: number) => {
@@ -66,7 +67,7 @@ export const useUsers = () => {
         await dispatch(deleteUser(id)).unwrap();
         await dispatch(fetchUsersDetails()).unwrap();
       } catch (error) {
-        console.error("Error deleting user:", error);
+        console.warn("Error deleting user:", error);
       }
     },
     handleChangeUserPassword: async (id: number) => {
@@ -74,7 +75,14 @@ export const useUsers = () => {
         await dispatch(changeUserPassword(id)).unwrap();
         await dispatch(fetchUsersDetails()).unwrap();
       } catch (error) {
-        console.error("Error changing user password:", error);
+        console.warn("Error changing user password:", error);
+      }
+    },
+    handleAssignedUsers: async (id: number) => {
+      try {
+        await dispatch(fetchAssignedDetails(id)).unwrap();
+      } catch (error) {
+        console.warn("Error fetching user:", error);
       }
     },
     current_page,

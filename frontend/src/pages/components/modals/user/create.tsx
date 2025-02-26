@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useUsers } from "../../../../hooks/useUsers";
 
 interface CreateUserModalProps {
@@ -6,25 +6,48 @@ interface CreateUserModalProps {
   onOpen: boolean;
 }
 
-const CreateUserModal: React.FC<CreateUserModalProps> = ({ onClose, onOpen }) => {
+const CreateUserModal: React.FC<CreateUserModalProps> = ({
+  onClose,
+  onOpen
+}) => {
   const [isOpen, setIsOpen] = useState(onOpen);
   const [userData, setUserData] = useState({
     username: "",
-    email: "",
+    email: ""
   });
-  const { handleCreate } = useUsers()
+  const [error, setError] = useState({
+    username: "",
+    email: ""
+  });
+  const { handleCreate } = useUsers();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (userData) {
-      await handleCreate(userData);
+      await handleCreate(userData)
+      .catch((error) => {
+        setError(error);
+      });
       setUserData({
         username: "",
-        email: "",
-      })
+        email: ""
+      });
       setIsOpen(false);
     }
   };
+
+  useEffect(() => {
+    if (error) {
+      const timer = setTimeout(() => {
+        setError({
+          username: "",
+          email: ""
+        });
+      }, 3000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [error]);
 
   return (
     <>
@@ -69,6 +92,11 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({ onClose, onOpen }) =>
                   className="px-4 py-3 bg-gray-100 w-full text-gray-800 text-sm border-none focus:outline-yellow-600 focus:bg-transparent rounded-lg"
                   required
                 />
+                {error.username && (
+                  <p className="text-red-500 text-xs italic py-2">
+                    {error.username}
+                  </p>
+                )}
               </div>
 
               {/* Email Input */}
@@ -86,6 +114,11 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({ onClose, onOpen }) =>
                   className="px-4 py-3 bg-gray-100 w-full text-gray-800 text-sm border-none focus:outline-yellow-600 focus:bg-transparent rounded-lg"
                   required
                 />
+                {error.email && (
+                  <p className="text-red-500 text-xs italic py-2">
+                    {error.email}
+                  </p>
+                )}
               </div>
 
               {/* Buttons */}
