@@ -10,7 +10,7 @@ const DeleteUserModal: React.FC<DeleteModalProps> = ({ id, username }) => {
   const [isOpen, setIsOpen] = useState(false);
   const { handleDeleteUser } = useUsers();
 
-  const deleteProject = () => {
+  const deleteUser = () => {
     handleDeleteUser(id)
     setIsOpen(false);
   }
@@ -74,7 +74,7 @@ const DeleteUserModal: React.FC<DeleteModalProps> = ({ id, username }) => {
                 <button
                   type="button"
                   className="px-4 py-2 rounded-lg text-white text-sm bg-red-600 hover:bg-red-700"
-                  onClick={deleteProject}
+                  onClick={deleteUser}
                 >
                   Delete
                 </button>

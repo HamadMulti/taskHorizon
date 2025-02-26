@@ -50,7 +50,7 @@ const EditUserModal: React.FC<EditUsersModalProps> = ({
 
             {/* Modal Title */}
             <h3 className="text-yellow-600 text-xl font-bold mb-4">
-              Edit Project
+              Edit User
             </h3>
 
             {/* Form */}
@@ -65,7 +65,7 @@ const EditUserModal: React.FC<EditUsersModalProps> = ({
                 </label>
                 <input
                   type="text"
-                  placeholder="Enter project name"
+                  placeholder="Enter user name"
                   value={username}
                   onChange={(e) => setUserName(e.target.value)}
                   className="px-4 py-3 bg-gray-100 w-full text-gray-800 text-sm border-none focus:outline-yellow-600 focus:bg-transparent rounded-lg"
@@ -79,7 +79,7 @@ const EditUserModal: React.FC<EditUsersModalProps> = ({
                 </label>
                 <input
                   type="text"
-                  placeholder="Enter project name"
+                  placeholder="Enter user name"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="px-4 py-3 bg-gray-100 w-full text-gray-800 text-sm border-none focus:outline-yellow-600 focus:bg-transparent rounded-lg"

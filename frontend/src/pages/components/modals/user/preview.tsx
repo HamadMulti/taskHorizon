@@ -44,7 +44,7 @@ const PreviewUserModal: React.FC<PreviewUsersModalProps> = ({
           </svg>
         </div>
 
-        {/* Project Details */}
+        {/* User Details */}
         <div className="my-8 relative">
           <ul className="text-gray-800 space-y-4">
             <li className="flex flex-wrap justify-start gap-4 text-sm">

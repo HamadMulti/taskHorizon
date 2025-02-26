@@ -249,12 +249,32 @@ export const archiveTask = createAsyncThunk(
 const taskSlice = createSlice({
   name: "tasks",
   initialState,
-  reducers: {},
+  reducers: {
+    resetTasksState: (state) => {
+      state.tasks = [];
+      state.my_tasks = [];
+      state.team_tasks = [];
+      state.archived_tasks = [];
+      state.totalPages = 0;
+      state.my_totalPages = 0;
+      state.team_totalPages = 0;
+      state.archived_totalPages = 0;
+      state.totalTasks = 0;
+      state.my_totalTasks = 0;
+      state.team_totalTasks = 0;
+      state.archived_totalTasks = 0;
+      state.currentPage = 1;
+      state.my_currentPage = 1;
+      state.team_currentPage = 1;
+      state.archived_currentPage = 1;
+      state.loading = false;
+      state.error = null;
+    }
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchTasksDetails.pending, (state) => {
         state.loading = true;
-        state.tasks = [];
       })
       .addCase(fetchTasksDetails.fulfilled, (state, action) => {
         state.tasks = [...state.tasks, ...action.payload.tasks];
@@ -269,7 +289,6 @@ const taskSlice = createSlice({
       })
       .addCase(fetchMyTasksDetails.pending, (state) => {
         state.loading = true;
-        state.my_tasks = [];
       })
       .addCase(fetchMyTasksDetails.fulfilled, (state, action) => {
         state.my_tasks = [...state.my_tasks, ...action.payload.my_tasks];
@@ -284,7 +303,6 @@ const taskSlice = createSlice({
       })
       .addCase(fetchTeamTasksDetails.pending, (state) => {
         state.loading = true;
-        state.team_tasks = [];
       })
       .addCase(fetchTeamTasksDetails.fulfilled, (state, action) => {
         state.team_tasks = [...state.team_tasks, ...action.payload.team_tasks];
@@ -299,7 +317,6 @@ const taskSlice = createSlice({
       })
       .addCase(fetchArchivedDetails.pending, (state) => {
         state.loading = true;
-        state.archived_tasks = [];
       })
       .addCase(fetchArchivedDetails.fulfilled, (state, action) => {
         state.archived_tasks = [...state.archived_tasks, ...action.payload.archived_tasks];
@@ -380,4 +397,5 @@ const taskSlice = createSlice({
   }
 });
 
+export const { resetTasksState } = taskSlice.actions;
 export default taskSlice.reducer;
