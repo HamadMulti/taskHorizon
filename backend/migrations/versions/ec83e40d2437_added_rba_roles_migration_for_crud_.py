@@ -1,8 +1,8 @@
-"""added RBA roles migration
+"""added RBA roles migration for CRUD functionalies
 
-Revision ID: c2b9c2c1457e
+Revision ID: ec83e40d2437
 Revises: 
-Create Date: 2025-02-25 05:00:52.096146
+Create Date: 2025-02-26 19:47:24.997112
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'c2b9c2c1457e'
+revision = 'ec83e40d2437'
 down_revision = None
 branch_labels = None
 depends_on = None

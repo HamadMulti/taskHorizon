@@ -1,3 +1,4 @@
+import traceback
 from flask import request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from models.project import Project
@@ -28,18 +29,21 @@ def create_task():
     if existing_task:
         return jsonify({"error": "A task with this title already exists in this project"}), 400
 
-    assigned_to = data.get("assigned_to")
+    assigned_to_username = data.get("assigned_to")
+    assigned_to_id = None
+
     if user.role == "user":
-        assigned_to = user.username
-    elif assigned_to:
-        assigned_user = User.query.filter_by(username=assigned_to).first()
+        assigned_to_id = user.id
+    elif assigned_to_username:
+        assigned_user = User.query.filter_by(username=assigned_to_username).first()
         if not assigned_user:
             return jsonify({"error": "Assigned user does not exist"}), 400
+        assigned_to_id = assigned_user.id
 
     task = Task(
         title=data["title"],
         description=data["description"],
-        assigned_to=assigned_to,
+        assigned_to=assigned_to_id,
         project_id=data["project_id"],
         status="pending",
     )
@@ -48,6 +52,7 @@ def create_task():
     db.session.commit()
 
     return jsonify({"message": "Task created successfully", "task_id": task.id}), 201
+
 
 
 @jwt_required()
@@ -65,7 +70,7 @@ def get_tasks():
     elif user.role == "team_leader":
         tasks_query = Task.query.filter_by(project_id=user.project_id)
     else:
-        tasks_query = Task.query.filter_by(assigned_to=user.username)
+        tasks_query = Task.query.filter_by(assigned_to=user.id)
 
     tasks = tasks_query.paginate(page=page, per_page=per_page, error_out=False)
 
@@ -76,7 +81,7 @@ def get_tasks():
                     "id": t.id,
                     "title": t.title,
                     "status": t.status,
-                    "assigned_to": t.assigned_to,
+                    "assigned_to": User.query.get(t.assigned_to).username if t.assigned_to else None,
                     "description": t.description,
                     "project_id": t.project_id,
                 }
@@ -93,16 +98,6 @@ def get_tasks():
 
 @jwt_required()
 def assign_task(task_id):
-    """Assigns a task to a user.
-
-    This endpoint assigns a task to a user by updating the task's assignee. It also logs the assignment in the task history.
-
-    Returns:
-        Response: A JSON response indicating the success or failure of the task assignment.
-        - 200: Task assigned successfully.
-        - 403: Unauthorized access.
-        - 404: Task not found.
-    """
     user_id = get_jwt_identity()
     user = User.query.get(user_id)
     task = Task.query.get(task_id)
@@ -113,19 +108,25 @@ def assign_task(task_id):
     if user.role not in ["admin", "team_leader"]:
         return jsonify({"error": "Unauthorized"}), 403
 
-    if user:
-        data = request.json
-        new_assignee = data.get("assigned_to")
+    data = request.json
+    new_assignee_username = data.get("assigned_to")
+    new_assignee = User.query.filter_by(username=new_assignee_username).first()
 
-        history = TaskHistory(task_id=task.id, updated_by=user.id,
-                                old_assignee=task.assigned_to, new_assignee=new_assignee)
-        db.session.add(history)
+    if not new_assignee:
+        return jsonify({"error": "Assigned user does not exist"}), 400
 
-        task.assigned_to = new_assignee
-        task.status = "Pending"
-        db.session.commit()
-        return jsonify({"message": "Task assigned successfully"}), 200
-    return jsonify({"error": "Unauthorized"}), 403
+    history = TaskHistory(
+        task_id=task.id,
+        updated_by=user.id,
+        old_assignee=task.assigned_to,
+        new_assignee=new_assignee.id,  # Store user ID
+    )
+    db.session.add(history)
+
+    task.assigned_to = new_assignee.id  # Store user ID
+    task.status = "Pending"
+    db.session.commit()
+    return jsonify({"message": "Task assigned successfully"}), 200
 
 
 @jwt_required()
@@ -140,7 +141,7 @@ def update_task(task_id):
     if not task:
         return jsonify({"error": "Task not found"}), 404
 
-    if task.assigned_to != user_id and user.role not in ["admin", "team_leader"]:
+    if task.assigned_to != user.id and user.role not in ["admin", "team_leader"]:
         return jsonify({"error": "Unauthorized: You are not allowed to update this task"}), 403
 
     data = request.get_json()
@@ -148,20 +149,28 @@ def update_task(task_id):
     if not data:
         return jsonify({"error": "No update data provided"}), 400
 
+    new_assignee_username = data.get("assigned_to")
+    new_assignee = None
+
+    if new_assignee_username:
+        new_assignee = User.query.filter_by(username=new_assignee_username).first()
+        if not new_assignee:
+            return jsonify({"error": "Assigned user does not exist"}), 400
+
     history = TaskHistory(
         task_id=task.id,
         updated_by=user.id,
         old_status=task.status,
         old_assignee=task.assigned_to,
         new_status=data.get("status", task.status),
-        new_assignee=data.get("assigned_to", task.assigned_to)
+        new_assignee=new_assignee.id if new_assignee else task.assigned_to
     )
     db.session.add(history)
 
     task.title = data.get("title", task.title)
     task.description = data.get("description", task.description)
     task.status = data.get("status", task.status)
-    task.assigned_to = data.get("assigned_to", task.assigned_to)
+    task.assigned_to = new_assignee.id if new_assignee else task.assigned_to
 
     db.session.commit()
 
@@ -202,39 +211,46 @@ def archive_task(task_id):
 
 @jwt_required()
 def get_user_tasks():
-    page = request.args.get("page", 1, type=int)
-    per_page = request.args.get("per_page", 10, type=int)
-    user_id = get_jwt_identity()
-    user = User.query.get(user_id)
+    try:
+        page = request.args.get("page", 1, type=int)
+        per_page = request.args.get("per_page", 10, type=int)
+        user_id = get_jwt_identity()
+        print(f"User ID from JWT: {user_id}")
 
-    if not user:
-        return jsonify({"error": "Unauthorized"}), 401
-    
-    tasks_query = Task.query.filter_by(assigned_to=user.username)
+        user = User.query.get(user_id)
+        if not user:
+            return jsonify({"error": "Unauthorized"}), 401
 
-    tasks = tasks_query.paginate(page=page, per_page=per_page, error_out=False)
+        tasks_query = Task.query.filter_by(assigned_to=user.id)
 
-    return jsonify(
-        {
-            "my_tasks": [
-                {
-                    "id": t.id,
-                    "title": t.title,
-                    "status": t.status,
-                    "assigned_to": t.assigned_to,
-                    "description": t.description,
-                    "project_id": t.project_id,
-                }
-                for t in tasks.items
-            ],
-            "total": tasks.total,
-            "pages": tasks.pages,
-            "current_page": tasks.page,
-            "prev_page": tasks.prev_num if tasks.has_prev else None,
-            "next_page": tasks.next_num if tasks.has_next else None,
-        }
-    ), 200
+        if not tasks_query:
+            return jsonify({"error": "Not found"}), 404
 
+        tasks = tasks_query.paginate(page=page, per_page=per_page, error_out=False)
+
+        return jsonify(
+            {
+                "my_tasks": [
+                    {
+                        "id": t.id,
+                        "title": t.title,
+                        "status": t.status,
+                        "assigned_to": t.assigned_to,
+                        "description": t.description,
+                        "project_id": t.project_id,
+                    }
+                    for t in tasks.items
+                ],
+                "total": tasks.total,
+                "pages": tasks.pages,
+                "current_page": tasks.page,
+                "prev_page": tasks.prev_num if tasks.has_prev else None,
+                "next_page": tasks.next_num if tasks.has_next else None,
+            }
+        ), 200
+
+    except Exception as e:
+        return jsonify({"error": "Internal Server Error", "details": str(e)}), 500
 
 
 @jwt_required()
@@ -250,26 +266,27 @@ def get_team_tasks():
     if user:
         tasks = Task.query.paginate(page=page, per_page=per_page, error_out=False)
         return jsonify(
-        {
-            "team_tasks": [
-                {
-                    "id": t.id,
-                    "title": t.title,
-                    "status": t.status,
-                    "assigned_to": t.assigned_to,
-                    "description": t.description,
-                    "project_id": t.project_id,
-                }
-                for t in tasks.items
-            ],
-            "total": tasks.total,
-            "pages": tasks.pages,
-            "current_page": tasks.page,
-            "prev_page": tasks.prev_num if tasks.has_prev else None,
-            "next_page": tasks.next_num if tasks.has_next else None,
-        }
-    ), 200
+            {
+                "team_tasks": [
+                    {
+                        "id": t.id,
+                        "title": t.title,
+                        "status": t.status,
+                        "assigned_to": t.assigned_to,
+                        "description": t.description,
+                        "project_id": t.project_id,
+                    }
+                    for t in tasks.items
+                ],
+                "total": tasks.total,
+                "pages": tasks.pages,
+                "current_page": tasks.page,
+                "prev_page": tasks.prev_num if tasks.has_prev else None,
+                "next_page": tasks.next_num if tasks.has_next else None,
+            }
+        ), 200
     return jsonify({"error": "Unauthorized"}), 403
+
 
 @jwt_required()
 def get_archived_tasks():
@@ -343,4 +360,3 @@ def restore_task(task_id):
     db.session.commit()
 
     return jsonify({"message": "Task restored successfully"}), 200
-

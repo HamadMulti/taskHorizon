@@ -3,16 +3,6 @@ from . import db
 
 
 class Project(db.Model):
-    """
-    Represents a project in the database.
-
-    Attributes:
-        id (int): The unique identifier for the project.
-        name (str): The name of the project. Cannot be null.
-        description (str, optional): A brief description of the project.
-        owner_id (int): The ID of the user who owns the project. References the user table.
-        status (str): The current status of the project.
-    """
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     description = db.Column(db.Text, nullable=True)
@@ -23,19 +13,6 @@ class Project(db.Model):
 
 
 class ProjectHistory(db.Model):
-    """
-    Represents the history of changes made to projects.
-
-    Attributes:
-        id (int): The primary key of the project history record.
-        project_id (int): The ID of the project that was updated.
-        updated_by (int): The ID of the user who made the update.
-        old_owner (int, optional): The previous owner of the project.
-        new_owner (int, optional): The new owner of the project.
-        old_status (str, optional): The previous status of the project.
-        new_status (str, optional): The new status of the project.
-        timestamp (datetime): The time when the update was made.
-    """
     id = db.Column(db.Integer, primary_key=True)
     project_id = db.Column(db.Integer, db.ForeignKey("project.id"), nullable=False)
     updated_by = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)

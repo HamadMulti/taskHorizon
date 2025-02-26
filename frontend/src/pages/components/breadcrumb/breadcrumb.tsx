@@ -74,7 +74,7 @@ const Breadcrumbs = () => {
               >
                 <path
                   stroke="currentColor"
-                  strokeLinecap="round"
+                  stroke-linecap="round"
                   strokeLinejoin="round"
                   strokeWidth="2"
                   d="M1 9l4-4-4-4"

@@ -361,7 +361,7 @@ const LandingPage = () => {
                       <g
                         fill="none"
                         className="stroke-yellow-600"
-                        strokeLinecap="round"
+                        stroke-linecap="round"
                         strokeLinejoin="round"
                         strokeMiterlimit="10"
                         strokeWidth="40"

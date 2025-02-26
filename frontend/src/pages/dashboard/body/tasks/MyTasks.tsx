@@ -11,7 +11,8 @@ import EditTaskModal from "../../../components/modals/task/edit";
 import DeleteTaskModal from "../../../components/modals/task/delete";
 
 const MyTasks = () => {
-  const { my_tasks, loading, my_currentPage, my_totalPages, my_totalTasks } = useTasks();
+  const { my_tasks, loading, my_currentPage, my_totalPages, my_totalTasks } =
+    useTasks();
 
   const [isCreating, setIsCreating] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -27,41 +28,41 @@ const MyTasks = () => {
   return (
     <>
       <div className="overflow-x-auto">
-            <div
-              className={`${
-                pathname === "/dashboard/my-tasks"
-                  ? "w-fit absolute z-1000 top-0 max-md:top-9 max-md:right-0 max-sm:top-0 max-sm:right-18 right-20 bg-transparent flex items-center justify-end py-4 px-8"
-                  : "hidden w-0 content-none clear-none"
-              }`}
+        <div
+          className={`${
+            pathname === "/dashboard/my-tasks"
+              ? "w-fit absolute z-1000 top-0 max-md:top-9 max-md:right-0 max-sm:top-0 max-sm:right-18 right-20 bg-transparent flex items-center justify-end py-4 px-8"
+              : "hidden w-0 content-none clear-none"
+          }`}
+        >
+          <button
+            className="flex items-center justify-center p-2 gap-2 rounded text-gray-100 shadow-2xs cursor-pointer bg-[#0c172b] hover:bg-[#0c172bee] "
+            title="Add"
+            onClick={() => setIsCreating(true)}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="currentColor"
+              className="w-5 fill-gray-100 hover:fill-gray-200"
+              viewBox="0 0 24 24"
             >
-              <button
-                className="flex items-center justify-center p-2 gap-2 rounded text-gray-100 shadow-2xs cursor-pointer bg-[#0c172b] hover:bg-[#0c172bee] "
-                title="Add"
-                onClick={() => setIsCreating(true)}
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="currentColor"
-                  className="w-5 fill-gray-100 hover:fill-gray-200"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    d="M18 2c2.206 0 4 1.794 4 4v12c0 2.206-1.794 4-4 4H6c-2.206 0-4-1.794-4-4V6c0-2.206 1.794-4 4-4zm0-2H6a6 6 0 0 0-6 6v12a6 6 0 0 0 6 6h12a6 6 0 0 0 6-6V6a6 6 0 0 0-6-6z"
-                    data-original="#000000"
-                  />
-                  <path
-                    d="M12 18a1 1 0 0 1-1-1V7a1 1 0 0 1 2 0v10a1 1 0 0 1-1 1z"
-                    data-original="#000000"
-                  />
-                  <path
-                    d="M6 12a1 1 0 0 1 1-1h10a1 1 0 0 1 0 2H7a1 1 0 0 1-1-1z"
-                    data-original="#000000"
-                  />
-                </svg>
-                Add Tasks
-              </button>
-              {isCreating && <CreateTaskModal onClose={handleClose} />}
-            </div>
+              <path
+                d="M18 2c2.206 0 4 1.794 4 4v12c0 2.206-1.794 4-4 4H6c-2.206 0-4-1.794-4-4V6c0-2.206 1.794-4 4-4zm0-2H6a6 6 0 0 0-6 6v12a6 6 0 0 0 6 6h12a6 6 0 0 0 6-6V6a6 6 0 0 0-6-6z"
+                data-original="#000000"
+              />
+              <path
+                d="M12 18a1 1 0 0 1-1-1V7a1 1 0 0 1 2 0v10a1 1 0 0 1-1 1z"
+                data-original="#000000"
+              />
+              <path
+                d="M6 12a1 1 0 0 1 1-1h10a1 1 0 0 1 0 2H7a1 1 0 0 1-1-1z"
+                data-original="#000000"
+              />
+            </svg>
+            Add Tasks
+          </button>
+          {isCreating && <CreateTaskModal onClose={handleClose} />}
+        </div>
         <table className="min-w-full bg-white">
           <thead className="bg-gray-800 whitespace-nowrap">
             <tr>
@@ -86,24 +87,43 @@ const MyTasks = () => {
             <SkeletonTable count={5} />
           ) : my_tasks.length === 0 ? (
             <tbody className="whitespace-nowrap flex">
-              <tr className="min-w-full flex justify-center py-6 items-center flex-col">
-                {" "}
-              </tr>
-              <tr className="w-full flex justify-center py-6 items-center flex-col">
-                {" "}
-              </tr>
+              <tr className="min-w-full flex justify-center py-6 items-center flex-col"></tr>
+              <tr className="w-full flex justify-center py-6 items-center flex-col"></tr>
               <tr className="min-w-full flex justify-center items-center gap-2.5 py-6 flex-col">
-                <img src="/images/warnings/not-found.svg" className="w-12" />
-                <span className="text-yellow-600 font-bold">
-                  Tasks Not Found
+                <span className="flex flex-col items-center justify-center">
+                  <svg
+                    fill="red"
+                    height="100px"
+                    width="100px"
+                    version="1.1"
+                    id="Filled_Icons"
+                    xmlns="http://www.w3.org/2000/svg"
+                    x="0px"
+                    y="0px"
+                    viewBox="0 0 24 24"
+                    enable-background="new 0 0 24 24"
+                  >
+                    <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                    <g
+                      id="SVGRepo_tracerCarrier"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    ></g>
+                    <g id="SVGRepo_iconCarrier">
+                      {" "}
+                      <g id="Status-Error-Filled">
+                        {" "}
+                        <path d="M12,0C5.37,0,0,5.37,0,12s5.37,12,12,12s12-5.37,12-12S18.63,0,12,0z M18.38,16.62l-1.77,1.77L12,13.77l-4.62,4.62 l-1.77-1.77L10.23,12L5.62,7.38l1.77-1.77L12,10.23l4.62-4.62l1.77,1.77L13.77,12L18.38,16.62z"></path>{" "}
+                      </g>{" "}
+                    </g>
+                  </svg>
+                  <span className="text-yellow-600 font-bold">
+                    Project Not Found
+                  </span>
                 </span>
               </tr>
-              <tr className="min-w-full flex justify-center py-6 items-center flex-col">
-                {" "}
-              </tr>
-              <tr className="min-w-full flex justify-center py-6 items-center flex-col">
-                {" "}
-              </tr>
+              <tr className="min-w-full flex justify-center py-6 items-center flex-col"></tr>
+              <tr className="min-w-full flex justify-center py-6 items-center flex-col"></tr>
             </tbody>
           ) : (
             <tbody className="whitespace-nowrap">
@@ -202,7 +222,9 @@ const MyTasks = () => {
             totalPages={my_totalPages}
             onPageChange={setCurrentPage}
           />
-          <span className="text-gray-500">{my_totalTasks} | Number Of Items</span>
+          <span className="text-gray-500">
+            {my_totalTasks} | Number Of Items
+          </span>
         </div>
       </div>
     </>
