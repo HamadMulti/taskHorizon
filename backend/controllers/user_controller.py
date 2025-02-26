@@ -36,21 +36,23 @@ def update_profile():
 
 @jwt_required()
 def updates_profile(users_id):
-    user_id = get_jwt_identity()
-    user = User.query.get(users_id)
-    admin = User.query.get(user_id)
-    
-    if not user:
+    current_user_id = get_jwt_identity()
+    current_user = User.query.get(current_user_id)
+    user_to_update = User.query.get(users_id)
+
+    if not current_user or not user_to_update:
         return jsonify({"error": "User not found"}), 404
 
-    if user.id != users_id or admin.role == "admin":
-        return jsonify({"error": "Unauthorized"}), 403
+    if current_user.id == user_to_update.id or current_user.role in ["admin", "team_leader"]:
+        data = request.json
+        user_to_update.username = data.get("username", user_to_update.username)
+        user_to_update.email = data.get("email", user_to_update.email)
+        db.session.commit()
+        return jsonify({"message": "Profile updated successfully"}), 200
+
+    return jsonify({"error": "Unauthorized"}), 403
     
-    data = request.json
-    user.username = data.get("username", user.username)
-    user.email = data.get("email", user.email)
-    db.session.commit()
-    return jsonify({"message": "Profile updated successfully"}), 200
+    
 
 
 @jwt_required()
