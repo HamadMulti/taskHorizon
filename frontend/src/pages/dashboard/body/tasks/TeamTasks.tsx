@@ -38,6 +38,9 @@ const TeamTasks = () => {
                 Status
               </th>
               <th className="p-4 text-left text-sm font-medium text-white">
+                Priority
+              </th>
+              <th className="p-4 text-left text-sm font-medium text-white">
                 Description
               </th>
               <th className="p-4 text-left text-sm font-medium text-white">
