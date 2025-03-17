@@ -3,6 +3,7 @@ import { AppDispatch, RootState } from "../../../../app/store";
 import { useState } from "react";
 import { updateProfile } from "../../../../features/authSlice";
 import { Error } from "../../interface";
+import LoaderDashboard from "../../../../utils/LoaderDashboard";
 
 
 

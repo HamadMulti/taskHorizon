@@ -32,6 +32,7 @@ const ProjectDropdown: React.FC<Props> = ({ onSelect, selectedValue }) => {
     <div>
       <select
         value={selectedProject}
+        required
         onChange={handleSelect}
         className="px-4 py-3 bg-gray-100 w-full text-gray-800 text-sm border-none focus:outline-yellow-600 focus:bg-transparent rounded-lg"
       >

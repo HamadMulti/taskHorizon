@@ -7,6 +7,7 @@ import PreviewTaskModal from "../../../components/modals/task/preview";
 import DeleteTaskModal from "../../../components/modals/task/delete";
 import EditTaskModal from "../../../components/modals/task/edit";
 import { Task } from "../../../../features/taskSlice";
+import LoaderDashboard from "../../../../utils/LoaderDashboard";
 
 const TeamTasks = () => {
   const {
@@ -53,6 +54,7 @@ const TeamTasks = () => {
             <tbody className="whitespace-nowrap flex">
               <tr className="min-w-full flex justify-center py-6 items-center flex-col"></tr>
               <tr className="w-full flex justify-center py-6 items-center flex-col"></tr>
+              <tr className="w-full flex justify-center py-6 items-center flex-col"></tr>
               <tr className="min-w-full flex justify-center items-center gap-2.5 py-6 flex-col">
                 <span className="flex flex-col items-center justify-center">
                   <svg
@@ -82,7 +84,7 @@ const TeamTasks = () => {
                     </g>
                   </svg>
                   <span className="text-yellow-600 font-bold">
-                    Project Not Found
+                    Tasks Not Found
                   </span>
                 </span>
               </tr>
@@ -95,6 +97,7 @@ const TeamTasks = () => {
                 <tr className="even:bg-yellow-50" key={task.id}>
                   <td className="p-4 text-sm text-black">{task.title}</td>
                   <td className="p-4 text-sm text-black">{task.status}</td>
+                  <td className="p-4 text-sm text-black">{task.priority}</td>
                   <td className="p-4 text-sm text-black">
                     {task.description && task.description.length > 0 ? (
                       <>

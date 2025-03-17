@@ -221,17 +221,38 @@ const userSlice = createSlice({
         state.loading = false;
         state.error = action.payload as string;
       })
+      .addCase(updatesProfile.pending, (state) => {
+        state.loading = true;
+      })
       .addCase(updatesProfile.fulfilled, (state, action) => {
         const index = state.users.findIndex((p) => p.id === action.payload.id);
         if (index !== -1) {
           state.users[index] = action.payload;
         }
       })
+      .addCase(updatesProfile.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
+      .addCase(changeUserPassword.pending, (state) => {
+        state.loading = true;
+      })
       .addCase(changeUserPassword.fulfilled, (state, action) => {
         state.users = state.users.filter((p) => p.id !== action.payload);
       })
+      .addCase(changeUserPassword.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
+      .addCase(deleteUser.pending, (state) => {
+        state.loading = true;
+      })
       .addCase(deleteUser.fulfilled, (state, action) => {
         state.users = state.users.filter((p) => p.id !== action.payload);
+      })
+      .addCase(deleteUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
       });
   }
 });

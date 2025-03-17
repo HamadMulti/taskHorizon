@@ -14,7 +14,7 @@ const CreateTaskModal: React.FC<CreateTaskModalProps> = ({ onClose }) => {
   const [title, setTitle] = useState("");
   const [status, setStatus] = useState("pending");
   const [description, setDescription] = useState("");
-  const { addTask, loading } = useTasks();
+  const { addTask } = useTasks();
   const [selectedUser, setSelectedUser] = useState("");
   const [selectedProject, setSelectedProject] = useState("");
   const { role } = useAuth();
@@ -77,6 +77,7 @@ const CreateTaskModal: React.FC<CreateTaskModalProps> = ({ onClose }) => {
                   placeholder="Enter task title"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
+                  required
                   className="px-4 py-3 bg-gray-100 w-full text-gray-800 text-sm border-none focus:outline-yellow-600 focus:bg-transparent rounded-lg"
                 />
               </div>
@@ -88,6 +89,7 @@ const CreateTaskModal: React.FC<CreateTaskModalProps> = ({ onClose }) => {
                 </label>
                 <select
                   value={status}
+                  required
                   onChange={(e) => setStatus(e.target.value)}
                   className="px-4 py-3 bg-gray-100 w-full text-gray-800 text-sm border-none focus:outline-yellow-600 focus:bg-transparent rounded-lg"
                 >
@@ -129,6 +131,7 @@ const CreateTaskModal: React.FC<CreateTaskModalProps> = ({ onClose }) => {
                   placeholder="Enter task description"
                   value={description}
                   rows={4}
+                  required
                   onChange={(e) => setDescription(e.target.value)}
                   className="px-4 py-3 bg-gray-100 w-full text-gray-800 text-sm border-none focus:outline-yellow-600 focus:bg-transparent rounded-lg"
                 />
@@ -150,22 +153,7 @@ const CreateTaskModal: React.FC<CreateTaskModalProps> = ({ onClose }) => {
                   type="submit"
                   className="px-6 py-3 rounded-lg text-white text-sm bg-yellow-600 hover:bg-yellow-700"
                 >
-                  {loading ? (
-                    <>
-                      Loading
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="18px"
-                        fill="#fff"
-                        className="ml-2 inline animate-spin"
-                        viewBox="0 0 24 24"
-                      >
-                        <path d="M12 22c5.421 0 10-4.579 10-10h-2c0 4.337-3.663 8-8 8s-8-3.663-8-8c0-4.336 3.663-8 8-8V2C6.579 2 2 6.58 2 12c0 5.421 4.579 10 10 10z" />
-                      </svg>
-                    </>
-                  ) : (
-                    "Create Task"
-                  )}
+                    Create Task
                 </button>
               </div>
             </form>

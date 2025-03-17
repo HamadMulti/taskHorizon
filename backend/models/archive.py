@@ -23,6 +23,7 @@ class ArchivedTask(db.Model):
     title = db.Column(db.String(100))
     description = db.Column(db.Text)
     status = db.Column(db.String(20))
+    priority = db.Column(db.String(20))
     assigned_to = db.Column(db.Integer, nullable=True)
     project_id = db.Column(db.Integer, nullable=True)
     deleted_by = db.Column(db.Integer, db.ForeignKey("user.id"))

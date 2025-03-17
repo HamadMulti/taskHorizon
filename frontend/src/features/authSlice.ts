@@ -352,6 +352,7 @@ const authSlice = createSlice({
         state.user = null;
         state.token = null;
         state.otpVerified = false;
+        state.loading = false;
       })
       .addCase(logoutUser.rejected, (state, action) => {
         state.loading = false;

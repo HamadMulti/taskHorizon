@@ -1,8 +1,8 @@
 const LoaderDashboard = () => {
   return (
     <>
-      <div className="flex justify-center items-center h-screen w-full bg-white">
-        <div className="w-full">
+      <div className="flex justify-center items-center h-screen min-w-full bg-white">
+        <div>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="spinner-6 w-10 h-10 shrink-0 animate-spin text-yellow-600"

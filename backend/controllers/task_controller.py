@@ -54,7 +54,6 @@ def create_task():
     return jsonify({"message": "Task created successfully", "task_id": task.id}), 201
 
 
-
 @jwt_required()
 def get_tasks():
     page = request.args.get("page", 1, type=int)
@@ -81,6 +80,7 @@ def get_tasks():
                     "id": t.id,
                     "title": t.title,
                     "status": t.status,
+                    "priority": t.priority,
                     "assigned_to": User.query.get(t.assigned_to).username if t.assigned_to else None,
                     "description": t.description,
                     "project_id": t.project_id,
@@ -119,11 +119,11 @@ def assign_task(task_id):
         task_id=task.id,
         updated_by=user.id,
         old_assignee=task.assigned_to,
-        new_assignee=new_assignee.id,  # Store user ID
+        new_assignee=new_assignee.id,
     )
     db.session.add(history)
 
-    task.assigned_to = new_assignee.id  # Store user ID
+    task.assigned_to = new_assignee.id
     task.status = "Pending"
     db.session.commit()
     return jsonify({"message": "Task assigned successfully"}), 200
@@ -235,7 +235,8 @@ def get_user_tasks():
                         "id": t.id,
                         "title": t.title,
                         "status": t.status,
-                        "assigned_to": t.assigned_to,
+                        "priority": t.priority,
+                        "assigned_to": User.query.get(t.assigned_to).username if t.assigned_to else None,
                         "description": t.description,
                         "project_id": t.project_id,
                     }
@@ -272,7 +273,8 @@ def get_team_tasks():
                         "id": t.id,
                         "title": t.title,
                         "status": t.status,
-                        "assigned_to": t.assigned_to,
+                        "priority": t.priority,
+                        "assigned_to": User.query.get(t.assigned_to).username if t.assigned_to else None,
                         "description": t.description,
                         "project_id": t.project_id,
                     }
@@ -316,7 +318,8 @@ def get_archived_tasks():
                     "id": t.task_id,
                     "title": t.title,
                     "status": t.status,
-                    "assigned_to": t.assigned_to,
+                    "priority": t.priority,
+                    "assigned_to": User.query.get(t.assigned_to).username if t.assigned_to else None,
                     "deleted_by": t.deleted_by,
                     "description": t.description,
                     "project_id": t.project_id

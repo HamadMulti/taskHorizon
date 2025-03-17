@@ -5,6 +5,7 @@ import { RootState } from "../app/store";
 
 interface Project {
   status: string;
+  priority?: string;
   id: number;
   name: string;
   description: string;
@@ -169,9 +170,10 @@ const projectSlice = createSlice({
         state.loading = false;
         state.error = action.payload as string;
       })
-
+      
       .addCase(createProject.fulfilled, (state, action) => {
         state.projects.push(action.payload);
+        state.loading = false;
       })
 
       .addCase(updateProject.fulfilled, (state, action) => {
@@ -181,10 +183,12 @@ const projectSlice = createSlice({
         if (index !== -1) {
           state.projects[index] = action.payload;
         }
+        state.loading = false;
       })
 
       .addCase(deleteProject.fulfilled, (state, action) => {
         state.projects = state.projects.filter((p) => p.id !== action.payload);
+        state.loading = false;
       });
   }
 });

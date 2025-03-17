@@ -329,18 +329,9 @@ const taskSlice = createSlice({
         state.loading = false;
         state.error = action.payload as string;
       })
-      .addCase(createTask.pending, (state) => {
-        state.loading = true;
-      })
       .addCase(createTask.fulfilled, (state, action) => {
         state.tasks.push(action.payload);
-      })
-      .addCase(createTask.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload as string;
-      })
-      .addCase(updateTask.pending, (state) => {
-        state.loading = true;
       })
       .addCase(updateTask.fulfilled, (state, action) => {
         const index = state.tasks.findIndex((p) => p.id === action.payload.id);
@@ -350,13 +341,7 @@ const taskSlice = createSlice({
           state.team_tasks[index] = action.payload;
           state.archived_tasks[index] = action.payload;
         }
-      })
-      .addCase(updateTask.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload as string;
-      })
-      .addCase(restoreTask.pending, (state) => {
-        state.loading = true;
       })
       .addCase(restoreTask.fulfilled, (state, action) => {
         if (action.payload.tasks) {
@@ -373,13 +358,6 @@ const taskSlice = createSlice({
         }
         state.loading = false;
       })
-      .addCase(restoreTask.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload as string;
-      })
-      .addCase(assignTask.pending, (state) => {
-        state.loading = true;
-      })
       .addCase(assignTask.fulfilled, (state, action) => {
         const index = state.tasks.findIndex(
           (task) => task.id === action.payload.id
@@ -387,21 +365,12 @@ const taskSlice = createSlice({
         if (index !== -1) {
           state.tasks[index] = action.payload;
         }
-      })
-      .addCase(assignTask.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload as string;
-      })
-      .addCase(archiveTask.pending, (state) => {
-        state.loading = true;
       })
       .addCase(archiveTask.fulfilled, (state, action) => {
         state.tasks = state.tasks.filter((task) => task.id !== action.payload);
-      })
-      .addCase(archiveTask.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload as string;
-      });
+      })
   }
 });
 

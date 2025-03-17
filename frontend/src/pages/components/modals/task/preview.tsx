@@ -49,6 +49,10 @@ const PreviewTaskModal: React.FC<PreviewTaskModalProps> = ({
               <span className="ml-auto">{task?.status}</span>
             </li>
             <li className="flex flex-wrap gap-4 text-sm">
+              <strong>Priority:</strong>
+              <span className="ml-auto">{task?.priority}</span>
+            </li>
+            <li className="flex flex-wrap gap-4 text-sm">
               <strong>Assigned To:</strong>
               <span className="ml-auto">{task?.assigned_to}</span>
             </li>

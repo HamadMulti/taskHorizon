@@ -2,6 +2,8 @@ interface Project {
   id: number;
   name: string;
   description: string;
+  status: string;
+  priority: string;
 }
 
 interface PreviewProjectModalProps {
@@ -48,6 +50,14 @@ const PreviewProjectModal: React.FC<PreviewProjectModalProps> = ({
             <li className="flex flex-wrap gap-4 text-sm">
               <strong>Name:</strong>
               <span className="ml-auto">{project?.name}</span>
+            </li>
+            <li className="flex flex-wrap gap-4 text-sm">
+              <strong>Status:</strong>
+              <span className="ml-auto">{project?.status}</span>
+            </li>
+            <li className="flex flex-wrap gap-4 text-sm">
+              <strong>Priority:</strong>
+              <span className="ml-auto">{project?.priority}</span>
             </li>
             <li className="flex flex-col items-start flex-wrap gap-4 text-sm">
               <div className="flex flex-col relative">

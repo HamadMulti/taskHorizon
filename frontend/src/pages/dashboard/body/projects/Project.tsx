@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useProjects } from "../../../../hooks/useProjects";
 import SkeletonTable from "../../../components/loaders/SkeletonTable";
 import PreviewProjectModal from "../../../components/modals/project/preview";
@@ -13,10 +13,12 @@ interface Project {
   id: number;
   name: string;
   description: string;
+  status: string;
+  priority: string;
 }
 
 const Project = () => {
-  const { projects, loading, currentPage, totalPages, totalProjects } =
+  const { projects, loading, currentPage, totalPages, totalProjects, _fetchMyProjects } =
     useProjects();
   const { role } = useAuth();
   const [page, setCurrentPage] = useState(currentPage);
@@ -29,6 +31,9 @@ const Project = () => {
     setIsCreating(false);
     setIsEditing(false);
   };
+    useEffect(() => {
+      _fetchMyProjects();
+      }, [_fetchMyProjects]);
 
   return (
     <>
@@ -81,6 +86,12 @@ const Project = () => {
                 Name
               </th>
               <th className="p-4 text-left text-sm font-medium text-white">
+                Status
+              </th>
+              <th className="p-4 text-left text-sm font-medium text-white">
+                Priority
+              </th>
+              <th className="p-4 text-left text-sm font-medium text-white">
                 Description
               </th>
               <th className="p-4 text-left text-sm font-medium text-white">
@@ -96,6 +107,7 @@ const Project = () => {
             <>
               {projects.length === 0 ? (
                 <tbody className="whitespace-nowrap flex">
+                  <tr className="min-w-full flex justify-center py-6 items-center flex-col"></tr>
                   <tr className="min-w-full flex justify-center py-6 items-center flex-col"></tr>
                   <tr className="min-w-full flex justify-center gap-2.5 py-6 items-start flex-col">
                     <span className="flex flex-col items-center justify-center">
@@ -131,12 +143,15 @@ const Project = () => {
                     </span>
                   </tr>
                   <tr className="min-w-full flex justify-center py-6 items-center flex-col"></tr>
+                  <tr className="min-w-full flex justify-center py-6 items-center flex-col"></tr>
                 </tbody>
               ) : (
                 <tbody className="whitespace-nowrap">
                   {projects.map((project) => (
                     <tr className="even:bg-yellow-50" key={project.id}>
                       <td className="p-4 text-sm text-black">{project.name}</td>
+                      <td className="p-4 text-sm text-black">{project.status}</td>
+                      <td className="p-4 text-sm text-black">{project.priority}</td>
                       <td className="p-4 text-sm text-black">
                         {project.description &&
                         project.description.length > 0 ? (

@@ -34,6 +34,9 @@ const ArchivedTasks = () => {
                 Status
               </th>
               <th className="p-4 text-left text-sm font-medium text-white">
+                Priority
+              </th>
+              <th className="p-4 text-left text-sm font-medium text-white">
                 Description
               </th>
               <th className="p-4 text-left text-sm font-medium text-white">
@@ -49,6 +52,8 @@ const ArchivedTasks = () => {
           ) : archived_tasks.length === 0 ? (
             <tbody className="whitespace-nowrap flex">
               <tr className="min-w-full flex justify-center py-6 items-center flex-col">
+              </tr>
+              <tr className="w-full flex justify-center py-6 items-center flex-col">
               </tr>
               <tr className="w-full flex justify-center py-6 items-center flex-col">
               </tr>
@@ -81,7 +86,7 @@ const ArchivedTasks = () => {
                     </g>
                   </svg>
                   <span className="text-yellow-600 font-bold">
-                    Project Not Found
+                    Tasks Not Found
                   </span>
                 </span>
               </tr>
@@ -96,6 +101,7 @@ const ArchivedTasks = () => {
                 <tr className="even:bg-yellow-50" key={task.id}>
                   <td className="p-4 text-sm text-black">{task.title}</td>
                   <td className="p-4 text-sm text-black">{task.status}</td>
+                  <td className="p-4 text-sm text-black">{task.priority}</td>
                   <td className="p-4 text-sm text-black">
                     {task.description && task.description.length > 0 ? (
                       <>

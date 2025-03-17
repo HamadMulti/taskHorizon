@@ -2,7 +2,7 @@ import { useProjects } from "../../../../hooks/useProjects";
 import SkeletonTable from "../../../components/loaders/SkeletonTable";
 import PreviewProjectModal from "../../../components/modals/project/preview";
 import Pagination from "../../../components/pagination/pagination";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { truncateText } from "../../../../utils/truncate";
 import { useLocation } from "react-router-dom";
 import CreateProjectModal from "../../../components/modals/project/create";
@@ -13,6 +13,8 @@ interface MyProject {
   id: number;
   name: string;
   description: string;
+  status: string;
+  priority: string;
 }
 
 const MyProject = () => {
@@ -21,7 +23,8 @@ const MyProject = () => {
     loading,
     my_currentPage,
     my_totalPages,
-    my_totalProjects
+    my_totalProjects,
+    _fetchProjects
   } = useProjects();
   const [page, setCurrentPage] = useState(my_currentPage);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -33,7 +36,9 @@ const MyProject = () => {
     setIsCreating(false);
     setIsEditing(false);
   };
-  
+  useEffect(() => {
+    _fetchProjects();
+    }, [_fetchProjects]);
 
   return (
     <>
@@ -85,6 +90,12 @@ const MyProject = () => {
                 Name
               </th>
               <th className="p-4 text-left text-sm font-medium text-white">
+                Status
+              </th>
+              <th className="p-4 text-left text-sm font-medium text-white">
+                Priority
+              </th>
+              <th className="p-4 text-left text-sm font-medium text-white">
                 Description
               </th>
               <th className="p-4 text-left text-sm font-medium text-white">
@@ -100,6 +111,7 @@ const MyProject = () => {
             <>
               {my_projects.length === 0 ? (
                 <tbody className="whitespace-nowrap flex">
+                  <tr className="min-w-full flex justify-center py-6 items-center flex-col"></tr>
                   <tr className="min-w-full flex justify-center py-6 items-center flex-col"></tr>
                   <tr className="min-w-full flex justify-center gap-2.5 py-6 items-start flex-col">
                     <span className="flex flex-col items-center justify-center">
@@ -135,12 +147,15 @@ const MyProject = () => {
                     </span>
                   </tr>
                   <tr className="min-w-full flex justify-center py-6 items-center flex-col"></tr>
+                  <tr className="min-w-full flex justify-center py-6 items-center flex-col"></tr>
                 </tbody>
               ) : (
                 <tbody className="whitespace-nowrap">
                   {my_projects.map((project) => (
                     <tr className="even:bg-yellow-50" key={project.id}>
                       <td className="p-4 text-sm text-black">{project.name}</td>
+                      <td className="p-4 text-sm text-black">{project.status}</td>
+                      <td className="p-4 text-sm text-black">{project.priority}</td>
                       <td className="p-4 text-sm text-black">
                         {project.description &&
                         project.description.length > 0 ? (

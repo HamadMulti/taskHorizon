@@ -39,7 +39,7 @@ def get_projects():
         return jsonify({"error": "Projects not found"}), 404
 
     return jsonify({
-        "projects": [{"id": p.id, "name": p.name, "description": p.description} for p in projects.items],
+        "projects": [{"id": p.id, "name": p.name, "status": p.status, "priority": p.priority, "description": p.description} for p in projects.items],
         "total": projects.total,
         "pages": projects.pages,
         "current_page": projects.page
@@ -58,7 +58,7 @@ def get_user_projects():
     if not projects:
         return jsonify({"error": "Projects not found"}), 404
     data = {
-        "my_projects": [{"id": p.id, "name": p.name, "description": p.description} for p in projects.items],
+        "my_projects": [{"id": p.id, "name": p.name, "status": p.status, "priority": p.priority, "description": p.description} for p in projects.items],
         "total": projects.total,
         "pages": projects.pages,
         "current_page": projects.page

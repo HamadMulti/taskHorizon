@@ -30,6 +30,20 @@ export const useProjects = () => {
   const [my_totalPages, setMyTotalPages] = useState(1);
   const [my_totalProjects, setMyTotalProjects] = useState(0);
 
+  const _fetchProjects = () => {
+    if (!isOpen && !projects) {
+      dispatch(fetchProjects({ page: currentPage })).unwrap();
+    }
+    setIsOpen(true);
+  };
+
+  const _fetchMyProjects = () => {
+    if (!isOpen && !projects) {
+      dispatch(fetchMyProjects({ page: currentPage })).unwrap();
+    }
+    setIsOpen(true);
+  };
+
   useEffect(() => {
     if (pathname === "/dashboard/projects") {
       const fetchData = async () => {
@@ -99,6 +113,9 @@ export const useProjects = () => {
     my_currentPage,
     my_totalPages,
     my_totalProjects,
+    pathname,
+    _fetchProjects,
+    _fetchMyProjects,
     fetchMyProjectSelector: async () => {
       if (!isOpen && my_projects.length === 0) {
         await dispatch(fetchMyProjects({ page: my_currentPage })).unwrap()
