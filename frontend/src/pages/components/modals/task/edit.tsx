@@ -9,6 +9,7 @@ interface EditTaskModalProps {
     id: number;
     title: string;
     status: string;
+    priority?: string;
     assigned_to?: string;
     description: string;
     project_id: number;
@@ -21,6 +22,7 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({ task, onClose }) => {
   const { role } = useAuth();
   const [title, setTitle] = useState(task?.title);
   const [status, setStatus] = useState(task?.status);
+  const [priority, setPriority] = useState(task?.priority);
   const [description, setDescription] = useState(task?.description || "");
   const { project_id, id } = task;
   const { editTask } = useTasks();
@@ -38,6 +40,7 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({ task, onClose }) => {
       id,
       title: title || "",
       status: status || "",
+      priority: priority || "",
       assigned_to: selectedUser,
       description,
       project_id: Number(selectedProject)
@@ -101,6 +104,22 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({ task, onClose }) => {
                   <option value="pending">Pending</option>
                   <option value="In progress">In Progress</option>
                   <option value="completed">Completed</option>
+                </select>
+              </div>
+
+              {/* Priority Input */}
+              <div>
+                <label className="text-gray-800 text-sm mb-2 block">
+                  Priority
+                </label>
+                <select
+                  value={priority}
+                  onChange={(e) => setPriority(e.target.value)}
+                  className="px-4 py-3 bg-gray-100 w-full text-gray-800 text-sm border-none focus:outline-yellow-600 focus:bg-transparent rounded-lg"
+                >
+                  <option value="Low">Low</option>
+                  <option value="Medium">Medium</option>
+                  <option value="High">High</option>
                 </select>
               </div>
 

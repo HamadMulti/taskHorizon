@@ -13,6 +13,7 @@ const CreateTaskModal: React.FC<CreateTaskModalProps> = ({ onClose }) => {
 
   const [title, setTitle] = useState("");
   const [status, setStatus] = useState("pending");
+  const [priority, setPriority] = useState("Medium");
   const [description, setDescription] = useState("");
   const { addTask } = useTasks();
   const [selectedUser, setSelectedUser] = useState("");
@@ -27,6 +28,7 @@ const CreateTaskModal: React.FC<CreateTaskModalProps> = ({ onClose }) => {
     const data = {
       title: title || "",
       status: status || "",
+      priority: priority || "",
       assigned_to: selectedUser || "",
       description,
       project_id: Number(selectedProject)
@@ -99,6 +101,22 @@ const CreateTaskModal: React.FC<CreateTaskModalProps> = ({ onClose }) => {
                 </select>
               </div>
 
+              {/* Priority Input */}
+              <div>
+                <label className="text-gray-800 text-sm mb-2 block">
+                  Priority
+                </label>
+                <select
+                  value={priority}
+                  onChange={(e) => setPriority(e.target.value)}
+                  className="px-4 py-3 bg-gray-100 w-full text-gray-800 text-sm border-none focus:outline-yellow-600 focus:bg-transparent rounded-lg"
+                >
+                  <option value="Low">Low</option>
+                  <option value="Medium">Medium</option>
+                  <option value="High">High</option>
+                </select>
+              </div>
+
               {/* Assigned To Input */}
               {role === "admin" || role === "team_leader" ? (
                 <>
@@ -153,7 +171,7 @@ const CreateTaskModal: React.FC<CreateTaskModalProps> = ({ onClose }) => {
                   type="submit"
                   className="px-6 py-3 rounded-lg text-white text-sm bg-yellow-600 hover:bg-yellow-700"
                 >
-                    Create Task
+                  Create Task
                 </button>
               </div>
             </form>

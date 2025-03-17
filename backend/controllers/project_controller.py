@@ -82,6 +82,8 @@ def update_project(project_id):
         data = request.json
         project.name = data.get("name", project.name)
         project.description = data.get("description", project.description)
+        project.status = data.get("status", project.status)
+        project.priority = data.get("priority", project.priority)
         db.session.commit()
         return jsonify({"message": "Project updated successfully"}), 200
 

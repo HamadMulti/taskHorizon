@@ -7,7 +7,6 @@ import PreviewTaskModal from "../../../components/modals/task/preview";
 import DeleteTaskModal from "../../../components/modals/task/delete";
 import EditTaskModal from "../../../components/modals/task/edit";
 import { Task } from "../../../../features/taskSlice";
-import LoaderDashboard from "../../../../utils/LoaderDashboard";
 
 const TeamTasks = () => {
   const {

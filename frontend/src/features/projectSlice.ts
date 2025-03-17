@@ -3,7 +3,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import API from "../utils/api";
 import { RootState } from "../app/store";
 
-interface Project {
+export interface Project {
   status: string;
   priority?: string;
   id: number;
@@ -74,7 +74,7 @@ export const fetchMyProjects = createAsyncThunk(
 
 export const createProject = createAsyncThunk(
   "projects/create",
-  async (projectData: { name: string; description: string }, thunkAPI) => {
+  async (projectData: { name: string; description: string; status: string; priority: string }, thunkAPI) => {
     try {
       const state = thunkAPI.getState() as RootState;
       const token = state.auth.token ?? null;
@@ -96,8 +96,10 @@ export const updateProject = createAsyncThunk(
     {
       id,
       name,
-      description
-    }: { id: number; name: string; description: string },
+      description,
+      status,
+      priority,
+    }: { id: number; name: string; description: string; status: string; priority: string },
     thunkAPI
   ) => {
     try {
@@ -105,7 +107,7 @@ export const updateProject = createAsyncThunk(
       const token = state.auth.token ?? null;
       API.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
-      const response = await API.put(`/projects/${id}`, { name, description });
+      const response = await API.put(`/projects/${id}`, { name, description, status, priority });
       return response.data;
     } catch (error: any) {
       return thunkAPI.rejectWithValue(

@@ -161,8 +161,10 @@ def update_task(task_id):
         task_id=task.id,
         updated_by=user.id,
         old_status=task.status,
-        old_assignee=task.assigned_to,
         new_status=data.get("status", task.status),
+        old_priority=task.priority,
+        new_priority=data.get("priority", task.priority),
+        old_assignee=task.assigned_to,
         new_assignee=new_assignee.id if new_assignee else task.assigned_to
     )
     db.session.add(history)
@@ -170,6 +172,7 @@ def update_task(task_id):
     task.title = data.get("title", task.title)
     task.description = data.get("description", task.description)
     task.status = data.get("status", task.status)
+    task.priority = data.get("priority", task.priority)
     task.assigned_to = new_assignee.id if new_assignee else task.assigned_to
 
     db.session.commit()

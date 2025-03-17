@@ -1,10 +1,4 @@
-interface Project {
-  id: number;
-  name: string;
-  description: string;
-  status: string;
-  priority: string;
-}
+import { Project } from "../../../../features/projectSlice";
 
 interface PreviewProjectModalProps {
   project?: Project;

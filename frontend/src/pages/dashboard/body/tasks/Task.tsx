@@ -10,7 +10,6 @@ import CreateTaskModal from "../../../components/modals/task/create";
 import EditTaskModal from "../../../components/modals/task/edit";
 import DeleteTaskModal from "../../../components/modals/task/delete";
 import { useAuth } from "../../../../hooks/useAuth";
-import LoaderDashboard from "../../../../utils/LoaderDashboard";
 
 const Tasks = () => {
   const { tasks, loading, currentPage, totalPages, totalTasks } = useTasks();

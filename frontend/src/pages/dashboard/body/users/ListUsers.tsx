@@ -9,7 +9,6 @@ import { useLocation } from "react-router-dom";
 import DeleteUserModal from "../../../components/modals/user/delete";
 import ChangePasswordModal from "../../../components/modals/user/generatepassword";
 import EditUserModal from "../../../components/modals/user/edit";
-import LoaderDashboard from "../../../../utils/LoaderDashboard";
 
 interface Users {
   id: number;

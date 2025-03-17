@@ -1,11 +1,6 @@
 import { useState } from "react";
 import { useProjects } from "../../../../hooks/useProjects";
-
-interface Project {
-  id: number;
-  name: string;
-  description: string;
-}
+import { Project } from "../../../../features/projectSlice";
 
 interface EditProjectModalProps {
   project: Project;
@@ -18,11 +13,13 @@ const EditProjectModal: React.FC<EditProjectModalProps> = ({
 }) => {
   const [isOpen, setIsOpen] = useState(true);
   const [name, setName] = useState(project?.name || "");
+  const [status, setStatus] = useState(project?.status);
+  const [priority, setPriority] = useState(project?.priority);
   const [description, setDescription] = useState(project?.description || "");
   const { handleUpdateProject } = useProjects();
 
   const handleUpdate = () => {
-    handleUpdateProject(project?.id, name, description);
+    handleUpdateProject(project?.id, name, description, status, priority );
     setIsOpen(false);
     onClose();
   };
@@ -70,6 +67,38 @@ const EditProjectModal: React.FC<EditProjectModalProps> = ({
                   onChange={(e) => setName(e.target.value)}
                   className="px-4 py-3 bg-gray-100 w-full text-gray-800 text-sm border-none focus:outline-yellow-600 focus:bg-transparent rounded-lg"
                 />
+              </div>
+
+              {/* Status Input */}
+              <div>
+                <label className="text-gray-800 text-sm mb-2 block">
+                  Status
+                </label>
+                <select
+                  value={status}
+                  onChange={(e) => setStatus(e.target.value)}
+                  className="px-4 py-3 bg-gray-100 w-full text-gray-800 text-sm border-none focus:outline-yellow-600 focus:bg-transparent rounded-lg"
+                >
+                  <option value="pending">Pending</option>
+                  <option value="In progress">In Progress</option>
+                  <option value="completed">Completed</option>
+                </select>
+              </div>
+
+              {/* Priority Input */}
+              <div>
+                <label className="text-gray-800 text-sm mb-2 block">
+                  Priority
+                </label>
+                <select
+                  value={priority}
+                  onChange={(e) => setPriority(e.target.value)}
+                  className="px-4 py-3 bg-gray-100 w-full text-gray-800 text-sm border-none focus:outline-yellow-600 focus:bg-transparent rounded-lg"
+                >
+                  <option value="Low">Low</option>
+                  <option value="Medium">Medium</option>
+                  <option value="High">High</option>
+                </select>
               </div>
 
               {/* Description Input */}

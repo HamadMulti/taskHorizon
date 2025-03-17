@@ -10,12 +10,14 @@ const CreateProjectModal: React.FC<CreateProjectModalProps> = ({ onClose, onOpen
   const { handleCreateProject } = useProjects();
   const [isOpen, setIsOpen] = useState(onOpen);
   const [name, setName] = useState("");
+  const [status, setStatus] = useState("");
+  const [priority, setPriority] = useState("");
   const [description, setDescription] = useState("");
   
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (name && description) {
-      await handleCreateProject(name, description);
+      await handleCreateProject(name, description, status, priority);
       setName("");
       setDescription("");
       setIsOpen(false);
@@ -62,6 +64,38 @@ const CreateProjectModal: React.FC<CreateProjectModalProps> = ({ onClose, onOpen
                   className="px-4 py-3 bg-gray-100 w-full text-gray-800 text-sm border-none focus:outline-yellow-600 focus:bg-transparent rounded-lg"
                   required
                 />
+              </div>
+
+              {/* Status Input */}
+              <div>
+                <label className="text-gray-800 text-sm mb-2 block">
+                  Status
+                </label>
+                <select
+                  value={status}
+                  onChange={(e) => setStatus(e.target.value)}
+                  className="px-4 py-3 bg-gray-100 w-full text-gray-800 text-sm border-none focus:outline-yellow-600 focus:bg-transparent rounded-lg"
+                >
+                  <option value="pending">Pending</option>
+                  <option value="In progress">In Progress</option>
+                  <option value="completed">Completed</option>
+                </select>
+              </div>
+
+              {/* Priority Input */}
+              <div>
+                <label className="text-gray-800 text-sm mb-2 block">
+                  Priority
+                </label>
+                <select
+                  value={priority}
+                  onChange={(e) => setPriority(e.target.value)}
+                  className="px-4 py-3 bg-gray-100 w-full text-gray-800 text-sm border-none focus:outline-yellow-600 focus:bg-transparent rounded-lg"
+                >
+                  <option value="Low">Low</option>
+                  <option value="Medium">Medium</option>
+                  <option value="High">High</option>
+                </select>
               </div>
 
               {/* Description Input */}

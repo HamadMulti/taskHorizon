@@ -122,18 +122,18 @@ export const useProjects = () => {
       }
       setIsOpen(true);
     },
-    handleCreateProject: async (name: string, description: string) => {
+    handleCreateProject: async (name: string, description: string, status: string, priority: string) => {
       try {
-        await dispatch(createProject({ name, description })).unwrap();
+        await dispatch(createProject({ name, description, status, priority })).unwrap();
         await dispatch(fetchProjects({ page: currentPage })).unwrap();
         await dispatch(fetchMyProjects({ page: currentPage })).unwrap();
       } catch (error) {
         console.warn("Error creating project:", error);
       }
     },
-    handleUpdateProject: async (id: number, name: string, description: string) => {
+    handleUpdateProject: async (id: number, name: string, description: string, status: string, priority: string) => {
       try {
-        await dispatch(updateProject({ id, name, description })).unwrap();
+        await dispatch(updateProject({ id, name, description, status, priority })).unwrap();
         await dispatch(fetchProjects({ page: currentPage })).unwrap();
         await dispatch(fetchMyProjects({ page: currentPage })).unwrap();
       } catch (error) {
