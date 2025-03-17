@@ -1,10 +1,10 @@
 import { Card, CardContent } from "../../../components/cards/Card";
 import { LineChart, PieChart } from "../../../components/charts/Charts";
 import { useAnalytics } from "../../../../hooks/useAnalytics";
-import Loader from "../../../../utils/Loader";
 import { useEffect, useState } from "react";
 import { useAuth } from "../../../../hooks/useAuth";
 import capitalizeUsername from "../../../../utils/capitalize";
+import LoaderDashboard from "../../../../utils/LoaderDashboard";
 
 const Analytics = () => {
   const { analytics, loading, error, fetchAnalytics } = useAnalytics();
@@ -23,9 +23,7 @@ const Analytics = () => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-screen">
-        <Loader />
-      </div>
+        <LoaderDashboard />
     );
   }
 
