@@ -1,6 +1,6 @@
 import { createSelector } from "@reduxjs/toolkit";
 import { RootState } from "../app/store";
-import Project from "../pages/dashboard/body/projects/Project";
+import { Project } from "../features/projectSlice";
 
 export const selectMyProjects = (state: RootState): Project[] =>
   state.projects.my_projects;

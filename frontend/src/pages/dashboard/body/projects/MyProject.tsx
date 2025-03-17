@@ -8,14 +8,7 @@ import { useLocation } from "react-router-dom";
 import CreateProjectModal from "../../../components/modals/project/create";
 import EditProjectModal from "../../../components/modals/project/edit";
 import DeleteProjectModal from "../../../components/modals/project/delete";
-
-interface MyProject {
-  id: number;
-  name: string;
-  description: string;
-  status: string;
-  priority: string;
-}
+import { Project } from "../../../../features/projectSlice";
 
 const MyProject = () => {
   const {
@@ -28,7 +21,7 @@ const MyProject = () => {
   } = useProjects();
   const [page, setCurrentPage] = useState(my_currentPage);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedProject, setSelectedProject] = useState<MyProject>();
+  const [selectedProject, setSelectedProject] = useState<Project>();
   const { pathname } = useLocation();
   const [isCreating, setIsCreating] = useState(false);
   const [isEditing, setIsEditing] = useState(false);

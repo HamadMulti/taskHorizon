@@ -5,7 +5,7 @@ import { RootState } from "../app/store";
 
 export interface Project {
   status: string;
-  priority?: string;
+  priority: string;
   id: number;
   name: string;
   description: string;

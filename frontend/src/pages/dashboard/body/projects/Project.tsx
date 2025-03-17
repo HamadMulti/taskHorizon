@@ -9,13 +9,7 @@ import { useLocation } from "react-router-dom";
 import DeleteProjectModal from "../../../components/modals/project/delete";
 import EditProjectModal from "../../../components/modals/project/edit";
 import { useAuth } from "../../../../hooks/useAuth";
-interface Project {
-  id: number;
-  name: string;
-  description: string;
-  status: string;
-  priority: string;
-}
+import { Project as _Project } from "../../../../features/projectSlice";
 
 const Project = () => {
   const { projects, loading, currentPage, totalPages, totalProjects, _fetchMyProjects } =
@@ -23,7 +17,7 @@ const Project = () => {
   const { role } = useAuth();
   const [page, setCurrentPage] = useState(currentPage);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedProject, setSelectedProject] = useState<Project>();
+  const [selectedProject, setSelectedProject] = useState<_Project>();
   const { pathname } = useLocation();
   const [isCreating, setIsCreating] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
