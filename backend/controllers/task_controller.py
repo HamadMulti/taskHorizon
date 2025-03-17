@@ -83,6 +83,7 @@ def get_tasks():
                     "priority": t.priority,
                     "assigned_to": User.query.get(t.assigned_to).username if t.assigned_to else None,
                     "description": t.description,
+                    "due_date": t.due_date,
                     "project_id": t.project_id,
                 }
                 for t in tasks.items
@@ -241,6 +242,7 @@ def get_user_tasks():
                         "priority": t.priority,
                         "assigned_to": User.query.get(t.assigned_to).username if t.assigned_to else None,
                         "description": t.description,
+                        "due_date": t.due_date,
                         "project_id": t.project_id,
                     }
                     for t in tasks.items
@@ -279,6 +281,7 @@ def get_team_tasks():
                         "priority": t.priority,
                         "assigned_to": User.query.get(t.assigned_to).username if t.assigned_to else None,
                         "description": t.description,
+                        "due_date": t.due_date,
                         "project_id": t.project_id,
                     }
                     for t in tasks.items
@@ -325,6 +328,7 @@ def get_archived_tasks():
                     "assigned_to": User.query.get(t.assigned_to).username if t.assigned_to else None,
                     "deleted_by": t.deleted_by,
                     "description": t.description,
+                    "due_date": t.due_date,
                     "project_id": t.project_id
                 }
                 for t in archived_tasks.items

@@ -60,6 +60,10 @@ const PreviewTaskModal: React.FC<PreviewTaskModalProps> = ({
               <strong>Description:</strong>
               <span className="ml-auto">{task?.description}</span>
             </li>
+            <li className="flex flex-wrap gap-4 text-sm">
+              <strong>Due Date:</strong>
+              <span className="ml-auto">{task?.due_date ? task.due_date.toLocaleDateString() : null}</span>
+            </li>
           </ul>
         </div>
 
