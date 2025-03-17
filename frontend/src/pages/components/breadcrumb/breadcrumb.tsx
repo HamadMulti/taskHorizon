@@ -39,7 +39,7 @@ const Breadcrumbs = () => {
           ) : (
             <>
               <Link
-                to="/dashboard/projects"
+                to="/dashboard/home"
                 className="inline-flex items-center text-sm font-medium text-gray-700 hover:text-[#0c172bea]"
               >
                 <svg

@@ -197,7 +197,7 @@ const LandingPage = () => {
               {otpVerified && !!user && !!token ? (
                 <>
                   <Linky
-                    to="/dashboard/projects"
+                    to="/dashboard/home"
                     className="text-yellow-600 hover:underline px-2 font-lighter items-center flex"
                   >
                     Dashboard
@@ -297,7 +297,7 @@ const LandingPage = () => {
                 </div>
                 <div className="max-md:mt-12 h-full">
                   <img
-                    src="https://static.vecteezy.com/system/resources/previews/006/317/447/non_2x/task-manager-flat-design-effective-time-management-save-time-teamwork-planning-training-activities-organization-working-time-flat-illustration-free-vector.jpg"
+                    src="https://img.freepik.com/premium-photo/diverse-businesspeople-working-management-presentation-analyzing-business-graph-startup-company-office-entrepreneurs-team-brainstorming-project-ideas-workplace-start-up-concept_482257-27812.jpg?w=740"
                     alt="banner img"
                     className="w-full h-full object-cover no-repeat"
                   />
@@ -551,7 +551,7 @@ const LandingPage = () => {
                 <div className="grid md:grid-cols-2 items-center gap-16">
                   <div>
                     <img
-                      src="https://media.istockphoto.com/id/1400074029/vector/user-interface-customization-programming-concept-of-creating-setting-personal-pages-and.jpg?s=612x612&w=0&k=20&c=gtc_M3IvgvaUzRU3G156NphR98HeQ4vlIFodu7JgDC0="
+                      src="https://img.freepik.com/free-photo/standard-quality-control-concept-m_23-2150041853.jpg?t=st=1742229462~exp=1742233062~hmac=598633a6f471aa03a2838a8b6a68ea9b23b147d3e0988698700bbbfde37d4860&w=740"
                       className="w-full object-contain rounded-md shadow-[0_2px_10px_-3px_rgba(6,81,237,0.3)]"
                     />
                   </div>
@@ -590,7 +590,7 @@ const LandingPage = () => {
                   </div>
                   <div>
                     <img
-                      src="https://img.freepik.com/free-vector/illustration-brainstorming-teamwork_53876-18390.jpg?semt=ais_hybrid"
+                      src="https://img.freepik.com/free-photo/group-multinational-busy-people-working-office_146671-15660.jpg?t=st=1742229355~exp=1742232955~hmac=23cc1ccae905574b7b18e1202996fdb411a0b9d549d7285a6bec0daac7af1346&w=740"
                       className="w-full object-contain rounded-md shadow-[0_2px_10px_-3px_rgba(6,81,237,0.3)]"
                     />
                   </div>
@@ -601,7 +601,7 @@ const LandingPage = () => {
                 <div className="grid md:grid-cols-2 items-center gap-16">
                   <div>
                     <img
-                      src="https://readymadeui.com/image-1.webp"
+                      src="https://img.freepik.com/free-photo/person-office-analyzing-checking-finance-graphs_23-2150377127.jpg?t=st=1742229717~exp=1742233317~hmac=5f29c81add4b9ece752b95aaa2fe06c9654ba37f369cba2350e465924f089394&w=740"
                       className="w-full object-contain rounded-md shadow-[0_2px_10px_-3px_rgba(6,81,237,0.3)]"
                     />
                   </div>
@@ -639,7 +639,7 @@ const LandingPage = () => {
                   </div>
                   <div>
                     <img
-                      src="https://readymadeui.com/contact.webp"
+                      src="https://img.freepik.com/free-photo/standard-quality-control-concept-m_23-2150041864.jpg?t=st=1742229713~exp=1742233313~hmac=7e52e76b5aace2c7d0c3d712055b3f34d62716a9a28bd535db2bcbff785311c3&w=740"
                       className="w-full object-contain rounded-md shadow-[0_2px_10px_-3px_rgba(6,81,237,0.3)]"
                     />
                   </div>

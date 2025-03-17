@@ -24,7 +24,7 @@ const Sidebar = () => {
         >
           <div className="min-md:max-lg:relative max-lg:max-h-screen max-w-full max:lg:flex max-lg:flex-col max-lg:justify-start">
             <ul className="space-y-2">
-              {/* <li>
+              <li>
               <Link
                 to="home"
                 className="text-gray-800 text-sm flex items-center hover:bg-gray-100 rounded-md px-4 py-2 transition-all"
@@ -46,7 +46,7 @@ const Sidebar = () => {
                 </svg>
                 <span>Dashboard</span>
               </Link>
-            </li> */}
+            </li>
             </ul>
 
             <div className="mt-6">

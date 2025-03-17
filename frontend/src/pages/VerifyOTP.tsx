@@ -28,9 +28,9 @@ const VerifyOTP = () => {
     handleVerifyOTP(otp)
       .then(() => {
         if (role === "user"){
-          navigate("/dashboard/my-projects");
+          navigate("/dashboard/home");
         }
-        navigate("/dashboard/projects");
+        navigate("/dashboard/home");
       })
       .catch((error) => {
         alert("Error verifying OTP: " + error.error);

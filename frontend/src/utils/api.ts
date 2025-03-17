@@ -3,9 +3,9 @@ import axios from "axios";
 import refreshAccessToken from "./refresh_token";
 import Cookies from "js-cookie";
 
-// const url = import.meta.env.VITE_API_BASE_URL
+const url = import.meta.env.VITE_API_BASE_URL
 
-const url = "https://taskhorizon.onrender.com";
+// const url = "https://taskhorizon.onrender.com";
 
 const API = axios.create({
   baseURL: url,

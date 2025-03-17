@@ -3,6 +3,7 @@ import authReducer from "../features/authSlice";
 import taskReducer from "../features/taskSlice";
 import projectReducer from "../features/projectSlice";
 import userReducer  from "../features/userSlice";
+import analyticsReducer  from "../features/analyticsSlice";
 import { persistStore } from "redux-persist";
 
 export const store = configureStore({
@@ -11,6 +12,7 @@ export const store = configureStore({
     tasks: taskReducer,
     projects: projectReducer,
     users: userReducer,
+    analytics: analyticsReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

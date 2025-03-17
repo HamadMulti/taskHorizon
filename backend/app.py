@@ -50,12 +50,14 @@ def create_app():
     from routes.task_routes import task_bp
     from routes.project_routes import project_bp
     from routes.home_route import home_bp
+    from routes.analytics_routes import analytics_bp
 
     app.register_blueprint(home_bp, url_prefix="/")
     app.register_blueprint(auth_bp, url_prefix="/auth")
     app.register_blueprint(user_bp, url_prefix="/user")
     app.register_blueprint(task_bp, url_prefix="/tasks")
     app.register_blueprint(project_bp, url_prefix="/projects")
+    app.register_blueprint(analytics_bp, url_prefix="/analytics")
 
     return app
 
