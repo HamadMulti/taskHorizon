@@ -46,7 +46,7 @@ useEffect(() => {
               <div className="relative flex items-center">
                 <input
                   name="email"
-                  type="text"
+                  type="email"
                   required
                   className="w-full bg-transparent text-sm text-white border-b border-gray-300 focus:border-yellow-400 pl-2 pr-8 py-3 outline-none"
                   placeholder="Enter email"
