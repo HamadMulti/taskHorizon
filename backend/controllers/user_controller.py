@@ -2,6 +2,7 @@ import random
 import re
 from flask import request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
+from models.project import Project
 from utils.security import hash_password
 from models.subscribe import Subscriber
 from utils.mailer import change_teammate_password, create_teammate, new_subscriber_mail
@@ -216,10 +217,12 @@ def delete_user(user_id):
     current_user = User.query.get(current_user_id)
     user_to_delete = User.query.get(user_id)
 
+
     if not current_user or not user_to_delete:
         return jsonify({"error": "User not found"}), 404
 
     if current_user.id == user_to_delete.id or current_user.role in ["admin", "team_leader"]:
+        db.session.query(Project).filter(Project.owner_id == user_to_delete).update({"owner_id": current_user})
         db.session.delete(user_to_delete)
         db.session.commit()
         return jsonify({"message": "User deleted successfully"}), 200
