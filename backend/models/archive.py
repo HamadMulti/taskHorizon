@@ -28,3 +28,4 @@ class ArchivedTask(db.Model):
     project_id = db.Column(db.Integer, nullable=True)
     deleted_by = db.Column(db.Integer, db.ForeignKey("user.id"))
     deleted_at = db.Column(db.DateTime, default=datetime.utcnow)
+    due_date = db.Column(db.Date, nullable=True)
