@@ -2,7 +2,7 @@ import random
 import re
 from flask import request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from models.task import Task
+from models.task import Task, TaskHistory
 from models.project import Project
 from utils.security import hash_password
 from models.subscribe import Subscriber
@@ -224,6 +224,7 @@ def delete_user(user_id):
     if current_user.id == user_to_delete.id or current_user.role in ["admin", "team_leader"]:
         db.session.query(Task).filter(Task.assigned_to == user_to_delete.id).update({"assigned_to": None})
         db.session.query(Project).filter(Project.owner_id == user_to_delete.id).update({"owner_id": current_user.id})
+        db.session.query(TaskHistory).filter(TaskHistory.updated_by == user_to_delete.id).update({"updated_by": current_user.id})
 
         db.session.delete(user_to_delete)
         db.session.commit()
